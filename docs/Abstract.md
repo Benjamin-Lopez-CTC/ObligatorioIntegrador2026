@@ -1,0 +1,5 @@
+# Abstract del proyecto
+
+El objetivo de este proyecto es diseñar e implementar un sistema que le permita al cliente registrar y manejar información sobre los apiarios y sus colmenas, la cual hasta la fecha se mantenía de forma intuitiva y mental, algo que puede generar dificultades para llevar un control preciso. Esto provoca que no tenga claridad sobre cuánto produce realmente, ni sobre los factores que influyen en variaciones de producción entre temporadas.
+
+El sistema le ayudaría a entender mejor su producción, optimizar su trabajo y poder escalar su negocio sin perder el control. Además de poder consultar un historial de datos anteriores y ubicar más rápido las colmenas en necesidad de atención, junto con ayuda al momento de registrar los datos de las colmenas según lo que le pide el ministerio cada año.
