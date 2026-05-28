@@ -1,0 +1,180 @@
+@model ObligatorioIntegrador2026.ViewModels.LoginViewModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>ApiaryPro - Acceso Interno</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&amp;family=Inter:wght@400;500&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed-variant": "#474746",
+                        "on-primary-container": "#715f00",
+                        "surface-container-high": "#292a2a",
+                        "on-primary": "#3a3000",
+                        "surface-dim": "#121414",
+                        "secondary-container": "#474746",
+                        "secondary-fixed": "#e5e2e1",
+                        "on-surface-variant": "#cfc6ab",
+                        "primary-fixed-dim": "#e7c400",
+                        "on-tertiary-container": "#606060",
+                        "surface": "#121414",
+                        "outline": "#989077",
+                        "surface-container-highest": "#343535",
+                        "inverse-primary": "#6f5d00",
+                        "on-error-container": "#ffdad6",
+                        "on-background": "#e3e2e2",
+                        "surface-tint": "#e7c400",
+                        "on-tertiary": "#303030",
+                        "tertiary-fixed": "#e4e2e1",
+                        "tertiary-fixed-dim": "#c8c6c5",
+                        "on-error": "#690005",
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "background": "#121414",
+                        "surface-container-lowest": "#0d0e0f",
+                        "secondary": "#c8c6c5",
+                        "surface-container": "#1e2020",
+                        "on-secondary-container": "#b7b5b4",
+                        "surface-bright": "#383939",
+                        "on-surface": "#e3e2e2",
+                        "error": "#ffb4ab",
+                        "on-tertiary-fixed-variant": "#474746",
+                        "on-primary-fixed": "#221b00",
+                        "inverse-surface": "#e3e2e2",
+                        "error-container": "#93000a",
+                        "on-tertiary-fixed": "#1b1c1c",
+                        "inverse-on-surface": "#2f3131",
+                        "surface-container-low": "#1a1c1c",
+                        "on-secondary-fixed": "#1b1b1c",
+                        "on-secondary": "#303030",
+                        "outline-variant": "#4c4732",
+                        "surface-variant": "#343535",
+                        "primary-fixed": "#ffe165",
+                        "primary-container": "#ffd900",
+                        "primary": "#fff7e6",
+                        "tertiary": "#faf7f7",
+                        "tertiary-container": "#dddbda",
+                        "on-primary-fixed-variant": "#544600"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "container-max": "1200px",
+                        "unit": "8px",
+                        "margin-mobile": "20px",
+                        "margin-desktop": "64px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "display": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "label-caps": ["JetBrains Mono"],
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "body-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "display": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "500"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            background-color: #121414;
+            color: #e3e2e2;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-body-md text-body-md">
+    <!-- Main Content Canvas -->
+    <main class="flex-grow flex items-center justify-center px-margin-mobile md:px-margin-desktop py-20 relative overflow-hidden">
+        <!-- Abstract Decorative Element (Subtle industrial texture) -->
+        <div class="absolute inset-0 opacity-5 pointer-events-none" style="background-image: radial-gradient(#FFD900 1px, transparent 1px); background-size: 40px 40px;"></div>
+        <div class="w-full max-w-[440px] z-10">
+            <!-- Branding Section -->
+            <div class="text-center mb-10">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-lg mb-6"><span class="material-symbols-outlined text-[32px]" style="color: rgb(255, 217, 0); font-variation-settings: &quot;FILL&quot; 1;">hive</span></div>
+                <h1 class="font-display text-display text-on-surface mb-2 tracking-tight">Zánganos S.A.</h1>
+                <p class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">Sistema de Gestión Interna</p>
+            </div>
+            <!-- Login Form Card -->
+            <div class="bg-surface-container border border-secondary-container p-8 md:p-10 rounded-lg">
+                <form asp-action="Login" asp-controller="Account" method="post" class="space-y-6">
+                    <!-- Validation Summary -->
+                    <div asp-validation-summary="ModelOnly" class="text-error font-body-sm mb-4"></div>
+
+                    <!-- Username Field -->
+                    <div class="space-y-2">
+                        <label class="block font-label-caps text-label-caps text-outline uppercase tracking-wider" for="username">Usuario</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline text-[20px]" data-icon="person">person</span>
+                            <input asp-for="Username" class="w-full bg-surface-container-high border border-secondary-container text-on-surface pl-10 pr-4 py-3 rounded focus:outline-none focus:border-primary-container transition-colors placeholder:text-on-secondary-fixed-variant" placeholder="ej: f.alvarez" type="text">
+                        </div>
+                        <span asp-validation-for="Username" class="text-error text-xs"></span>
+                    </div>
+                    <!-- Password Field -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center">
+                            <label class="block font-label-caps text-label-caps text-outline uppercase tracking-wider" for="password">Contraseña</label>
+                            <a class="font-label-caps text-[10px] text-on-surface-variant hover:text-primary-container transition-colors uppercase tracking-wider" href="#">¿Olvidó su clave?</a>
+                        </div>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline text-[20px]" data-icon="lock">lock</span>
+                            <input asp-for="Password" class="w-full bg-surface-container-high border border-secondary-container text-on-surface pl-10 pr-4 py-3 rounded focus:outline-none focus:border-primary-container transition-colors placeholder:text-on-secondary-fixed-variant" placeholder="••••••••" type="password">
+                        </div>
+                        <span asp-validation-for="Password" class="text-error text-xs"></span>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button class="w-full bg-primary-container text-on-primary font-body-md font-bold py-4 rounded hover:opacity-90 active:opacity-80 transition-all flex items-center justify-center gap-2 group" type="submit">
+                        Iniciar Sesión
+                        <span class="material-symbols-outlined text-[20px]" data-icon="arrow_forward">arrow_forward</span>
+                    </button>
+                </form>
+            </div>
+            <!-- Footer-like Meta Info -->
+            <div class="mt-12 text-center">
+                <p class="font-label-caps text-label-caps text-on-secondary-fixed-variant flex items-center justify-center gap-2"><span class="material-symbols-outlined text-[14px]" data-icon="language">language</span>ZÁNGANOS S.A. - PROPIEDAD DE MATÍAS VERGUES</p>
+            </div>
+        </div>
+    </main>
+    <!-- Essential Footer Component -->
+    <footer class="bg-surface-container-lowest border-t border-secondary-container mt-auto">
+        <div class="max-w-container-max mx-auto px-margin-desktop py-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="font-label-caps text-label-caps text-on-surface-variant">
+                Felipe Alvarez y Benjamin Lopez - 2026
+            </div>
+            <div class="flex gap-6">
+                <span class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary-container transition-colors cursor-pointer">Privacy Policy</span>
+                <span class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary-container transition-colors cursor-pointer">Terms of Service</span>
+                <span class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary-container transition-colors cursor-pointer">Sustainability</span>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

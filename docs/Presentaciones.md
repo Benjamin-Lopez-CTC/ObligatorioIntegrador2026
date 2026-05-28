@@ -1,0 +1,10 @@
+# Presentación del Cliente
+Nuestro cliente es Matías Vergues, dueño de la empresa Zánganos SA, una productora apícola la cual se encarga de gestionar alrededor de 800 colmenas distribuidas en varios apiarios, incluyendo la producción de miel, la cual posteriormente es procesada y exportada.
+Matías es el dueño y unico trabajador de la empresa, lo que implica que debe encargarse de llevar el control de sus colmenas y producción de miel, guardar dicha información, transportar todo el producto y entregarlo en su debido tiempo, además de completar manualmente las fichas del ministerio, labor que es muy dificil para una sola persona sin ayuda de ningun servicio.
+
+# Presentación del Problema
+El problema ocurre en la gestión diaria del apiario de Matías, quien trabaja de forma independiente administrando aproximadamente 800 colmenas distribuidas en distintos apiarios. Actualmente, el manejo de la información se realiza de forma mental e intuitiva, sin el uso de herramientas digitales que permitan registrar y organizar los datos.
+Esta situación genera falta de control y claridad sobre el estado de las colmenas y la producción. Matías no puede determinar con precisión cuánta miel produce realmente ni identificar qué factores influyen en las variaciones de producción entre temporadas.
+Además, la ausencia de registros provoca errores frecuentes, como olvidar tratamientos necesarios para las abejas, no poder asociar la producción a colmenas específicas o no llevar todo lo necesario al momento de revisar las colmenas.
+Matías está en una situación donde no puede crecer, ya que aumentar la cantidad de colmenas le implicaría perder aún más el control sobre la gestión de colmenas y producción de miel.
+Entonces, surge la necesidad de una aplicación que de forma simple pero eficiente, le permita registrar, consultar y analizar la información de sus colmenas y apiarios. Esto además de brindarle mayor control le permitirá tomar decisiones y reducir errores a partir de la información registrada, y crecer en su negocio de forma mas sostenible.

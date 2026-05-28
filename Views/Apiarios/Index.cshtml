@@ -1,0 +1,135 @@
+@{
+    ViewData["Title"] = "Gestión de Apiarios";
+}
+
+<!-- Header Section -->
+<section class="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6 mt-8">
+    <div>
+        <h1 class="font-display text-display text-on-surface mb-2">Gestión de Apiarios</h1>
+        <p class="font-body-md text-body-md text-on-surface-variant">Monitoreo y administración de instalaciones apícolas.</p>
+    </div>
+    <button class="bg-primary-container text-on-primary font-label-caps text-label-caps px-6 py-3 rounded hover:bg-primary-fixed-dim transition-colors flex items-center gap-2">
+        <span class="material-symbols-outlined text-[18px]">add</span>
+        Registrar Nuevo Apiario
+    </button>
+</section>
+<!-- Apiary Grid (Cards) -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+    <!-- Card 1 -->
+    <article class="bg-surface-container-high border border-surface-variant rounded flex flex-col hover:border-primary-container transition-colors">
+        <div class="p-6 flex-grow">
+            <div class="flex justify-between items-start mb-4">
+                <h2 class="font-headline-lg text-headline-lg text-on-surface">Apiario Norte</h2>
+                <span class="font-label-caps text-label-caps bg-surface-variant text-on-surface-variant px-2 py-1 rounded">ID: 001</span>
+            </div>
+            <div class="space-y-3 mb-6">
+                <div class="flex items-center gap-2 text-on-surface-variant">
+                    <span class="material-symbols-outlined text-[16px]">location_on</span>
+                    <span class="font-body-md text-body-md">Valle Central</span>
+                </div>
+                <div class="flex items-center gap-2 text-on-surface-variant">
+                    <span class="material-symbols-outlined text-[16px]">hive</span>
+                    <span class="font-body-md text-body-md">45 Colmenas</span>
+                </div>
+                <div class="flex items-center gap-2 text-on-surface-variant">
+                    <span class="material-symbols-outlined text-[16px]">calendar_today</span>
+                    <span class="font-body-md text-body-md">Últ. Insp: 12 Oct 2026</span>
+                </div>
+            </div>
+            <!-- Progress/Status -->
+            <div class="mb-4">
+                <div class="flex justify-between items-center mb-1">
+                    <span class="font-label-caps text-label-caps text-on-surface-variant">Producción: Alta</span>
+                    <span class="font-label-caps text-label-caps text-primary-container">85%</span>
+                </div>
+                <div class="w-full bg-surface-variant h-1 rounded-full overflow-hidden">
+                    <div class="bg-primary-container h-full" style="width: 85%"></div>
+                </div>
+            </div>
+        </div>
+        <div class="p-6 border-t border-surface-variant">
+            <button class="w-full bg-transparent border border-primary-container text-primary-container font-label-caps text-label-caps px-4 py-2 rounded hover:bg-surface-variant transition-colors flex justify-center items-center gap-2">
+                Ver Detalles
+                <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+            </button>
+        </div>
+    </article>
+    <!-- Card 2 -->
+    <article class="bg-surface-container-high border border-surface-variant rounded flex flex-col hover:border-primary-container transition-colors">
+        <div class="p-6 flex-grow">
+            <div class="flex justify-between items-start mb-4">
+                <h2 class="font-headline-lg text-headline-lg text-on-surface">Apiario Sur</h2>
+                <span class="font-label-caps text-label-caps bg-surface-variant text-on-surface-variant px-2 py-1 rounded">ID: 002</span>
+            </div>
+            <div class="space-y-3 mb-6">
+                <div class="flex items-center gap-2 text-on-surface-variant">
+                    <span class="material-symbols-outlined text-[16px]">location_on</span>
+                    <span class="font-body-md text-body-md">Colinas Bajas</span>
+                </div>
+                <div class="flex items-center gap-2 text-on-surface-variant">
+                    <span class="material-symbols-outlined text-[16px]">hive</span>
+                    <span class="font-body-md text-body-md">32 Colmenas</span>
+                </div>
+                <div class="flex items-center gap-2 text-on-surface-variant">
+                    <span class="material-symbols-outlined text-[16px]">calendar_today</span>
+                    <span class="font-body-md text-body-md">Últ. Insp: 05 Oct 2026</span>
+                </div>
+            </div>
+            <!-- Progress/Status -->
+            <div class="mb-4">
+                <div class="flex justify-between items-center mb-1">
+                    <span class="font-label-caps text-label-caps text-on-surface-variant">Producción: Media</span>
+                    <span class="font-label-caps text-label-caps text-primary-container">60%</span>
+                </div>
+                <div class="w-full bg-surface-variant h-1 rounded-full overflow-hidden">
+                    <div class="bg-primary-container h-full" style="width: 60%"></div>
+                </div>
+            </div>
+        </div>
+        <div class="p-6 border-t border-surface-variant">
+            <button class="w-full bg-transparent border border-primary-container text-primary-container font-label-caps text-label-caps px-4 py-2 rounded hover:bg-surface-variant transition-colors flex justify-center items-center gap-2">
+                Ver Detalles
+                <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+            </button>
+        </div>
+    </article>
+    <!-- Card 3 -->
+    <article class="bg-surface-container-high border border-surface-variant rounded flex flex-col hover:border-primary-container transition-colors">
+        <div class="p-6 flex-grow">
+            <div class="flex justify-between items-start mb-4">
+                <h2 class="font-headline-lg text-headline-lg text-on-surface">Apiario Este</h2>
+                <span class="font-label-caps text-label-caps bg-surface-variant text-on-surface-variant px-2 py-1 rounded">ID: 003</span>
+            </div>
+            <div class="space-y-3 mb-6">
+                <div class="flex items-center gap-2 text-on-surface-variant">
+                    <span class="material-symbols-outlined text-[16px]">location_on</span>
+                    <span class="font-body-md text-body-md">Bosque Nativo</span>
+                </div>
+                <div class="flex items-center gap-2 text-on-surface-variant">
+                    <span class="material-symbols-outlined text-[16px]">hive</span>
+                    <span class="font-body-md text-body-md">60 Colmenas</span>
+                </div>
+                <div class="flex items-center gap-2 text-on-surface-variant">
+                    <span class="material-symbols-outlined text-[16px]">calendar_today</span>
+                    <span class="font-body-md text-body-md">Últ. Insp: 15 Oct 2026</span>
+                </div>
+            </div>
+            <!-- Progress/Status -->
+            <div class="mb-4">
+                <div class="flex justify-between items-center mb-1">
+                    <span class="font-label-caps text-label-caps text-on-surface-variant">Producción: Crítica</span>
+                    <span class="font-label-caps text-label-caps text-error">95%</span>
+                </div>
+                <div class="w-full bg-surface-variant h-1 rounded-full overflow-hidden">
+                    <div class="bg-error h-full" style="width: 95%"></div>
+                </div>
+            </div>
+        </div>
+        <div class="p-6 border-t border-surface-variant">
+            <button class="w-full bg-transparent border border-primary-container text-primary-container font-label-caps text-label-caps px-4 py-2 rounded hover:bg-surface-variant transition-colors flex justify-center items-center gap-2">
+                Ver Detalles
+                <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+            </button>
+        </div>
+    </article>
+</section>

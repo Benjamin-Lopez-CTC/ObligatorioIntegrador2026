@@ -1,0 +1,194 @@
+@{
+    ViewData["Title"] = "Gestión Global de Colmenas";
+}
+
+<!-- Grid Container -->
+<div class="grid grid-cols-4 md:grid-cols-12 gap-gutter mt-8">
+    <!-- Page Header -->
+    <div class="col-span-4 md:col-span-12 flex flex-col md:flex-row justify-between items-start md:items-center mb-[40px] border-b border-outline-variant pb-gutter">
+        <div>
+            <p class="font-label-caps text-label-caps text-on-surface-variant mb-2">INVENTARIO TÉCNICO</p>
+            <h1 class="font-display text-headline-lg-mobile md:text-display text-on-surface">Gestión Global de Colmenas</h1>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-unit mt-6 md:mt-0 w-full md:w-auto">
+            <button class="flex items-center justify-center gap-2 border border-primary-container text-primary-container px-4 py-3 rounded hover:bg-surface-container-high transition-colors font-label-caps text-label-caps">
+                <span class="material-symbols-outlined text-[16px]">qr_code_scanner</span>
+                Escanear Código ID
+            </button>
+            <button class="flex items-center justify-center gap-2 bg-primary-container text-[#000000] px-6 py-3 rounded hover:bg-primary-fixed-dim transition-colors font-label-caps text-label-caps">
+                <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">add</span>
+                Registrar Nueva Colmena
+            </button>
+        </div>
+    </div>
+    <!-- Filters Panel -->
+    <div class="col-span-4 md:col-span-12 bg-surface-container-high border border-outline-variant rounded p-gutter mb-gutter">
+        <div class="flex flex-col md:flex-row gap-gutter">
+            <div class="flex-1 flex flex-col gap-2">
+                <label class="font-label-caps text-label-caps text-on-surface-variant">APIARIO</label>
+                <div class="relative">
+                    <select class="w-full bg-surface border border-outline-variant text-on-surface font-body-sm text-body-sm rounded p-3 appearance-none focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container transition-colors">
+                        <option>Todos los Apiarios</option>
+                        <option>Sector Norte Alpha</option>
+                        <option>Sector Sur Beta</option>
+                    </select>
+                    <span class="material-symbols-outlined absolute right-3 top-3 text-on-surface-variant pointer-events-none">expand_more</span>
+                </div>
+            </div>
+            <div class="flex-1 flex flex-col gap-2">
+                <label class="font-label-caps text-label-caps text-on-surface-variant">ESTADO DE SALUD</label>
+                <div class="relative">
+                    <select class="w-full bg-surface border border-outline-variant text-on-surface font-body-sm text-body-sm rounded p-3 appearance-none focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container transition-colors">
+                        <option>Todos los Estados</option>
+                        <option>Óptimo</option>
+                        <option>Alerta</option>
+                        <option>Crítico</option>
+                    </select>
+                    <span class="material-symbols-outlined absolute right-3 top-3 text-on-surface-variant pointer-events-none">expand_more</span>
+                </div>
+            </div>
+            <div class="flex-1 flex flex-col gap-2">
+                <label class="font-label-caps text-label-caps text-on-surface-variant">TIPO DE ABEJA</label>
+                <div class="relative">
+                    <select class="w-full bg-surface border border-outline-variant text-on-surface font-body-sm text-body-sm rounded p-3 appearance-none focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container transition-colors">
+                        <option>Cualquiera</option>
+                        <option>Apis mellifera</option>
+                        <option>Buckfast</option>
+                    </select>
+                    <span class="material-symbols-outlined absolute right-3 top-3 text-on-surface-variant pointer-events-none">expand_more</span>
+                </div>
+            </div>
+            <div class="flex-1 flex flex-col gap-2">
+                <label class="font-label-caps text-label-caps text-on-surface-variant">ÚLTIMA INSPECCIÓN</label>
+                <input class="w-full bg-surface border border-outline-variant text-on-surface font-body-sm text-body-sm rounded p-3 focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container transition-colors css-color-scheme-dark" style="color-scheme: dark;" type="date" />
+            </div>
+        </div>
+    </div>
+    <!-- Data Table Container (Responsive) -->
+    <div class="col-span-4 md:col-span-12 bg-surface-container border border-outline-variant rounded overflow-hidden mb-12">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-surface-container-high border-b border-outline-variant font-label-caps text-label-caps text-on-surface-variant">
+                        <th class="p-4 font-medium">ID COLMENA</th>
+                        <th class="p-4 font-medium">APIARIO DE ORIGEN</th>
+                        <th class="p-4 font-medium">ESTADO</th>
+                        <th class="p-4 font-medium">PESO (KG)</th>
+                        <th class="p-4 font-medium">TEMP. INT.</th>
+                        <th class="p-4 font-medium text-right">ACCIÓN</th>
+                    </tr>
+                </thead>
+                <tbody class="font-body-sm text-body-sm text-on-surface">
+                    <!-- Row 1 -->
+                    <tr class="border-b border-outline-variant hover:bg-surface-container-highest transition-colors">
+                        <td class="p-4 font-label-caps text-label-caps text-primary-container">#HIVE-0042</td>
+                        <td class="p-4">Sector Norte Alpha</td>
+                        <td class="p-4">
+                            <div class="inline-flex items-center gap-1.5 px-2 py-1 border border-[#4CAF50] rounded bg-[#4CAF50]/10 text-[#4CAF50] font-label-caps text-label-caps">
+                                <span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                                Óptimo
+                            </div>
+                        </td>
+                        <td class="p-4">42.5</td>
+                        <td class="p-4">34.5°C</td>
+                        <td class="p-4 text-right">
+                            <div class="flex items-center justify-end gap-2">
+                                <button class="text-on-surface-variant hover:text-error transition-colors p-2 flex items-center justify-center" title="Eliminar colmena">
+                                    <span class="material-symbols-outlined text-[20px]">delete</span>
+                                </button>
+                                <button class="text-on-surface-variant hover:text-primary-container transition-colors p-2 flex items-center gap-2 font-label-caps text-label-caps">
+                                    Ver Detalles
+                                    <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- Row 2 -->
+                    <tr class="border-b border-outline-variant hover:bg-surface-container-highest transition-colors bg-error-container/5">
+                        <td class="p-4 font-label-caps text-label-caps text-primary-container">#HIVE-0089</td>
+                        <td class="p-4">Sector Sur Beta</td>
+                        <td class="p-4">
+                            <div class="inline-flex items-center gap-1.5 px-2 py-1 border border-error rounded bg-error/10 text-error font-label-caps text-label-caps">
+                                <span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">warning</span>
+                                Crítico
+                            </div>
+                        </td>
+                        <td class="p-4 text-error">28.1 <span class="material-symbols-outlined text-[14px] align-middle">arrow_downward</span></td>
+                        <td class="p-4">32.0°C</td>
+                        <td class="p-4 text-right">
+                            <div class="flex items-center justify-end gap-2">
+                                <button class="text-on-surface-variant hover:text-error transition-colors p-2 flex items-center justify-center" title="Eliminar colmena">
+                                    <span class="material-symbols-outlined text-[20px]">delete</span>
+                                </button>
+                                <button class="text-on-surface-variant hover:text-primary-container transition-colors p-2 flex items-center gap-2 font-label-caps text-label-caps">
+                                    Ver Detalles
+                                    <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- Row 3 -->
+                    <tr class="border-b border-outline-variant hover:bg-surface-container-highest transition-colors">
+                        <td class="p-4 font-label-caps text-label-caps text-primary-container">#HIVE-0112</td>
+                        <td class="p-4">Sector Este Gamma</td>
+                        <td class="p-4">
+                            <div class="inline-flex items-center gap-1.5 px-2 py-1 border border-primary-container rounded bg-primary-container/10 text-primary-container font-label-caps text-label-caps">
+                                <span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">info</span>
+                                Alerta
+                            </div>
+                        </td>
+                        <td class="p-4">35.0</td>
+                        <td class="p-4 text-primary-container">36.5°C <span class="material-symbols-outlined text-[14px] align-middle">arrow_upward</span></td>
+                        <td class="p-4 text-right">
+                            <div class="flex items-center justify-end gap-2">
+                                <button class="text-on-surface-variant hover:text-error transition-colors p-2 flex items-center justify-center" title="Eliminar colmena">
+                                    <span class="material-symbols-outlined text-[20px]">delete</span>
+                                </button>
+                                <button class="text-on-surface-variant hover:text-primary-container transition-colors p-2 flex items-center gap-2 font-label-caps text-label-caps">
+                                    Ver Detalles
+                                    <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- Row 4 -->
+                    <tr class="hover:bg-surface-container-highest transition-colors">
+                        <td class="p-4 font-label-caps text-label-caps text-primary-container">#HIVE-0045</td>
+                        <td class="p-4">Sector Norte Alpha</td>
+                        <td class="p-4">
+                            <div class="inline-flex items-center gap-1.5 px-2 py-1 border border-[#4CAF50] rounded bg-[#4CAF50]/10 text-[#4CAF50] font-label-caps text-label-caps">
+                                <span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                                Óptimo
+                            </div>
+                        </td>
+                        <td class="p-4">40.2</td>
+                        <td class="p-4">34.2°C</td>
+                        <td class="p-4 text-right">
+                            <div class="flex items-center justify-end gap-2">
+                                <button class="text-on-surface-variant hover:text-error transition-colors p-2 flex items-center justify-center" title="Eliminar colmena">
+                                    <span class="material-symbols-outlined text-[20px]">delete</span>
+                                </button>
+                                <button class="text-on-surface-variant hover:text-primary-container transition-colors p-2 flex items-center gap-2 font-label-caps text-label-caps">
+                                    Ver Detalles
+                                    <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- Pagination / Footer of table -->
+        <div class="bg-surface-container-high border-t border-outline-variant p-4 flex justify-between items-center text-on-surface-variant font-body-sm text-body-sm">
+            <span class="">Mostrando 4 de 128 colmenas</span>
+            <div class="flex gap-2">
+                <button class="p-1 border border-outline-variant rounded hover:text-primary-container hover:border-primary-container transition-colors disabled:opacity-50" disabled="">
+                    <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+                </button>
+                <button class="p-1 border border-outline-variant rounded hover:text-primary-container hover:border-primary-container transition-colors">
+                    <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

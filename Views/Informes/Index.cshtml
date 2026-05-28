@@ -1,0 +1,146 @@
+@{
+    ViewData["Title"] = "Informes y Declaraciones Juradas";
+}
+
+<!-- Header Section -->
+<header class="space-y-4 max-w-3xl mt-8">
+    <h1 class="font-display text-display text-on-surface">Informes y Declaraciones Juradas</h1>
+    <p class="font-body-md text-on-surface-variant text-lg">
+        Gestión centralizada del Registro Nacional de Apicultores. Revisa el estado de tus declaraciones y exporta los datos necesarios para el portal SINATPA.
+    </p>
+</header>
+<!-- Status Summary Cards -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-gutter mt-8">
+    <!-- Last Declaration -->
+    <div class="bg-surface-container-highest border border-outline-variant p-6 rounded flex flex-col justify-between">
+        <div>
+            <h3 class="font-label-caps text-label-caps text-on-secondary-container uppercase mb-2">Última Declaración Presentada</h3>
+            <p class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">21 de Julio, 2025</p>
+        </div>
+        <div class="mt-6 flex items-center gap-2 text-primary-container">
+        </div>
+    </div>
+    <!-- Next Declaration -->
+    <div class="bg-surface-container-highest border border-outline-variant p-6 rounded flex flex-col justify-between relative overflow-hidden group hover:border-primary-container transition-colors duration-300">
+        <div class="absolute inset-y-0 right-0 w-1 bg-primary-container"></div>
+        <div>
+            <h3 class="font-label-caps text-label-caps text-on-secondary-container uppercase mb-2">Próxima Declaración Pendiente</h3>
+            <p class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Julio 2026</p>
+        </div>
+        <div class="mt-6 flex items-center justify-between">
+            <div class="flex items-center gap-2 text-on-surface-variant">
+                <span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+                <span class="font-body-sm text-body-sm">Válida hasta 30/06/2026</span>
+            </div>
+            <span class="font-label-caps text-label-caps bg-surface-container-high px-3 py-1 text-primary-container rounded border border-outline-variant">
+                ~340 DÍAS
+            </span>
+        </div>
+    </div>
+</section>
+<!-- Data for SINATPA Section -->
+<section class="space-y-6 mt-12 mb-12">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+            <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Datos para SINATPA</h2>
+            <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Resumen técnico basado en el inventario actual.</p>
+        </div>
+        <div class="flex flex-wrap gap-4">
+            <button class="bg-transparent border border-primary-container text-primary-container font-label-caps text-label-caps px-6 py-3 rounded flex items-center gap-2 hover:bg-primary-container/10 transition-colors">
+                <span class="material-symbols-outlined" data-icon="download">download</span>
+                EXPORTAR DATOS (.TXT)
+            </button>
+            <button class="bg-primary-container text-on-primary font-label-caps text-label-caps px-6 py-3 rounded flex items-center gap-2 hover:bg-primary-fixed-dim transition-colors">
+                <span class="material-symbols-outlined" data-icon="open_in_new">open_in_new</span>
+                IR AL PORTAL SINATPA (MGAP)
+            </button>
+        </div>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+        <!-- Stock Summary -->
+        <div class="lg:col-span-1 space-y-gutter">
+            <div class="bg-surface-container-highest border border-outline-variant p-6 rounded">
+                <h3 class="font-label-caps text-label-caps text-on-secondary-container uppercase mb-6 border-b border-outline-variant pb-2">Stock Apícola Total</h3>
+                <div class="space-y-4">
+                    <div>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant">Cantidad de colmenas en propiedad</p>
+                        <p class="font-headline-lg-mobile text-headline-lg-mobile text-primary-container">269</p>
+                    </div>
+                    <div>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant">Cantidad de núcleos</p>
+                        <p class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">0</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-surface-container-highest border border-outline-variant p-6 rounded">
+                <h3 class="font-label-caps text-label-caps text-on-secondary-container uppercase mb-4">Información Titular</h3>
+                <div class="space-y-3 font-body-sm text-body-sm">
+                    <div class="flex justify-between">
+                        <span class="text-on-surface-variant">RNA:</span>
+                        <span class="text-on-surface">205068</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-on-surface-variant">Sección Policial:</span>
+                        <span class="text-on-surface">6 (Colonia Valdense)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Apiary Locations Table -->
+        <div class="lg:col-span-2 bg-surface-container-highest border border-outline-variant rounded overflow-hidden flex flex-col">
+            <div class="p-6 border-b border-outline-variant">
+                <h3 class="font-label-caps text-label-caps text-on-secondary-container uppercase">Desglose de Apiarios</h3>
+            </div>
+            <div class="overflow-x-auto flex-grow">
+                <table class="w-full text-left font-body-sm text-body-sm">
+                    <thead class="bg-surface-container-high text-on-secondary-container font-label-caps text-label-caps">
+                        <tr>
+                            <th class="p-4 font-normal">NRO</th>
+                            <th class="p-4 font-normal">NOMBRE</th>
+                            <th class="p-4 font-normal">DEPARTAMENTO</th>
+                            <th class="p-4 font-normal">COLMENAS</th>
+                            <th class="p-4 font-normal">NÚCLEOS</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-outline-variant text-on-surface">
+                        <tr class="hover:bg-surface-container transition-colors">
+                            <td class="p-4">1</td>
+                            <td class="p-4 font-medium">Talar</td>
+                            <td class="p-4 text-on-surface-variant">Flores</td>
+                            <td class="p-4 text-primary-container">70</td>
+                            <td class="p-4">0</td>
+                        </tr>
+                        <tr class="hover:bg-surface-container transition-colors">
+                            <td class="p-4">2</td>
+                            <td class="p-4 font-medium">Cerro</td>
+                            <td class="p-4 text-on-surface-variant">Flores</td>
+                            <td class="p-4 text-primary-container">70</td>
+                            <td class="p-4">0</td>
+                        </tr>
+                        <tr class="hover:bg-surface-container transition-colors">
+                            <td class="p-4">3</td>
+                            <td class="p-4 font-medium">cantera</td>
+                            <td class="p-4 text-on-surface-variant">San José</td>
+                            <td class="p-4 text-primary-container">30</td>
+                            <td class="p-4">0</td>
+                        </tr>
+                        <tr class="hover:bg-surface-container transition-colors">
+                            <td class="p-4">4</td>
+                            <td class="p-4 font-medium">alfalfa</td>
+                            <td class="p-4 text-on-surface-variant">San José</td>
+                            <td class="p-4 text-primary-container">30</td>
+                            <td class="p-4">0</td>
+                        </tr>
+                        <tr class="hover:bg-surface-container transition-colors">
+                            <td class="p-4">5</td>
+                            <td class="p-4 font-medium">caraguata</td>
+                            <td class="p-4 text-on-surface-variant">San José</td>
+                            <td class="p-4 text-primary-container">69</td>
+                            <td class="p-4">0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>

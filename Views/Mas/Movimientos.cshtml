@@ -1,0 +1,179 @@
+@{
+    ViewData["Title"] = "Historial de Movimientos";
+}
+
+<!-- Header Section -->
+<header class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-surface-variant pb-8 mt-8">
+    <div class="flex flex-col gap-2">
+        <h1 class="font-display text-display text-on-surface">Historial de Movimientos</h1>
+        <p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+            Registro logístico y seguimiento de reubicaciones de colmenas para optimización de floración y polinización.
+        </p>
+    </div>
+    <button class="bg-primary-container text-[#000000] font-label-caps text-label-caps px-6 py-3 rounded-lg hover:bg-primary-fixed transition-colors flex items-center gap-2 border border-primary-container shrink-0">
+        <span class="material-symbols-outlined text-[18px]">add</span>
+        Registrar Nuevo Movimiento
+    </button>
+</header>
+<!-- Bento Grid Layout for Movements -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 mb-12">
+    <!-- Card 1: Alert/Overdue -->
+    <article class="bg-surface-container border border-error rounded-lg p-6 flex flex-col gap-6 relative overflow-hidden group">
+        <!-- Subtle glow effect for alert -->
+        <div class="absolute top-0 left-0 w-full h-1 bg-error"></div>
+        <div class="flex flex-wrap justify-between items-start gap-4 relative">
+            <div class="flex flex-col gap-1 min-w-fit">
+                <span class="font-label-caps text-label-caps text-on-surface-variant">ID COLMENA</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">#HIVE-0042</span>
+            </div>
+            <button class="text-on-surface-variant hover:text-primary-container transition-colors p-1 rounded-full">
+                <span class="material-symbols-outlined">more_vert</span>
+            </button>
+        </div>
+        <div class="flex">
+            <div class="bg-error-container text-on-error-container border border-error/50 px-3 py-1 rounded-DEFAULT font-label-caps text-label-caps flex items-center gap-1 shrink-0 whitespace-nowrap">
+                <span class="material-symbols-outlined text-[14px]">warning</span>
+                Pendiente de Retorno
+            </div>
+        </div>
+        <div class="flex items-center gap-4 bg-surface-container-highest p-4 rounded-lg border border-outline-variant">
+            <div class="flex-1 flex flex-col">
+                <span class="font-label-caps text-label-caps text-on-surface-variant mb-1">ORIGEN</span>
+                <span class="font-body-md text-body-md text-on-surface">Apiario Norte</span>
+            </div>
+            <span class="material-symbols-outlined text-primary-container">arrow_forward</span>
+            <div class="flex-1 flex flex-col text-right">
+                <span class="font-label-caps text-label-caps text-on-surface-variant mb-1">DESTINO</span>
+                <span class="font-body-md text-body-md text-on-surface">Sector Alfalfa</span>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+            <div class="flex flex-col gap-1">
+                <span class="font-label-caps text-label-caps text-on-surface-variant flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px]">event_note</span> Razón
+                </span>
+                <span class="font-body-md text-body-md text-on-surface">Floración</span>
+            </div>
+            <div class="flex flex-col gap-1 text-right">
+                <span class="font-label-caps text-label-caps text-on-surface-variant flex items-center justify-end gap-1">
+                    <span class="material-symbols-outlined text-[14px]">calendar_today</span> Salida
+                </span>
+                <span class="font-body-md text-body-md text-on-surface">12 Oct 2025</span>
+            </div>
+        </div>
+        <!-- Progress Bar showing overdue status -->
+        <div class="flex flex-col gap-2 mt-auto pt-4 border-t border-surface-variant">
+            <div class="flex justify-between font-label-caps text-label-caps">
+                <span class="text-on-surface-variant">Duración: 21 Días</span>
+                <span class="text-error">Día 24</span>
+            </div>
+            <div class="w-full h-[4px] bg-surface-variant rounded-full overflow-hidden">
+                <div class="h-full bg-error w-full"></div>
+            </div>
+        </div>
+    </article>
+    <!-- Card 2: In Progress -->
+    <article class="bg-surface-container border border-outline-variant rounded-lg p-6 flex flex-col gap-6 hover:border-primary-container transition-colors">
+        <div class="flex flex-wrap justify-between items-start gap-4 relative">
+            <button class="text-on-surface-variant hover:text-primary-container transition-colors p-1 rounded-full order-last">
+                <span class="material-symbols-outlined">more_vert</span>
+            </button>
+            <div class="flex flex-col gap-1 min-w-fit">
+                <span class="font-label-caps text-label-caps text-on-surface-variant">ID COLMENA</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">#HIVE-0128</span>
+            </div>
+        </div>
+        <div class="flex">
+            <div class="bg-surface-container-highest text-primary-container border border-primary-container/30 px-3 py-1 rounded-DEFAULT font-label-caps text-label-caps flex items-center gap-1 shrink-0 whitespace-nowrap">
+                <span class="material-symbols-outlined text-[14px]">local_shipping</span>
+                En Destino
+            </div>
+        </div>
+        <div class="flex items-center gap-4 bg-surface-container-highest p-4 rounded-lg border border-outline-variant">
+            <div class="flex-1 flex flex-col">
+                <span class="font-label-caps text-label-caps text-on-surface-variant mb-1">ORIGEN</span>
+                <span class="font-body-md text-body-md text-on-surface">Central Sur</span>
+            </div>
+            <span class="material-symbols-outlined text-primary-container">arrow_forward</span>
+            <div class="flex-1 flex flex-col text-right">
+                <span class="font-label-caps text-label-caps text-on-surface-variant mb-1">DESTINO</span>
+                <span class="font-body-md text-body-md text-on-surface">Huerto Cerezos</span>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+            <div class="flex flex-col gap-1">
+                <span class="font-label-caps text-label-caps text-on-surface-variant flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px]">event_note</span> Razón
+                </span>
+                <span class="font-body-md text-body-md text-on-surface">Polinización</span>
+            </div>
+            <div class="flex flex-col gap-1 text-right">
+                <span class="font-label-caps text-label-caps text-on-surface-variant flex items-center justify-end gap-1">
+                    <span class="material-symbols-outlined text-[14px]">calendar_today</span> Salida
+                </span>
+                <span class="font-body-md text-body-md text-on-surface">01 Nov 2025</span>
+            </div>
+        </div>
+        <div class="flex flex-col gap-2 mt-auto pt-4 border-t border-surface-variant">
+            <div class="flex justify-between font-label-caps text-label-caps">
+                <span class="text-on-surface-variant">Duración: 14 Días</span>
+                <span class="text-primary-container">Día 5</span>
+            </div>
+            <div class="w-full h-[4px] bg-surface-variant rounded-full overflow-hidden">
+                <div class="h-full bg-primary-container w-[35%]"></div>
+            </div>
+        </div>
+    </article>
+    <!-- Card 3: In Progress -->
+    <article class="bg-surface-container border border-outline-variant rounded-lg p-6 flex flex-col gap-6 hover:border-primary-container transition-colors">
+        <div class="flex flex-wrap justify-between items-start gap-4 relative">
+            <button class="text-on-surface-variant hover:text-primary-container transition-colors p-1 rounded-full order-last">
+                <span class="material-symbols-outlined">more_vert</span>
+            </button>
+            <div class="flex flex-col gap-1 min-w-fit">
+                <span class="font-label-caps text-label-caps text-on-surface-variant">ID COLMENA</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">#HIVE-0088</span>
+            </div>
+        </div>
+        <div class="flex">
+            <div class="bg-surface-container-highest text-primary-container border border-primary-container/30 px-3 py-1 rounded-DEFAULT font-label-caps text-label-caps flex items-center gap-1 shrink-0 whitespace-nowrap">
+                <span class="material-symbols-outlined text-[14px]">local_shipping</span>
+                En Destino
+            </div>
+        </div>
+        <div class="flex items-center gap-4 bg-surface-container-highest p-4 rounded-lg border border-outline-variant">
+            <div class="flex-1 flex flex-col">
+                <span class="font-label-caps text-label-caps text-on-surface-variant mb-1">ORIGEN</span>
+                <span class="font-body-md text-body-md text-on-surface">Apiario Este</span>
+            </div>
+            <span class="material-symbols-outlined text-primary-container">arrow_forward</span>
+            <div class="flex-1 flex flex-col text-right">
+                <span class="font-label-caps text-label-caps text-on-surface-variant mb-1">DESTINO</span>
+                <span class="font-body-md text-body-md text-on-surface">Reserva Nativas</span>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+            <div class="flex flex-col gap-1">
+                <span class="font-label-caps text-label-caps text-on-surface-variant flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px]">event_note</span> Razón
+                </span>
+                <span class="font-body-md text-body-md text-on-surface">Refugio Invier.</span>
+            </div>
+            <div class="flex flex-col gap-1 text-right">
+                <span class="font-label-caps text-label-caps text-on-surface-variant flex items-center justify-end gap-1">
+                    <span class="material-symbols-outlined text-[14px]">calendar_today</span> Salida
+                </span>
+                <span class="font-body-md text-body-md text-on-surface">28 Oct 2025</span>
+            </div>
+        </div>
+        <div class="flex flex-col gap-2 mt-auto pt-4 border-t border-surface-variant">
+            <div class="flex justify-between font-label-caps text-label-caps">
+                <span class="text-on-surface-variant">Duración: 60 Días</span>
+                <span class="text-primary-container">Día 12</span>
+            </div>
+            <div class="w-full h-[4px] bg-surface-variant rounded-full overflow-hidden">
+                <div class="h-full bg-primary-container w-[20%]"></div>
+            </div>
+        </div>
+    </article>
+</section>

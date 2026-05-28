@@ -1,0 +1,218 @@
+@{
+    ViewData["Title"] = "Cálculo de Costos y Ganancias";
+}
+
+<style>
+    /* Progress Bar Animation */
+    @@keyframes fillProgress {
+        from { width: 0; }
+    }
+    .animate-progress {
+        animation: fillProgress 1.5s ease-out forwards;
+    }
+</style>
+
+<!-- Header -->
+<section class="flex flex-col gap-4 mt-8">
+    <h1 class="font-display text-display text-on-background">Cálculo de Costos y Ganancias</h1>
+    <p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+        Análisis financiero detallado de la temporada. Resumen de inversiones operativas, ingresos por producción y balance general.
+    </p>
+</section>
+<!-- Financial Summary Cards -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+    <!-- Investment Card -->
+    <div class="bg-surface-container border border-outline-variant rounded-lg p-6 flex flex-col gap-4 relative overflow-hidden group">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-error/5 rounded-full -mr-10 -mt-10 blur-xl group-hover:bg-error/10 transition-all duration-500"></div>
+        <div class="flex justify-between items-center z-10">
+            <span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">Inversión Total</span>
+            <span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 0;">trending_down</span>
+        </div>
+        <div class="flex items-baseline gap-2 z-10">
+            <span class="font-headline-lg text-headline-lg text-on-background">$</span>
+            <span class="font-display text-display text-on-background">14,250</span>
+        </div>
+        <div class="z-10 mt-2">
+            <span class="font-label-caps text-label-caps bg-surface-container-high border border-outline-variant px-2 py-1 rounded text-on-surface-variant">Temporada 2025</span>
+        </div>
+    </div>
+    <!-- Gross Profit Card -->
+    <div class="bg-surface-container border border-outline-variant rounded-lg p-6 flex flex-col gap-4 relative overflow-hidden group">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-primary-container/5 rounded-full -mr-10 -mt-10 blur-xl group-hover:bg-primary-container/10 transition-all duration-500"></div>
+        <div class="flex justify-between items-center z-10">
+            <span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">Ganancia Bruta</span>
+            <span class="material-symbols-outlined text-primary-container" style="font-variation-settings: 'FILL' 0;">trending_up</span>
+        </div>
+        <div class="flex items-baseline gap-2 z-10">
+            <span class="font-headline-lg text-headline-lg text-on-background">$</span>
+            <span class="font-display text-display text-on-background">38,500</span>
+        </div>
+        <div class="z-10 mt-2 flex gap-2">
+            <span class="font-label-caps text-label-caps bg-surface-container-high border border-outline-variant px-2 py-1 rounded text-on-surface-variant">850 kg Miel</span>
+        </div>
+    </div>
+    <!-- Net Balance Card -->
+    <div class="bg-surface-container border border-primary-container rounded-lg p-6 flex flex-col gap-4 relative overflow-hidden group shadow-[0_0_15px_rgba(255,217,0,0.1)]">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-primary-container/10 rounded-full -mr-10 -mt-10 blur-xl group-hover:bg-primary-container/20 transition-all duration-500"></div>
+        <div class="flex justify-between items-center z-10">
+            <span class="font-label-caps text-label-caps text-primary-container font-bold uppercase tracking-widest">Balance Neto (Profit)</span>
+            <span class="material-symbols-outlined text-primary-container" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+        </div>
+        <div class="flex items-baseline gap-2 z-10">
+            <span class="font-headline-lg text-headline-lg text-primary-container">$</span>
+            <span class="font-display text-display text-primary-container">24,250</span>
+        </div>
+        <div class="z-10 mt-2">
+            <span class="font-label-caps text-label-caps bg-surface-container-high border border-outline-variant px-2 py-1 rounded text-primary-container">+170% ROI</span>
+        </div>
+    </div>
+</section>
+<!-- Visual Comparison Chart (CSS/HTML) -->
+<section class="bg-surface-container border border-outline-variant rounded-lg p-6 lg:p-8 flex flex-col gap-8 mt-8">
+    <div class="flex justify-between items-center border-b border-surface-container-highest pb-4">
+        <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg">Relación Inversión vs Ganancia</h2>
+        <button class="bg-transparent border border-primary-container text-primary-container font-label-caps text-label-caps px-4 py-2 rounded-lg hover:bg-primary-container/10 transition-colors">
+            Exportar Reporte
+        </button>
+    </div>
+    <div class="flex flex-col gap-6">
+        <!-- Investment Bar -->
+        <div class="flex flex-col gap-2">
+            <div class="flex justify-between items-end">
+                <span class="font-label-caps text-label-caps text-on-surface-variant">Inversión (27%)</span>
+                <span class="font-body-md text-body-md font-semibold text-on-background">$14,250</span>
+            </div>
+            <div class="w-full h-4 bg-surface-container-high overflow-hidden border border-outline-variant rounded-sm"><div class="h-full bg-error rounded-sm animate-progress" style="width: 27%;"></div></div>
+        </div>
+        <!-- Profit Bar -->
+        <div class="flex flex-col gap-2">
+            <div class="flex justify-between items-end">
+                <span class="font-label-caps text-label-caps text-primary-container">Ganancia Bruta (73%)</span>
+                <span class="font-body-md text-body-md font-semibold text-primary-container">$38,500</span>
+            </div>
+            <div class="w-full h-4 bg-surface-container-high overflow-hidden border border-outline-variant rounded-sm"><div class="h-full bg-primary-container rounded-sm animate-progress" style="width: 73%;"></div></div>
+        </div>
+    </div>
+</section>
+<!-- Details Sections (Side by Side) -->
+<section class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8 mb-12">
+    <!-- Left Column: Investments -->
+    <div class="flex flex-col gap-6">
+        <h3 class="font-headline-lg-mobile text-headline-lg-mobile border-b border-surface-container-highest pb-2 flex items-center gap-2">
+            <span class="material-symbols-outlined text-error">receipt_long</span>
+            Inversión Realizada
+        </h3>
+        <div class="flex flex-col gap-4">
+            <!-- Item 1 -->
+            <div class="bg-surface-container border border-outline-variant rounded-lg p-4 flex justify-between items-center hover:border-primary-container/50 transition-colors">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded bg-surface-container-high border border-outline-variant flex items-center justify-center text-on-surface-variant">
+                        <span class="material-symbols-outlined">local_gas_station</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-body-md text-body-md font-semibold text-on-background">Combustible por viaje</span>
+                        <span class="font-label-caps text-label-caps text-on-surface-variant">Logística</span>
+                    </div>
+                </div>
+                <span class="font-body-md text-body-md text-error">-$2,400</span>
+            </div>
+            <!-- Item 2 -->
+            <div class="bg-surface-container border border-outline-variant rounded-lg p-4 flex justify-between items-center hover:border-primary-container/50 transition-colors">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded bg-surface-container-high border border-outline-variant flex items-center justify-center text-on-surface-variant">
+                        <span class="material-symbols-outlined">construction</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-body-md text-body-md font-semibold text-on-background">Equipamiento nuevo</span>
+                        <span class="font-label-caps text-label-caps text-on-surface-variant">Ahumadores, trajes</span>
+                    </div>
+                </div>
+                <span class="font-body-md text-body-md text-error">-$3,150</span>
+            </div>
+            <!-- Item 3 -->
+            <div class="bg-surface-container border border-outline-variant rounded-lg p-4 flex justify-between items-center hover:border-primary-container/50 transition-colors">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded bg-surface-container-high border border-outline-variant flex items-center justify-center text-on-surface-variant">
+                        <span class="material-symbols-outlined">medication</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-body-md text-body-md font-semibold text-on-background">Tratamientos Varroa</span>
+                        <span class="font-label-caps text-label-caps text-on-surface-variant">Suministros Médicos</span>
+                    </div>
+                </div>
+                <span class="font-body-md text-body-md text-error">-$4,200</span>
+            </div>
+            <!-- Item 4 -->
+            <div class="bg-surface-container border border-outline-variant rounded-lg p-4 flex justify-between items-center hover:border-primary-container/50 transition-colors">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded bg-surface-container-high border border-outline-variant flex items-center justify-center text-on-surface-variant">
+                        <span class="material-symbols-outlined">hive</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-body-md text-body-md font-semibold text-on-background">Mantenimiento de Cajas</span>
+                        <span class="font-label-caps text-label-caps text-on-surface-variant">Materiales</span>
+                    </div>
+                </div>
+                <span class="font-body-md text-body-md text-error">-$4,500</span>
+            </div>
+            <!-- Subtotal Investments -->
+            <div class="mt-4 flex justify-between items-center border-t border-surface-container-highest pt-4">
+                <span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Subtotal Inversión</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-error">$14,250</span>
+            </div>
+        </div>
+    </div>
+    <!-- Right Column: Revenue -->
+    <div class="flex flex-col gap-6">
+        <h3 class="font-headline-lg-mobile text-headline-lg-mobile border-b border-surface-container-highest pb-2 flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary-container">point_of_sale</span>
+            Ganancia Obtenida
+        </h3>
+        <div class="flex flex-col gap-4">
+            <!-- Item 1 -->
+            <div class="bg-surface-container border border-outline-variant rounded-lg p-4 flex justify-between items-center hover:border-primary-container transition-colors">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded bg-surface-container-high border border-primary-container/30 flex items-center justify-center text-primary-container">
+                        <span class="material-symbols-outlined">water_drop</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-body-md text-body-md font-semibold text-on-background">Venta de Miel (850 kg)</span>
+                        <span class="font-label-caps text-label-caps text-on-surface-variant">Precio: $35/kg</span>
+                    </div>
+                </div>
+                <span class="font-body-md text-body-md text-primary-container">+$29,750</span>
+            </div>
+            <!-- Item 2 -->
+            <div class="bg-surface-container border border-outline-variant rounded-lg p-4 flex justify-between items-center hover:border-primary-container transition-colors">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded bg-surface-container-high border border-primary-container/30 flex items-center justify-center text-primary-container">
+                        <span class="material-symbols-outlined">bug_report</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-body-md text-body-md font-semibold text-on-background">Venta de Núcleos (20 u.)</span>
+                        <span class="font-label-caps text-label-caps text-on-surface-variant">Precio: $350/u.</span>
+                    </div>
+                </div>
+                <span class="font-body-md text-body-md text-primary-container">+$7,000</span>
+            </div>
+            <!-- Item 3 -->
+            <div class="bg-surface-container border border-outline-variant rounded-lg p-4 flex justify-between items-center hover:border-primary-container transition-colors">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded bg-surface-container-high border border-primary-container/30 flex items-center justify-center text-primary-container">
+                        <span class="material-symbols-outlined">spa</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-body-md text-body-md font-semibold text-on-background">Venta de Polen (50 kg)</span>
+                        <span class="font-label-caps text-label-caps text-on-surface-variant">Precio: $35/kg</span>
+                    </div>
+                </div>
+                <span class="font-body-md text-body-md text-primary-container">+$1,750</span>
+            </div>
+            <!-- Subtotal Revenue -->
+            <div class="mt-auto flex justify-between items-center border-t border-surface-container-highest pt-4">
+                <span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Subtotal Ganancia</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-primary-container">$38,500</span>
+            </div>
+        </div>
+    </div>
+</section>
