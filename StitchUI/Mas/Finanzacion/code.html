@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Cálculo de Costos y Ganancias - Zánganos S.A.</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&amp;family=Inter:wght@400&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #121414; /* background */
+            color: #e3e2e2; /* on-background */
+        }
+        
+        /* Progress Bar Animation */
+        @keyframes fillProgress {
+            from { width: 0; }
+        }
+        .animate-progress {
+            animation: fillProgress 1.5s ease-out forwards;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "inverse-primary": "#6f5d00",
+                      "surface-container-high": "#292a2a",
+                      "primary-fixed-dim": "#e7c400",
+                      "inverse-surface": "#e3e2e2",
+                      "on-secondary-fixed": "#1b1b1c",
+                      "error": "#ffb4ab",
+                      "on-secondary": "#303030",
+                      "surface-container": "#1e2020",
+                      "on-tertiary-container": "#616060",
+                      "surface-dim": "#121414",
+                      "inverse-on-surface": "#2f3131",
+                      "surface-tint": "#e7c400",
+                      "surface-container-highest": "#343535",
+                      "secondary-fixed": "#e5e2e1",
+                      "on-error-container": "#ffdad6",
+                      "surface": "#121414",
+                      "outline": "#989077",
+                      "on-tertiary-fixed-variant": "#474746",
+                      "primary": "#fff7e6",
+                      "tertiary": "#faf7f7",
+                      "secondary": "#c8c6c5",
+                      "tertiary-fixed-dim": "#c8c6c5",
+                      "error-container": "#93000a",
+                      "background": "#121414",
+                      "tertiary-container": "#dddbda",
+                      "surface-variant": "#343535",
+                      "secondary-fixed-dim": "#c8c6c5",
+                      "on-surface": "#e3e2e2",
+                      "on-tertiary-fixed": "#1b1c1c",
+                      "on-primary-fixed": "#221b00",
+                      "on-primary": "#3a3000",
+                      "surface-container-lowest": "#0d0e0f",
+                      "on-primary-container": "#715f00",
+                      "on-secondary-fixed-variant": "#474746",
+                      "outline-variant": "#4c4732",
+                      "on-tertiary": "#303030",
+                      "on-primary-fixed-variant": "#544600",
+                      "on-error": "#690005",
+                      "primary-container": "#ffd900",
+                      "on-surface-variant": "#cfc6ab",
+                      "on-background": "#e3e2e2",
+                      "surface-bright": "#383939",
+                      "on-secondary-container": "#b7b5b4",
+                      "surface-container-low": "#1a1c1c",
+                      "secondary-container": "#474746",
+                      "tertiary-fixed": "#e4e2e1",
+                      "primary-fixed": "#ffe165"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "margin-mobile": "20px",
+                      "container-max": "1200px",
+                      "unit": "8px",
+                      "margin-desktop": "64px",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "headline-lg-mobile": [
+                              "Hanken Grotesk"
+                      ],
+                      "headline-lg": [
+                              "Hanken Grotesk"
+                      ],
+                      "body-sm": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "label-caps": [
+                              "JetBrains Mono"
+                      ],
+                      "display": [
+                              "Hanken Grotesk"
+                      ]
+              },
+              "fontSize": {
+                      "headline-lg-mobile": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-caps": [
+                              "12px",
+                              {
+                                      "lineHeight": "1.0",
+                                      "letterSpacing": "0.1em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "display": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ]
+              }
+            }
+          }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-md text-body-md antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopNavBar -->
+<header class="w-full bg-surface-container border-b border-surface-container-highest z-40 sticky top-0">
+<div class="max-w-container-max mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
+<div class="flex items-center gap-8">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile font-bold text-primary-container tracking-tight"><span class="material-symbols-outlined mr-2 align-middle" style="font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;">hive</span>Zánganos S.A.</h1>
+<nav class="hidden md:flex items-center gap-1">
+<a class="px-4 py-2 font-label-caps text-label-caps text-on-surface-variant hover:text-primary-container transition-colors rounded-lg hover:bg-surface-container-high flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-[18px]">dashboard</span> Dashboard
+                    </a>
+<a class="px-4 py-2 font-label-caps text-label-caps text-on-surface-variant hover:text-primary-container transition-colors rounded-lg hover:bg-surface-container-high flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-[18px]">location_on</span> Apiarios
+                    </a>
+<a class="px-4 py-2 font-label-caps text-label-caps text-on-surface-variant hover:text-primary-container transition-colors rounded-lg hover:bg-surface-container-high flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-[18px]">hive</span> Colmenas
+                    </a>
+<a class="px-4 py-2 font-label-caps text-label-caps text-on-surface-variant hover:text-primary-container transition-colors rounded-lg hover:bg-surface-container-high flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-[18px]">assessment</span> Informes
+                    </a>
+<div class="relative group">
+<button class="px-4 py-2 font-label-caps text-label-caps text-primary-container bg-surface-container-high rounded-lg flex items-center gap-2 border-b-2 border-primary-container">
+<span class="material-symbols-outlined text-[18px]">more_horiz</span> Más
+                            <span class="material-symbols-outlined text-[18px]">expand_more</span>
+</button>
+<div class="absolute top-full left-0 mt-1 w-56 bg-surface-container border border-surface-container-highest rounded-lg shadow-lg hidden group-hover:block z-50">
+<a class="px-4 py-3 font-label-caps text-label-caps text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface flex items-center gap-2 transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">swap_horiz</span> Movimientos
+                            </a>
+<a class="px-4 py-3 font-label-caps text-label-caps text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface flex items-center gap-2 transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">compare_arrows</span> Comparar Apiarios
+                            </a>
+<a class="px-4 py-3 font-label-caps text-label-caps text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface flex items-center gap-2 transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">compare_arrows</span> Comparar Colmenas
+                            </a>
+<a class="px-4 py-3 font-label-caps text-label-caps text-primary-container bg-surface-container-high flex items-center gap-2 border-l-2 border-primary-container" href="#">
+<span class="material-symbols-outlined text-[18px]">calculate</span> Cálculo de Costos
+                            </a>
+<a class="px-4 py-3 font-label-caps text-label-caps text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface flex items-center gap-2 transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">inventory_2</span> Inventario
+                            </a><a class="px-4 py-3 font-label-caps text-label-caps text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface flex items-center gap-2 transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">login</span> Registro Logins
+                            </a></div>
+</div>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary-container transition-colors focus:ring-2 focus:ring-primary-container outline-none rounded-full p-1">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="flex items-center gap-3">
+<div class="text-right hidden md:block">
+<p class="font-label-caps text-label-caps text-on-surface">Operario 1</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant text-[10px]">Técnico Apícola</p>
+</div>
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center overflow-hidden">
+<img alt="User profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCe1SoYAnw7Rys1XaQnf0_j7RbtMqmOK3LTFVS-ru8jrlIUEiL0U-GMPGK3l3RG6hPbjOK29aF5pFSoFM3S1I5Rygv12LsItIif7gv-MdJKnh03bgsm9fkwTyaoClbhaserSYVWXnPlo9G3UzDl2HNFVQgYuM4tJQ42bzVSZzcTXQ3d7R3mK7EF-V51z9AW_3cKiQkQ1h5axd0Vbw_b5wvUt_KvD5sdCZyI4X0aart46X90sN4LAnbjKLO6Q5Zj879CTYRlj3bDUZFJ"/>
+</div>
+</div>
+<button class="md:hidden text-on-surface-variant hover:text-primary-container transition-colors">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-[80px] md:py-[120px] flex flex-col gap-12">
+<!-- Header -->
+<section class="flex flex-col gap-4">
+<h1 class="font-display text-display text-on-background">Cálculo de Costos y Ganancias</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+                Análisis financiero detallado de la temporada. Resumen de inversiones operativas, ingresos por producción y balance general.
+            </p>
+</section>
+<!-- Financial Summary Cards -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Investment Card -->
+<div class="bg-[#252525] border border-[#333333] rounded-lg p-6 flex flex-col gap-4 relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-32 h-32 bg-error/5 rounded-full -mr-10 -mt-10 blur-xl group-hover:bg-error/10 transition-all duration-500"></div>
+<div class="flex justify-between items-center z-10">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">Inversión Total</span>
+<span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 0;">trending_down</span>
+</div>
+<div class="flex items-baseline gap-2 z-10">
+<span class="font-headline-lg text-headline-lg text-on-background">$</span>
+<span class="font-display text-display text-on-background">14,250</span>
+</div>
+<div class="z-10 mt-2">
+<span class="font-label-caps text-label-caps bg-[#1E1E1E] border border-[#333333] px-2 py-1 rounded text-on-surface-variant">Temporada 2025</span>
+</div>
+</div>
+<!-- Gross Profit Card -->
+<div class="bg-[#252525] border border-[#333333] rounded-lg p-6 flex flex-col gap-4 relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary-container/5 rounded-full -mr-10 -mt-10 blur-xl group-hover:bg-primary-container/10 transition-all duration-500"></div>
+<div class="flex justify-between items-center z-10">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">Ganancia Bruta</span>
+<span class="material-symbols-outlined text-primary-container" style="font-variation-settings: 'FILL' 0;">trending_up</span>
+</div>
+<div class="flex items-baseline gap-2 z-10">
+<span class="font-headline-lg text-headline-lg text-on-background">$</span>
+<span class="font-display text-display text-on-background">38,500</span>
+</div>
+<div class="z-10 mt-2 flex gap-2">
+<span class="font-label-caps text-label-caps bg-[#1E1E1E] border border-[#333333] px-2 py-1 rounded text-on-surface-variant">850 kg Miel</span>
+</div>
+</div>
+<!-- Net Balance Card -->
+<div class="bg-[#252525] border border-primary-container rounded-lg p-6 flex flex-col gap-4 relative overflow-hidden group shadow-[0_0_15px_rgba(255,217,0,0.1)]">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary-container/10 rounded-full -mr-10 -mt-10 blur-xl group-hover:bg-primary-container/20 transition-all duration-500"></div>
+<div class="flex justify-between items-center z-10">
+<span class="font-label-caps text-label-caps text-primary-container font-bold uppercase tracking-widest">Balance Neto (Profit)</span>
+<span class="material-symbols-outlined text-primary-container" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+</div>
+<div class="flex items-baseline gap-2 z-10">
+<span class="font-headline-lg text-headline-lg text-primary-container">$</span>
+<span class="font-display text-display text-primary-container">24,250</span>
+</div>
+<div class="z-10 mt-2">
+<span class="font-label-caps text-label-caps bg-[#1E1E1E] border border-[#333333] px-2 py-1 rounded text-primary-container">+170% ROI</span>
+</div>
+</div>
+</section>
+<!-- Visual Comparison Chart (CSS/HTML) -->
+<section class="bg-[#252525] border border-[#333333] rounded-lg p-6 lg:p-8 flex flex-col gap-8">
+<div class="flex justify-between items-center border-b border-[#333333] pb-4">
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg">Relación Inversión vs Ganancia</h2>
+<button class="bg-transparent border border-primary-container text-primary-container font-label-caps text-label-caps px-4 py-2 rounded-lg hover:bg-primary-container/10 transition-colors">
+                    Exportar Reporte
+                </button>
+</div>
+<div class="flex flex-col gap-6">
+<!-- Investment Bar -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-end">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Inversión (27%)</span>
+<span class="font-body-md text-body-md font-semibold text-on-background">$14,250</span>
+</div>
+<div class="w-full h-4 bg-[#1E1E1E] overflow-hidden border border-[#333333] rounded-sm"><div class="h-full bg-error rounded-sm animate-progress" style="width: 27%;"></div></div>
+</div>
+<!-- Profit Bar -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-end">
+<span class="font-label-caps text-label-caps text-primary-container">Ganancia Bruta (73%)</span>
+<span class="font-body-md text-body-md font-semibold text-primary-container">$38,500</span>
+</div>
+<div class="w-full h-4 bg-[#1E1E1E] overflow-hidden border border-[#333333] rounded-sm"><div class="h-full bg-primary-container rounded-sm animate-progress" style="width: 73%;"></div></div>
+</div>
+</div>
+</section>
+<!-- Details Sections (Side by Side) -->
+<section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+<!-- Left Column: Investments -->
+<div class="flex flex-col gap-6">
+<h3 class="font-headline-lg-mobile text-headline-lg-mobile border-b border-[#333333] pb-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-error">receipt_long</span>
+                    Inversión Realizada
+                </h3>
+<div class="flex flex-col gap-4">
+<!-- Item 1 -->
+<div class="bg-[#252525] border border-[#333333] rounded-lg p-4 flex justify-between items-center hover:border-primary-container/50 transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded bg-[#1E1E1E] border border-[#333333] flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">local_gas_station</span>
+</div>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md font-semibold text-on-background">Combustible por viaje</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Logística</span>
+</div>
+</div>
+<span class="font-body-md text-body-md text-error">-$2,400</span>
+</div>
+<!-- Item 2 -->
+<div class="bg-[#252525] border border-[#333333] rounded-lg p-4 flex justify-between items-center hover:border-primary-container/50 transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded bg-[#1E1E1E] border border-[#333333] flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">construction</span>
+</div>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md font-semibold text-on-background">Equipamiento nuevo</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Ahumadores, trajes</span>
+</div>
+</div>
+<span class="font-body-md text-body-md text-error">-$3,150</span>
+</div>
+<!-- Item 3 -->
+<div class="bg-[#252525] border border-[#333333] rounded-lg p-4 flex justify-between items-center hover:border-primary-container/50 transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded bg-[#1E1E1E] border border-[#333333] flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">medication</span>
+</div>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md font-semibold text-on-background">Tratamientos Varroa</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Suministros Médicos</span>
+</div>
+</div>
+<span class="font-body-md text-body-md text-error">-$4,200</span>
+</div>
+<!-- Item 4 -->
+<div class="bg-[#252525] border border-[#333333] rounded-lg p-4 flex justify-between items-center hover:border-primary-container/50 transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded bg-[#1E1E1E] border border-[#333333] flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">hive</span>
+</div>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md font-semibold text-on-background">Mantenimiento de Cajas</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Materiales</span>
+</div>
+</div>
+<span class="font-body-md text-body-md text-error">-$4,500</span>
+</div>
+<!-- Subtotal Investments -->
+<div class="mt-4 flex justify-between items-center border-t border-[#333333] pt-4">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Subtotal Inversión</span>
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-error">$14,250</span>
+</div>
+</div>
+</div>
+<!-- Right Column: Revenue -->
+<div class="flex flex-col gap-6">
+<h3 class="font-headline-lg-mobile text-headline-lg-mobile border-b border-[#333333] pb-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container">point_of_sale</span>
+                    Ganancia Obtenida
+                </h3>
+<div class="flex flex-col gap-4">
+<!-- Item 1 -->
+<div class="bg-[#252525] border border-[#333333] rounded-lg p-4 flex justify-between items-center hover:border-primary-container transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded bg-[#1E1E1E] border border-primary-container/30 flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined">water_drop</span>
+</div>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md font-semibold text-on-background">Venta de Miel (850 kg)</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Precio: $35/kg</span>
+</div>
+</div>
+<span class="font-body-md text-body-md text-primary-container">+$29,750</span>
+</div>
+<!-- Item 2 -->
+<div class="bg-[#252525] border border-[#333333] rounded-lg p-4 flex justify-between items-center hover:border-primary-container transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded bg-[#1E1E1E] border border-primary-container/30 flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined">bug_report</span>
+</div>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md font-semibold text-on-background">Venta de Núcleos (20 u.)</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Precio: $350/u.</span>
+</div>
+</div>
+<span class="font-body-md text-body-md text-primary-container">+$7,000</span>
+</div>
+<!-- Item 3 -->
+<div class="bg-[#252525] border border-[#333333] rounded-lg p-4 flex justify-between items-center hover:border-primary-container transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded bg-[#1E1E1E] border border-primary-container/30 flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined">spa</span>
+</div>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md font-semibold text-on-background">Venta de Polen (50 kg)</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Precio: $35/kg</span>
+</div>
+</div>
+<span class="font-body-md text-body-md text-primary-container">+$1,750</span>
+</div>
+<!-- Subtotal Revenue -->
+<div class="mt-auto flex justify-between items-center border-t border-[#333333] pt-4">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Subtotal Ganancia</span>
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-primary-container">$38,500</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="flex justify-between items-center py-6 px-4 md:px-8 bg-surface-container border-t border-surface-container-highest mt-auto w-full">
+<span class="font-label-caps text-label-caps font-bold text-primary-container">Zánganos S.A.</span>
+<div class="flex gap-4">
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary-container transition-opacity" href="#">Términos de Servicio</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary-container transition-opacity hidden sm:inline" href="#">Política de Privacidad</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary-container transition-opacity" href="#">Soporte Técnico</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary-container transition-opacity" href="#">Contacto</a>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant hidden md:inline">Felipe Alvarez y Benjamin Lopez - 2026</span>
+</footer>
+</body></html>

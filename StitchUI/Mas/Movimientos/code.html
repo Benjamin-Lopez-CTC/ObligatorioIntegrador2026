@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es" style=""><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Movimientos - Zánganos S.A.</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&amp;family=Inter:wght@400&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-tint": "#e7c400",
+                    "on-secondary-container": "#b7b5b4",
+                    "outline-variant": "#4c4732",
+                    "on-secondary-fixed": "#1b1b1c",
+                    "on-primary-container": "#715f00",
+                    "on-surface-variant": "#cfc6ab",
+                    "on-secondary-fixed-variant": "#474746",
+                    "tertiary-fixed": "#e4e2e1",
+                    "surface": "#121414",
+                    "surface-container-high": "#292a2a",
+                    "outline": "#989077",
+                    "primary-fixed": "#ffe165",
+                    "inverse-on-surface": "#2f3131",
+                    "surface-container-lowest": "#0d0e0f",
+                    "on-background": "#e3e2e2",
+                    "inverse-primary": "#6f5d00",
+                    "on-surface": "#e3e2e2",
+                    "surface-container-highest": "#343535",
+                    "on-primary-fixed": "#221b00",
+                    "error-container": "#93000a",
+                    "tertiary-container": "#dddbda",
+                    "inverse-surface": "#e3e2e2",
+                    "secondary": "#c8c6c5",
+                    "primary-container": "#ffd900",
+                    "on-error-container": "#ffdad6",
+                    "secondary-fixed": "#e5e2e1",
+                    "on-error": "#690005",
+                    "background": "#121414",
+                    "tertiary-fixed-dim": "#c8c6c5",
+                    "surface-variant": "#343535",
+                    "secondary-fixed-dim": "#c8c6c5",
+                    "tertiary": "#faf7f7",
+                    "surface-container": "#1e2020",
+                    "error": "#ffb4ab",
+                    "primary": "#fff7e6",
+                    "surface-bright": "#383939",
+                    "on-tertiary": "#303030",
+                    "secondary-container": "#474746",
+                    "surface-dim": "#121414",
+                    "on-tertiary-fixed-variant": "#474746",
+                    "on-primary-fixed-variant": "#544600",
+                    "primary-fixed-dim": "#e7c400",
+                    "on-tertiary-fixed": "#1b1c1c",
+                    "surface-container-low": "#1a1c1c",
+                    "on-tertiary-container": "#606060",
+                    "on-secondary": "#303030",
+                    "on-primary": "#3a3000"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "margin-mobile": "20px",
+                    "margin-desktop": "64px",
+                    "gutter": "24px",
+                    "container-max": "1200px",
+                    "unit": "8px"
+            },
+            "fontFamily": {
+                    "headline-lg-mobile": [
+                            "Hanken Grotesk"
+                    ],
+                    "headline-lg": [
+                            "Hanken Grotesk"
+                    ],
+                    "body-md": [
+                            "Inter"
+                    ],
+                    "display": [
+                            "Hanken Grotesk"
+                    ],
+                    "label-caps": [
+                            "JetBrains Mono"
+                    ],
+                    "body-sm": [
+                            "Inter"
+                    ]
+            },
+            "fontSize": {
+                    "headline-lg-mobile": [
+                            "24px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "headline-lg": [
+                            "32px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "body-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "1.6",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "display": [
+                            "48px",
+                            {
+                                    "lineHeight": "1.1",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "label-caps": [
+                            "12px",
+                            {
+                                    "lineHeight": "1.0",
+                                    "letterSpacing": "0.1em",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "body-sm": [
+                            "14px",
+                            {
+                                    "lineHeight": "1.5",
+                                    "fontWeight": "400"
+                            }
+                    ]
+            }
+        },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col" style="background-color: #121414;">
+<!-- Top Navigation Bar -->
+<header class="w-full bg-surface-container border-b border-surface-container-highest z-40 sticky top-0">
+<div class="max-w-container-max mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
+<div class="flex items-center gap-8">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile font-bold text-primary-container tracking-tight"><span class="material-symbols-outlined mr-2" style="font-variation-settings: 'wght' 300, 'opsz' 24;">hive</span>Zánganos S.A.</h1>
+<nav class="hidden md:flex items-center gap-1"><a class="px-4 py-2 font-label-caps text-label-caps text-on-surface-variant hover:text-primary-container transition-colors rounded-lg hover:bg-surface-container-high flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-[18px]">dashboard</span> Dashboard
+</a>
+<a class="px-4 py-2 font-label-caps text-label-caps text-on-surface-variant hover:text-primary-container transition-colors rounded-lg hover:bg-surface-container-high flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-[18px]">location_on</span> Apiarios
+</a>
+<a class="px-4 py-2 font-label-caps text-label-caps text-on-surface-variant hover:text-primary-container transition-colors rounded-lg hover:bg-surface-container-high flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-[18px]">hive</span> Colmenas
+</a>
+<a class="px-4 py-2 font-label-caps text-label-caps text-on-surface-variant hover:text-primary-container transition-colors rounded-lg hover:bg-surface-container-high flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-[18px]">assessment</span> Informes
+</a>
+<div class="relative group">
+<button class="px-4 py-2 font-label-caps text-label-caps text-primary-container bg-surface-container-high rounded-lg flex items-center gap-2 border-b-2 border-primary-container">
+    Más <span class="material-symbols-outlined text-[18px]">arrow_drop_down</span>
+</button>
+<div class="absolute left-0 mt-1 w-56 bg-surface-container-high border border-outline-variant rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 py-2">
+<a class="px-4 py-2 font-label-caps text-label-caps text-primary-container flex items-center gap-2 hover:bg-surface-variant" href="#">
+<span class="material-symbols-outlined text-[18px]">local_shipping</span> Movimientos
+    </a>
+<a class="px-4 py-2 font-label-caps text-label-caps text-on-surface-variant flex items-center gap-2 hover:bg-surface-variant hover:text-primary-container" href="#">
+<span class="material-symbols-outlined text-[18px]">compare</span> Comparar Apiarios
+    </a>
+<a class="px-4 py-2 font-label-caps text-label-caps text-on-surface-variant flex items-center gap-2 hover:bg-surface-variant hover:text-primary-container" href="#">
+<span class="material-symbols-outlined text-[18px]">grid_view</span> Comparar Colmenas
+    </a>
+<a class="px-4 py-2 font-label-caps text-label-caps text-on-surface-variant flex items-center gap-2 hover:bg-surface-variant hover:text-primary-container" href="#">
+<span class="material-symbols-outlined text-[18px]">calculate</span> C lculo de Costos
+    </a>
+<a class="px-4 py-2 font-label-caps text-label-caps text-on-surface-variant flex items-center gap-2 hover:bg-surface-variant hover:text-primary-container" href="#">
+<span class="material-symbols-outlined text-[18px]">inventory_2</span> Inventario
+    </a>
+<a class="px-4 py-2 font-label-caps text-label-caps text-on-surface-variant flex items-center gap-2 hover:bg-surface-variant hover:text-primary-container" href="#">
+<span class="material-symbols-outlined text-[18px]">history</span> Registro Logins
+    </a>
+</div>
+</div></nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary-container transition-colors focus:ring-2 focus:ring-primary-container outline-none rounded-full p-1">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="flex items-center gap-3">
+<div class="text-right hidden md:block">
+<p class="font-label-caps text-label-caps text-on-surface">Operario 1</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant text-[10px]">Técnico Apícola</p>
+</div>
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center overflow-hidden">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">person</span>
+</div>
+</div>
+<button class="md:hidden text-on-surface-variant hover:text-primary-container transition-colors">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-[80px] flex flex-col gap-[64px]">
+<!-- Header Section -->
+<header class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-surface-variant pb-8">
+<div class="flex flex-col gap-2">
+<h1 class="font-display text-display text-on-surface">Historial de Movimientos</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+                    Registro logístico y seguimiento de reubicaciones de colmenas para optimización de floración y polinización.
+                </p>
+</div>
+<button class="bg-primary-container text-[#000000] font-label-caps text-label-caps px-6 py-3 rounded-lg hover:bg-primary-fixed transition-colors flex items-center gap-2 border border-primary-container shrink-0">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                Registrar Nuevo Movimiento
+            </button>
+</header>
+<!-- Bento Grid Layout for Movements -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Card 1: Alert/Overdue -->
+<article class="bg-surface-container border border-error rounded-lg p-6 flex flex-col gap-6 relative overflow-hidden group">
+<!-- Subtle glow effect for alert -->
+<div class="absolute top-0 left-0 w-full h-1 bg-error"></div>
+<div class="flex flex-wrap justify-between items-start gap-4 relative"><div class="flex flex-col gap-1 min-w-fit">
+<span class="font-label-caps text-label-caps text-on-surface-variant">ID COLMENA</span>
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">#HIVE-0042</span>
+</div>
+<button class="text-on-surface-variant hover:text-primary-container transition-colors p-1 rounded-full">
+<span class="material-symbols-outlined">more_vert</span>
+</button></div><div class="flex">
+<div class="bg-error-container text-on-error-container border border-error/50 px-3 py-1 rounded-DEFAULT font-label-caps text-label-caps flex items-center gap-1 shrink-0 whitespace-nowrap">
+<span class="material-symbols-outlined text-[14px]">warning</span>
+                        Pendiente de Retorno
+                    </div>
+</div>
+<div class="flex items-center gap-4 bg-surface-container-highest p-4 rounded-lg border border-outline-variant">
+<div class="flex-1 flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant mb-1">ORIGEN</span>
+<span class="font-body-md text-body-md text-on-surface">Apiario Norte</span>
+</div>
+<span class="material-symbols-outlined text-primary-container">arrow_forward</span>
+<div class="flex-1 flex flex-col text-right">
+<span class="font-label-caps text-label-caps text-on-surface-variant mb-1">DESTINO</span>
+<span class="font-body-md text-body-md text-on-surface">Sector Alfalfa</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="flex flex-col gap-1">
+<span class="font-label-caps text-label-caps text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">event_note</span> Razón
+                        </span>
+<span class="font-body-md text-body-md text-on-surface">Floración</span>
+</div>
+<div class="flex flex-col gap-1 text-right">
+<span class="font-label-caps text-label-caps text-on-surface-variant flex items-center justify-end gap-1">
+<span class="material-symbols-outlined text-[14px]">calendar_today</span> Salida
+                        </span>
+<span class="font-body-md text-body-md text-on-surface">12 Oct 2025</span>
+</div>
+</div>
+<!-- Progress Bar showing overdue status -->
+<div class="flex flex-col gap-2 mt-auto pt-4 border-t border-surface-variant">
+<div class="flex justify-between font-label-caps text-label-caps">
+<span class="text-on-surface-variant">Duración: 21 Días</span>
+<span class="text-error">Día 24</span>
+</div>
+<div class="w-full h-[4px] bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-error w-full"></div>
+</div>
+</div>
+</article>
+<!-- Card 2: In Progress -->
+<article class="bg-surface-container border border-outline-variant rounded-lg p-6 flex flex-col gap-6 hover:border-primary-container transition-colors">
+<div class="flex flex-wrap justify-between items-start gap-4 relative"><button class="text-on-surface-variant hover:text-primary-container transition-colors p-1 rounded-full order-last">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+<div class="flex flex-col gap-1 min-w-fit">
+<span class="font-label-caps text-label-caps text-on-surface-variant">ID COLMENA</span>
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">#HIVE-0128</span>
+</div>
+</div>
+<div class="flex">
+<div class="bg-surface-container-highest text-primary-container border border-primary-container/30 px-3 py-1 rounded-DEFAULT font-label-caps text-label-caps flex items-center gap-1 shrink-0 whitespace-nowrap">
+<span class="material-symbols-outlined text-[14px]">local_shipping</span>
+                        En Destino
+                    </div>
+</div><div class="flex items-center gap-4 bg-surface-container-highest p-4 rounded-lg border border-outline-variant">
+<div class="flex-1 flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant mb-1">ORIGEN</span>
+<span class="font-body-md text-body-md text-on-surface">Central Sur</span>
+</div>
+<span class="material-symbols-outlined text-primary-container">arrow_forward</span>
+<div class="flex-1 flex flex-col text-right">
+<span class="font-label-caps text-label-caps text-on-surface-variant mb-1">DESTINO</span>
+<span class="font-body-md text-body-md text-on-surface">Huerto Cerezos</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="flex flex-col gap-1">
+<span class="font-label-caps text-label-caps text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">event_note</span> Razón
+                        </span>
+<span class="font-body-md text-body-md text-on-surface">Polinización</span>
+</div>
+<div class="flex flex-col gap-1 text-right">
+<span class="font-label-caps text-label-caps text-on-surface-variant flex items-center justify-end gap-1">
+<span class="material-symbols-outlined text-[14px]">calendar_today</span> Salida
+                        </span>
+<span class="font-body-md text-body-md text-on-surface">01 Nov 2025</span>
+</div>
+</div>
+<div class="flex flex-col gap-2 mt-auto pt-4 border-t border-surface-variant">
+<div class="flex justify-between font-label-caps text-label-caps">
+<span class="text-on-surface-variant">Duración: 14 Días</span>
+<span class="text-primary-container">Día 5</span>
+</div>
+<div class="w-full h-[4px] bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary-container w-[35%]"></div>
+</div>
+</div>
+</article>
+<!-- Card 3: In Progress -->
+<article class="bg-surface-container border border-outline-variant rounded-lg p-6 flex flex-col gap-6 hover:border-primary-container transition-colors">
+<div class="flex flex-wrap justify-between items-start gap-4 relative"><button class="text-on-surface-variant hover:text-primary-container transition-colors p-1 rounded-full order-last">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+<div class="flex flex-col gap-1 min-w-fit">
+<span class="font-label-caps text-label-caps text-on-surface-variant">ID COLMENA</span>
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">#HIVE-0088</span>
+</div>
+</div>
+<div class="flex">
+<div class="bg-surface-container-highest text-primary-container border border-primary-container/30 px-3 py-1 rounded-DEFAULT font-label-caps text-label-caps flex items-center gap-1 shrink-0 whitespace-nowrap">
+<span class="material-symbols-outlined text-[14px]">local_shipping</span>
+                        En Destino
+                    </div>
+</div><div class="flex items-center gap-4 bg-surface-container-highest p-4 rounded-lg border border-outline-variant">
+<div class="flex-1 flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant mb-1">ORIGEN</span>
+<span class="font-body-md text-body-md text-on-surface">Apiario Este</span>
+</div>
+<span class="material-symbols-outlined text-primary-container">arrow_forward</span>
+<div class="flex-1 flex flex-col text-right">
+<span class="font-label-caps text-label-caps text-on-surface-variant mb-1">DESTINO</span>
+<span class="font-body-md text-body-md text-on-surface">Reserva Nativas</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="flex flex-col gap-1">
+<span class="font-label-caps text-label-caps text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">event_note</span> Razón
+                        </span>
+<span class="font-body-md text-body-md text-on-surface">Refugio Invier.</span>
+</div>
+<div class="flex flex-col gap-1 text-right">
+<span class="font-label-caps text-label-caps text-on-surface-variant flex items-center justify-end gap-1">
+<span class="material-symbols-outlined text-[14px]">calendar_today</span> Salida
+                        </span>
+<span class="font-body-md text-body-md text-on-surface">28 Oct 2025</span>
+</div>
+</div>
+<div class="flex flex-col gap-2 mt-auto pt-4 border-t border-surface-variant">
+<div class="flex justify-between font-label-caps text-label-caps">
+<span class="text-on-surface-variant">Duración: 60 Días</span>
+<span class="text-primary-container">Día 12</span>
+</div>
+<div class="w-full h-[4px] bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary-container w-[20%]"></div>
+</div>
+</div>
+</article>
+</section>
+</main>
+<!-- Footer -->
+<footer class="flex justify-between items-center py-6 px-4 md:px-8 bg-surface-container border-t border-surface-container-highest mt-auto w-full">
+<span class="font-label-caps text-label-caps font-bold text-primary-container">Zánganos S.A.</span>
+<div class="flex gap-4">
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary-container transition-opacity" href="#">Documentación Técnica</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary-container transition-opacity hidden sm:inline" href="#">Soporte API</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary-container transition-opacity" href="#">Privacidad</a>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant hidden md:inline">Felipe Alvarez y Benjamin Lopez - 2026</span>
+</footer>
+</body></html>

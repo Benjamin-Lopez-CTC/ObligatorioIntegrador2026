@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es" style=""><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Informes - Zánganos S.A.</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#ffd900",
+                        "on-primary": "#3a3000",
+                        "tertiary-fixed": "#e4e2e1",
+                        "surface-container-lowest": "#0d0e0f",
+                        "background": "#121414",
+                        "tertiary-container": "#dddbda",
+                        "surface": "#121414",
+                        "on-secondary-container": "#b7b5b4",
+                        "tertiary": "#faf7f7",
+                        "surface-variant": "#343535",
+                        "on-tertiary-container": "#606060",
+                        "on-secondary-fixed-variant": "#474746",
+                        "on-primary-fixed": "#221b00",
+                        "on-primary-fixed-variant": "#544600",
+                        "error-container": "#93000a",
+                        "surface-container-high": "#292a2a",
+                        "secondary": "#c8c6c5",
+                        "surface-bright": "#383939",
+                        "on-tertiary-fixed-variant": "#474746",
+                        "surface-container-highest": "#343535",
+                        "surface-tint": "#e7c400",
+                        "on-background": "#e3e2e2",
+                        "surface-dim": "#121414",
+                        "surface-container-low": "#1a1c1c",
+                        "on-error": "#690005",
+                        "primary-fixed-dim": "#e7c400",
+                        "on-tertiary": "#303030",
+                        "outline-variant": "#4c4732",
+                        "error": "#ffb4ab",
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "secondary-container": "#474746",
+                        "inverse-primary": "#6f5d00",
+                        "primary-fixed": "#ffe165",
+                        "inverse-on-surface": "#2f3131",
+                        "on-surface": "#e3e2e2",
+                        "tertiary-fixed-dim": "#c8c6c5",
+                        "secondary-fixed": "#e5e2e1",
+                        "surface-container": "#1e2020",
+                        "on-error-container": "#ffdad6",
+                        "on-secondary": "#303030",
+                        "primary": "#fff7e6",
+                        "on-surface-variant": "#cfc6ab",
+                        "on-secondary-fixed": "#1b1b1c",
+                        "on-tertiary-fixed": "#1b1c1c",
+                        "inverse-surface": "#e3e2e2",
+                        "outline": "#989077",
+                        "on-primary-container": "#715f00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "margin-mobile": "20px",
+                        "gutter": "24px",
+                        "unit": "8px",
+                        "margin-desktop": "64px",
+                        "container-max": "1200px"
+                    },
+                    "fontFamily": {
+                        "display": ["Hanken Grotesk"],
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "label-caps": ["JetBrains Mono"],
+                        "body-sm": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "display": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "label-caps": ["12px", { "lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "500" }],
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #121414;
+            color: #e3e2e2;
+        }
+        .border-brand {
+            border-color: #333333;
+        }
+        .card-surface {
+            background-color: #252525;
+        }
+    </style>
+</head>
+<body class="bg-background font-body-md text-on-background antialiased min-h-screen flex flex-col">
+<!-- Top Navigation Bar -->
+<header class="w-full bg-surface-container border-b border-surface-container-highest z-40 sticky top-0">
+<div class="max-w-container-max mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
+<div class="flex items-center gap-8">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile font-bold text-primary-container tracking-tight"><span class="material-symbols-outlined mr-2" style="font-variation-settings: 'wght' 300, 'opsz' 24;">hive</span>Zánganos S.A.</h1>
+<nav class="hidden md:flex items-center gap-1"><a class="px-4 py-2 font-label-caps text-label-caps text-on-surface-variant hover:text-primary-container transition-colors rounded-lg hover:bg-surface-container-high flex items-center gap-2" href="#"><span class="material-symbols-outlined text-[18px]">dashboard</span> Dashboard</a><a class="px-4 py-2 font-label-caps text-label-caps text-on-surface-variant hover:text-primary-container transition-colors rounded-lg hover:bg-surface-container-high flex items-center gap-2" href="#"><span class="material-symbols-outlined text-[18px]">location_on</span> Apiarios</a><a class="px-4 py-2 font-label-caps text-label-caps text-on-surface-variant hover:text-primary-container transition-colors rounded-lg hover:bg-surface-container-high flex items-center gap-2" href="#"><span class="material-symbols-outlined text-[18px]">hive</span> Colmenas</a><a class="px-4 py-2 font-label-caps text-label-caps text-primary-container bg-surface-container-high rounded-lg flex items-center gap-2 border-b-2 border-primary-container" href="#"><span class="material-symbols-outlined text-[18px]">assessment</span> Informes</a><div class="relative group ml-1"><button class="px-4 py-2 font-label-caps text-label-caps text-on-surface-variant hover:text-primary-container transition-colors rounded-lg hover:bg-surface-container-high flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">more_vert</span> Más <span class="material-symbols-outlined text-[16px]">expand_more</span></button><div class="absolute left-0 mt-1 w-56 rounded-md shadow-lg bg-surface-container-highest border border-outline-variant opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50"><div class="py-1"><a class="flex items-center px-4 py-2 text-sm text-on-surface hover:bg-surface-container-high gap-2" href="#"><span class="material-symbols-outlined text-[18px]">local_shipping</span> Movimientos</a><a class="flex items-center px-4 py-2 text-sm text-on-surface hover:bg-surface-container-high gap-2" href="#"><span class="material-symbols-outlined text-[18px]">compare</span> Comparar Apiarios</a><a class="flex items-center px-4 py-2 text-sm text-on-surface hover:bg-surface-container-high gap-2" href="#"><span class="material-symbols-outlined text-[18px]">difference</span> Comparar Colmenas</a><a class="flex items-center px-4 py-2 text-sm text-on-surface hover:bg-surface-container-high gap-2" href="#"><span class="material-symbols-outlined text-[18px]">payments</span> Cálculo de Costos</a><a class="flex items-center px-4 py-2 text-sm text-on-surface hover:bg-surface-container-high gap-2" href="#"><span class="material-symbols-outlined text-[18px]">inventory_2</span> Inventario</a><a class="flex items-center px-4 py-2 text-sm text-on-surface hover:bg-surface-container-high gap-2" href="#"><span class="material-symbols-outlined text-[18px]">login</span> Registro Logins</a></div></div></div></nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary-container transition-colors focus:ring-2 focus:ring-primary-container outline-none rounded-full p-1">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="flex items-center gap-3">
+<div class="text-right hidden md:block">
+<p class="font-label-caps text-label-caps text-on-surface">Operario 1</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant text-[10px]">Técnico Apícola</p>
+</div>
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center overflow-hidden">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">person</span>
+</div>
+</div>
+<button class="md:hidden text-on-surface-variant hover:text-primary-container transition-colors">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-12 md:py-24 space-y-16">
+<!-- Header Section -->
+<header class="space-y-4 max-w-3xl">
+<h1 class="font-display text-display text-on-surface">Informes y Declaraciones Juradas</h1>
+<p class="font-body-md text-on-surface-variant text-lg">
+                Gestión centralizada del Registro Nacional de Apicultores. Revisa el estado de tus declaraciones y exporta los datos necesarios para el portal SINATPA.
+            </p>
+</header>
+<!-- Status Summary Cards -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<!-- Last Declaration -->
+<div class="card-surface border border-brand p-6 rounded flex flex-col justify-between">
+<div>
+<h3 class="font-label-caps text-label-caps text-on-secondary-container uppercase mb-2">Última Declaración Presentada</h3>
+<p class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">21 de Julio, 2025</p>
+</div>
+<div class="mt-6 flex items-center gap-2 text-primary-container">
+</div>
+</div>
+<!-- Next Declaration -->
+<div class="card-surface border border-brand p-6 rounded flex flex-col justify-between relative overflow-hidden group hover:border-primary-container transition-colors duration-300">
+<div class="absolute inset-y-0 right-0 w-1 bg-primary-container"></div>
+<div>
+<h3 class="font-label-caps text-label-caps text-on-secondary-container uppercase mb-2">Próxima Declaración Pendiente</h3>
+<p class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Julio 2026</p>
+</div>
+<div class="mt-6 flex items-center justify-between">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+<span class="font-body-sm text-body-sm">Válida hasta 30/06/2026</span>
+</div>
+<span class="font-label-caps text-label-caps bg-surface-container-high px-3 py-1 text-primary-container rounded border border-outline-variant">
+                        ~340 DÍAS
+                    </span>
+</div>
+</div>
+</section>
+<!-- Data for SINATPA Section -->
+<section class="space-y-6">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+<div>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Datos para SINATPA</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Resumen técnico basado en el inventario actual.</p>
+</div>
+<div class="flex flex-wrap gap-4">
+<button class="bg-transparent border border-primary-container text-primary-container font-label-caps text-label-caps px-6 py-3 rounded flex items-center gap-2 hover:bg-primary-container/10 transition-colors">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+                        EXPORTAR DATOS (.TXT)
+                    </button>
+<button class="bg-primary-container text-on-primary font-label-caps text-label-caps px-6 py-3 rounded flex items-center gap-2 hover:bg-primary-fixed-dim transition-colors">
+<span class="material-symbols-outlined" data-icon="open_in_new">open_in_new</span>
+                        IR AL PORTAL SINATPA (MGAP)
+                    </button>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<!-- Stock Summary -->
+<div class="lg:col-span-1 space-y-gutter">
+<div class="card-surface border border-brand p-6 rounded">
+<h3 class="font-label-caps text-label-caps text-on-secondary-container uppercase mb-6 border-b border-brand pb-2">Stock Apícola Total</h3>
+<div class="space-y-4">
+<div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Cantidad de colmenas en propiedad</p>
+<p class="font-headline-lg-mobile text-headline-lg-mobile text-primary-container">269</p>
+</div>
+<div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Cantidad de núcleos</p>
+<p class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">0</p>
+</div>
+</div>
+</div>
+<div class="card-surface border border-brand p-6 rounded">
+<h3 class="font-label-caps text-label-caps text-on-secondary-container uppercase mb-4">Información Titular</h3>
+<div class="space-y-3 font-body-sm text-body-sm">
+<div class="flex justify-between">
+<span class="text-on-surface-variant">RNA:</span>
+<span class="text-on-surface">205068</span>
+</div>
+<div class="flex justify-between">
+<span class="text-on-surface-variant">Sección Policial:</span>
+<span class="text-on-surface">6 (Colonia Valdense)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Apiary Locations Table -->
+<div class="lg:col-span-2 card-surface border border-brand rounded overflow-hidden flex flex-col">
+<div class="p-6 border-b border-brand">
+<h3 class="font-label-caps text-label-caps text-on-secondary-container uppercase">Desglose de Apiarios</h3>
+</div>
+<div class="overflow-x-auto flex-grow">
+<table class="w-full text-left font-body-sm text-body-sm">
+<thead class="bg-surface-container-high text-on-secondary-container font-label-caps text-label-caps">
+<tr>
+<th class="p-4 font-normal">NRO</th>
+<th class="p-4 font-normal">NOMBRE</th>
+<th class="p-4 font-normal">DEPARTAMENTO</th>
+<th class="p-4 font-normal">COLMENAS</th>
+<th class="p-4 font-normal">NÚCLEOS</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-brand text-on-surface">
+<tr class="hover:bg-surface-container transition-colors">
+<td class="p-4">1</td>
+<td class="p-4 font-medium">Talar</td>
+<td class="p-4 text-on-surface-variant">Flores</td>
+<td class="p-4 text-primary-container">70</td>
+<td class="p-4">0</td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors">
+<td class="p-4">2</td>
+<td class="p-4 font-medium">Cerro</td>
+<td class="p-4 text-on-surface-variant">Flores</td>
+<td class="p-4 text-primary-container">70</td>
+<td class="p-4">0</td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors">
+<td class="p-4">3</td>
+<td class="p-4 font-medium">cantera</td>
+<td class="p-4 text-on-surface-variant">San José</td>
+<td class="p-4 text-primary-container">30</td>
+<td class="p-4">0</td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors">
+<td class="p-4">4</td>
+<td class="p-4 font-medium">alfalfa</td>
+<td class="p-4 text-on-surface-variant">San José</td>
+<td class="p-4 text-primary-container">30</td>
+<td class="p-4">0</td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors">
+<td class="p-4">5</td>
+<td class="p-4 font-medium">caraguata</td>
+<td class="p-4 text-on-surface-variant">San José</td>
+<td class="p-4 text-primary-container">69</td>
+<td class="p-4">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="flex justify-between items-center py-6 px-4 md:px-8 bg-surface-container border-t border-surface-container-highest mt-auto w-full">
+<span class="font-label-caps text-label-caps font-bold text-primary-container">Zánganos S.A.</span>
+<div class="flex gap-4">
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary-container transition-opacity" href="#">Documentación Técnica</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary-container transition-opacity hidden sm:inline" href="#">Soporte API</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary-container transition-opacity" href="#">Privacidad</a>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant hidden md:inline">Felipe Alvarez y Benjamin Lopez - 2026</span>
+</footer>
+</body></html>
