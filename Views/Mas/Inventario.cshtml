@@ -6,144 +6,1330 @@
     .icon-fill {
          font-variation-settings: 'FILL' 1;
     }
+    
+    /* Custom animations for modals */
+    .modal-backdrop {
+        transition: opacity 0.25s ease-out;
+    }
+    .modal-container {
+        transition: transform 0.25s ease-out, opacity 0.25s ease-out;
+    }
+    .modal-hidden {
+        opacity: 0;
+        pointer-events: none;
+    }
+    .modal-hidden .modal-container {
+        transform: scale(0.95);
+        opacity: 0;
+    }
+    
+    /* Drag & Drop Visual indicator */
+    .draggable-item {
+        user-select: none;
+    }
+    .draggable-item[draggable="true"]:hover {
+        cursor: grab;
+    }
+    .draggable-item[draggable="true"]:active {
+        cursor: grabbing;
+    }
 </style>
 
-<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
-<!-- Hero Section -->
-<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 mt-8">
-    <div>
-        <h2 class="font-display text-display text-on-surface mb-2 tracking-tight">Inventario de Equipamiento</h2>
-        <p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">Gestión de herramientas, insumos médicos y materiales de trabajo para operaciones apícolas.</p>
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-8">
+    <!-- Hero Section -->
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 mt-4">
+        <div>
+            <h2 class="font-display text-display text-on-surface mb-2 tracking-tight">Inventario de Equipamiento</h2>
+            <p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+                Gestión de herramientas, insumos médicos y materiales de trabajo para operaciones apícolas con monitoreo inteligente de stock y umbrales.
+            </p>
+        </div>
+        <button onclick="openCreateModal()" class="bg-primary-container text-on-primary-container hover:bg-primary-fixed transition-colors px-6 py-3 rounded font-label-caps text-label-caps flex items-center justify-center gap-2 whitespace-nowrap shadow-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary-container">
+            <span class="material-symbols-outlined text-[18px]">add</span>
+            Registrar Nuevo Equipo
+        </button>
     </div>
-    <button class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-3 rounded font-label-caps text-label-caps flex items-center justify-center gap-2 whitespace-nowrap">
-        <span class="material-symbols-outlined text-[18px]">add</span>
-        Registrar Nuevo Equipo
-    </button>
-</div>
-<!-- Bento Grid Layout for Inventory -->
-<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter mb-12">
-    <!-- Category: Herramientas (Spans 8 cols) -->
-    <section class="md:col-span-8 bg-surface-container-low border border-outline-variant rounded-lg p-6">
-        <div class="flex items-center gap-3 mb-6 pb-4 border-b border-outline-variant">
-            <span class="material-symbols-outlined text-primary-container icon-fill">handyman</span>
-            <h2 class="font-headline-lg text-headline-lg text-on-surface">Herramientas</h2>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <!-- Item Card -->
-            <div class="bg-background border border-outline-variant p-4 rounded group hover:border-primary-container transition-colors relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-1 h-full bg-outline-variant group-hover:bg-primary-container transition-colors"></div>
-                <div class="flex justify-between items-start mb-2 pl-3">
-                    <h3 class="font-body-md text-body-md font-semibold text-on-surface">Ahumador Inoxidable</h3>
-                    <span class="font-label-caps text-label-caps bg-surface-container text-primary-container px-2 py-1 rounded border border-outline-variant">Stock: 12</span>
-                </div>
-                <p class="font-body-sm text-body-sm text-on-surface-variant mb-4 pl-3">Ahumador estándar de 10x25cm con fuelle de cuero sintético.</p>
-                <div class="flex justify-between items-end pl-3">
-                    <span class="font-label-caps text-label-caps text-on-surface">$45.00 / u</span>
-                    <button class="text-primary-container hover:text-primary-fixed transition-colors">
-                        <span class="material-symbols-outlined text-sm">edit</span>
-                    </button>
+
+    <!-- Search & Filters Panel -->
+    <div class="bg-surface-container-low border border-outline-variant rounded p-6 mb-8">
+        <h3 class="font-label-caps text-label-caps text-primary-container mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">filter_list</span> Búsqueda y Filtros
+        </h3>
+        
+        <!-- Standard Filters Row -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4" id="standard-filters-row">
+            <!-- Search Text -->
+            <div class="md:col-span-2" id="search-input-wrapper">
+                <label for="search-input" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Buscar por Nombre/Descripción</label>
+                <div class="relative">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+                    <input type="text" id="search-input" placeholder="Escribe para buscar..." class="w-full bg-background border border-outline-variant pl-10 pr-4 py-2 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors placeholder:text-on-surface-variant/40" />
                 </div>
             </div>
-            <!-- Item Card -->
-            <div class="bg-background border border-outline-variant p-4 rounded group hover:border-primary-container transition-colors relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-1 h-full bg-outline-variant group-hover:bg-primary-container transition-colors"></div>
-                <div class="flex justify-between items-start mb-2 pl-3">
-                    <h3 class="font-body-md text-body-md font-semibold text-on-surface">Palanca de Manejo</h3>
-                    <span class="font-label-caps text-label-caps bg-surface-container text-primary-container px-2 py-1 rounded border border-outline-variant">Stock: 24</span>
-                </div>
-                <p class="font-body-sm text-body-sm text-on-surface-variant mb-4 pl-3">Pinza y palanca universal para extracción de marcos.</p>
-                <div class="flex justify-between items-end pl-3">
-                    <span class="font-label-caps text-label-caps text-on-surface">$15.50 / u</span>
-                    <button class="text-primary-container hover:text-primary-fixed transition-colors">
-                        <span class="material-symbols-outlined text-sm">edit</span>
-                    </button>
-                </div>
+
+            <!-- Category Filter -->
+            <div>
+                <label for="filter-category" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Categoría</label>
+                <select id="filter-category" class="w-full bg-background border border-outline-variant px-3 py-2 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
+                    <option value="all">Todas</option>
+                    <option value="Material">Material</option>
+                    <option value="Herramienta">Herramienta</option>
+                    <option value="Medicamento">Medicamento</option>
+                    <option value="Otro">Otro</option>
+                </select>
+            </div>
+
+            <!-- State/Estado Filter -->
+            <div>
+                <label for="filter-status" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Estado de Stock</label>
+                <select id="filter-status" class="w-full bg-background border border-outline-variant px-3 py-2 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
+                    <option value="all">Todos los Estados</option>
+                    <option value="Alto">Alto</option>
+                    <option value="Medio">Medio</option>
+                    <option value="Bajo">Bajo</option>
+                </select>
+            </div>
+
+            <!-- Type Filter -->
+            <div>
+                <label for="filter-type" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Tipo / Subtipo</label>
+                <select id="filter-type" class="w-full bg-background border border-outline-variant px-3 py-2 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
+                    <option value="all">Todos</option>
+                </select>
             </div>
         </div>
-    </section>
-    <!-- Category: Medicamentos (Spans 4 cols) -->
-    <section class="md:col-span-4 bg-surface-container-low border border-outline-variant rounded-lg p-6 flex flex-col">
-        <div class="flex items-center gap-3 mb-6 pb-4 border-b border-outline-variant">
-            <span class="material-symbols-outlined text-primary-container icon-fill">medication</span>
-            <h2 class="font-headline-lg text-headline-lg text-on-surface">Medicamentos</h2>
-        </div>
-        <div class="flex flex-col gap-4 flex-1">
-            <!-- Minimal List Item -->
-            <div class="flex justify-between items-center pb-3 border-b border-outline-variant group cursor-pointer">
-                <div>
-                    <h3 class="font-body-sm text-body-sm text-on-surface font-medium group-hover:text-primary-container transition-colors">Ácido Oxálico (Glicerina)</h3>
-                    <span class="font-label-caps text-label-caps text-on-surface-variant text-[10px]">Tratamiento Varroa</span>
+
+        <div class="border-t border-outline-variant/30 mt-4 pt-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <!-- Lower Row Option 1: Separate Sorting Selectors -->
+            <div class="flex flex-wrap items-center gap-6" id="extra-filters-container">
+                <!-- Alphabetical Sort Selector -->
+                <div class="flex items-center gap-3" id="name-sort-container">
+                    <label for="filter-sort-name" class="font-label-caps text-label-caps text-on-surface-variant shrink-0">Ordenar Alfabéticamente:</label>
+                    <select id="filter-sort-name" class="bg-background border border-outline-variant px-3 py-1.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors text-sm">
+                        <option value="none">Por defecto</option>
+                        <option value="nameAsc">Nombre: A - Z</option>
+                        <option value="nameDesc">Nombre: Z - A</option>
+                    </select>
                 </div>
-                <div class="text-right">
-                    <div class="font-label-caps text-label-caps text-on-surface">50 Tiras</div>
-                    <div class="font-label-caps text-label-caps text-primary-container text-[10px]">$12.00</div>
-                </div>
-            </div>
-            <!-- Minimal List Item -->
-            <div class="flex justify-between items-center pb-3 border-b border-outline-variant group cursor-pointer">
-                <div>
-                    <h3 class="font-body-sm text-body-sm text-on-surface font-medium group-hover:text-primary-container transition-colors">Amitraz (Tiras)</h3>
-                    <span class="font-label-caps text-label-caps text-on-surface-variant text-[10px]">Tratamiento Varroa</span>
-                </div>
-                <div class="text-right">
-                    <div class="font-label-caps text-label-caps text-on-surface">15 Pqts</div>
-                    <div class="font-label-caps text-label-caps text-primary-container text-[10px]">$22.50</div>
+                
+                <!-- Stock Sort Selector -->
+                <div class="flex items-center gap-3" id="stock-sort-container">
+                    <label for="filter-sort-stock" class="font-label-caps text-label-caps text-on-surface-variant shrink-0">Ordenar por Stock:</label>
+                    <select id="filter-sort-stock" class="bg-background border border-outline-variant px-3 py-1.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors text-sm">
+                        <option value="none">Por defecto</option>
+                        <option value="stockAsc">Stock: Menor a Mayor</option>
+                        <option value="stockDesc">Stock: Mayor a Menor</option>
+                    </select>
                 </div>
             </div>
-            <button class="mt-auto w-full py-2 px-4 border border-primary-container text-primary-container hover:bg-primary-container/10 rounded transition-colors font-label-caps text-label-caps flex items-center justify-center gap-2">
-                <span class="material-symbols-outlined text-sm">add_shopping_cart</span>
-                Solicitar Insumos
-            </button>
+
+            <!-- Lower Row Option 2: Custom Reordering Mode Toggle Switch -->
+            <div class="flex items-center gap-4 bg-surface-container-high/40 border border-outline-variant/60 px-4 py-2 rounded">
+                <div class="flex items-center gap-2 select-none">
+                    <span class="material-symbols-outlined text-primary-container text-[20px]" id="reorder-icon">drag_indicator</span>
+                    <span class="font-label-caps text-label-caps text-on-surface font-semibold text-xs">Reordenación Personalizada</span>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer select-none">
+                    <input type="checkbox" id="toggle-custom-reorder" class="sr-only peer" />
+                    <div class="w-10 h-5 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-secondary after:border-secondary after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-container peer-checked:after:bg-background peer-checked:after:border-primary-container"></div>
+                </label>
+                <span id="reorder-status" class="text-xs text-on-surface-variant font-medium select-none w-16 text-center">Desactivado</span>
+            </div>
         </div>
-    </section>
-    <!-- Category: Materiales (Spans 12 cols) -->
-    <section class="md:col-span-12 bg-surface-container-low border border-outline-variant rounded-lg p-6 mt-4">
-        <div class="flex items-center gap-3 mb-6 pb-4 border-b border-outline-variant">
-            <span class="material-symbols-outlined text-primary-container icon-fill">inventory_2</span>
-            <h2 class="font-headline-lg text-headline-lg text-on-surface">Materiales y Consumibles</h2>
+        
+        <!-- Drag & Drop Hint Banner -->
+        <div id="drag-hint" class="hidden mt-4 bg-primary-container/10 border border-primary-container/20 text-primary-container text-xs rounded p-3 flex items-center gap-2 animate-pulse select-none">
+            <span class="material-symbols-outlined text-[18px]">info</span>
+            <span>El modo de reordenación está activado. Se muestra la lista completa en tu orden personalizado. Los demás filtros están desactivados temporalmente. Arrastra y suelta para reordenar.</span>
         </div>
-        <div class="overflow-x-auto">
+    </div>
+
+    <!-- Inventory List Section -->
+    <div class="bg-surface-container-low border border-outline-variant rounded p-6">
+        <div class="flex items-center justify-between mb-6 pb-4 border-b border-surface-container-highest">
+            <h3 class="font-headline-lg text-headline-lg text-on-surface flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary-container icon-fill">inventory</span>
+                Equipos e Insumos de Inventario
+            </h3>
+            <span id="items-count" class="font-label-caps text-label-caps bg-surface-container px-3 py-1.5 rounded border border-outline-variant text-on-surface-variant">
+                Cargando...
+            </span>
+        </div>
+
+        <!-- Desktop Data Table -->
+        <div class="overflow-x-auto hidden md:block">
             <table class="w-full text-left border-collapse">
                 <thead>
-                    <tr class="border-b border-outline-variant">
-                        <th class="font-label-caps text-label-caps text-on-surface-variant py-3 px-4">Descripción</th>
-                        <th class="font-label-caps text-label-caps text-on-surface-variant py-3 px-4">Tipo</th>
-                        <th class="font-label-caps text-label-caps text-on-surface-variant py-3 px-4 text-right">Stock</th>
-                        <th class="font-label-caps text-label-caps text-on-surface-variant py-3 px-4 text-right">Precio Un.</th>
-                        <th class="font-label-caps text-label-caps text-on-surface-variant py-3 px-4 text-center">Estado</th>
+                    <tr class="border-b border-surface-container-highest">
+                        <th class="font-label-caps text-label-caps text-on-surface-variant py-4 px-4 w-[20%]">Categoría</th>
+                        <th class="font-label-caps text-label-caps text-on-surface-variant py-4 px-4 w-[35%]">Descripción / Nombre</th>
+                        <th class="font-label-caps text-label-caps text-on-surface-variant py-4 px-4 w-[25%]">Tipo</th>
+                        <th class="font-label-caps text-label-caps text-on-surface-variant py-4 px-4 text-right w-[10%]">Stock</th>
+                        <th class="font-label-caps text-label-caps text-on-surface-variant py-4 px-4 text-center w-[10%]">Estado</th>
+                        <th class="font-label-caps text-label-caps text-on-surface-variant py-4 px-4 text-center w-[5%]">Acciones</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr class="border-b border-outline-variant hover:bg-surface-container transition-colors">
-                        <td class="font-body-sm text-body-sm text-on-surface py-3 px-4">Alzas Melarias (Media)</td>
-                        <td class="font-body-sm text-body-sm text-on-surface-variant py-3 px-4">Madera</td>
-                        <td class="font-body-sm text-body-sm text-on-surface py-3 px-4 text-right">120</td>
-                        <td class="font-label-caps text-label-caps text-on-surface py-3 px-4 text-right">$8.00</td>
-                        <td class="py-3 px-4 text-center">
-                            <span class="inline-block px-2 py-1 bg-surface-container-high border border-outline-variant rounded font-label-caps text-label-caps text-on-surface text-[10px]">Adecuado</span>
-                        </td>
-                    </tr>
-                    <tr class="border-b border-outline-variant hover:bg-surface-container transition-colors">
-                        <td class="font-body-sm text-body-sm text-on-surface py-3 px-4">Marcos Alambrados</td>
-                        <td class="font-body-sm text-body-sm text-on-surface-variant py-3 px-4">Madera/Alambre</td>
-                        <td class="font-body-sm text-body-sm text-on-surface py-3 px-4 text-right">450</td>
-                        <td class="font-label-caps text-label-caps text-on-surface py-3 px-4 text-right">$1.50</td>
-                        <td class="py-3 px-4 text-center">
-                            <span class="inline-block px-2 py-1 bg-surface-container-high border border-outline-variant rounded font-label-caps text-label-caps text-on-surface text-[10px]">Adecuado</span>
-                        </td>
-                    </tr>
-                    <tr class="hover:bg-surface-container transition-colors">
-                        <td class="font-body-sm text-body-sm text-on-surface py-3 px-4">Cera Estampada</td>
-                        <td class="font-body-sm text-body-sm text-on-surface-variant py-3 px-4">Cera Orgánica</td>
-                        <td class="font-body-sm text-body-sm text-on-surface py-3 px-4 text-right text-error">5 kg</td>
-                        <td class="font-label-caps text-label-caps text-on-surface py-3 px-4 text-right">$18.00</td>
-                        <td class="py-3 px-4 text-center">
-                            <span class="inline-block px-2 py-1 bg-error-container/30 border border-error rounded font-label-caps text-label-caps text-error text-[10px]">Crítico</span>
-                        </td>
-                    </tr>
+                <tbody id="inventory-table-body">
+                    <!-- Dynamic Rows -->
                 </tbody>
             </table>
         </div>
-    </section>
+
+        <!-- Mobile Card List -->
+        <div id="inventory-cards-container" class="grid grid-cols-1 gap-4 md:hidden">
+            <!-- Dynamic Cards -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="empty-state" class="hidden flex-col items-center justify-center py-12 text-center">
+            <span class="material-symbols-outlined text-outline text-5xl mb-4">inventory_2</span>
+            <p class="font-body-md text-body-md text-on-surface mb-2 font-medium">No se encontraron equipamientos</p>
+            <p class="font-body-sm text-body-sm text-on-surface-variant max-w-sm">Prueba ajustando los filtros o registra un nuevo equipo para comenzar.</p>
+        </div>
+    </div>
 </div>
+
+<!-- ================= MODALS & DIALOGS ================= -->
+
+<!-- 1. Form Modal (Create & Edit) -->
+<div id="form-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop bg-black/75 modal-hidden p-4">
+    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-xl modal-container shadow-2xl overflow-hidden">
+        <!-- Header -->
+        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between">
+            <h4 id="form-modal-title" class="font-headline-lg text-lg font-bold text-on-surface">Registrar Nuevo Equipo</h4>
+            <button onclick="closeFormModal()" class="text-on-surface-variant hover:text-primary-container transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <!-- Form Content -->
+        <form id="equipment-form" onsubmit="handleFormSubmit(event)" class="p-6 space-y-4">
+            <input type="hidden" id="form-id" />
+            
+            <!-- Error Banner -->
+            <div id="form-error-banner" class="hidden bg-error-container/30 border border-error text-error text-sm rounded p-3 space-y-1">
+                <!-- Validation errors go here -->
+            </div>
+
+            <!-- Name -->
+            <div>
+                <label for="form-name" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Descripción / Nombre *</label>
+                <input type="text" id="form-name" required placeholder="Ej. Ahumador de Acero, Alza Melaria..." class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+            </div>
+
+            <!-- Category & Type -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label for="form-category" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Categoría *</label>
+                    <select id="form-category" required class="w-full bg-background border border-outline-variant px-3 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
+                        <option value="Material">Material</option>
+                        <option value="Herramienta">Herramienta</option>
+                        <option value="Medicamento">Medicamento</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="form-type" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Tipo *</label>
+                    <input type="text" id="form-type" list="existing-types" required placeholder="Ej. Madera, Inox, Químico..." class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                    <datalist id="existing-types"></datalist>
+                </div>
+            </div>
+
+            <!-- Stock & Thresholds -->
+            <div class="bg-background/40 p-4 border border-outline-variant rounded space-y-4">
+                <h5 class="font-label-caps text-label-caps text-primary-container border-b border-outline-variant pb-2">
+                    Configuración de Stock y Alertas
+                </h5>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label for="form-stock" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Stock Actual *</label>
+                        <input type="number" id="form-stock" required min="0" value="0" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                    </div>
+                    <div>
+                        <label for="form-low-threshold" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Umbral Bajo *</label>
+                        <input type="number" id="form-low-threshold" required min="0" value="5" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                        <span class="text-[10px] text-on-surface-variant/60 block mt-1">Alerta Crítica</span>
+                    </div>
+                    <div>
+                        <label for="form-medium-threshold" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Umbral Medio *</label>
+                        <input type="number" id="form-medium-threshold" required min="0" value="15" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                        <span class="text-[10px] text-on-surface-variant/60 block mt-1">Alerta Preventiva</span>
+                    </div>
+                </div>
+                <div class="text-[11px] text-on-surface-variant flex items-start gap-1">
+                    <span class="material-symbols-outlined text-[14px] mt-0.5 text-primary-container">info</span>
+                    <span>El sistema calculará el Estado automáticamente: Stock menor o igual al Umbral Bajo (Bajo) | Stock menor o igual al Umbral Medio (Medio) | Superior (Alto).</span>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="pt-4 border-t border-surface-container-highest flex justify-end gap-3">
+                <button type="button" onclick="closeFormModal()" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2.5 rounded font-label-caps text-label-caps">
+                    Cancelar
+                </button>
+                <button type="submit" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps font-semibold">
+                    Guardar Equipo
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
+
+<!-- 2. Detail Modal (Read Only) -->
+<div id="detail-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop bg-black/75 modal-hidden p-4">
+    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-lg modal-container shadow-2xl overflow-hidden">
+        <!-- Header -->
+        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between">
+            <h4 class="font-headline-lg text-lg font-bold text-on-surface flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary-container">info</span> Detalle de Equipamiento
+            </h4>
+            <button onclick="closeDetailModal()" class="text-on-surface-variant hover:text-primary-container transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <!-- Content -->
+        <div class="p-6 space-y-6">
+            <div class="flex items-start justify-between">
+                <div>
+                    <h3 id="detail-name" class="font-headline-lg text-headline-lg text-on-surface tracking-tight mb-1">Nombre Equipo</h3>
+                    <div class="flex items-center gap-2">
+                        <span id="detail-category-badge" class="flex items-center gap-1 font-label-caps text-[10px] uppercase border px-2 py-0.5 rounded">
+                            <span class="material-symbols-outlined text-[12px]" id="detail-category-icon">handyman</span>
+                            <span id="detail-category">Herramienta</span>
+                        </span>
+                        <span id="detail-type" class="font-body-sm text-body-sm text-on-surface-variant">Tipo</span>
+                    </div>
+                </div>
+                <div id="detail-status-badge">
+                    <!-- Status Badge -->
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-3 gap-4 bg-background/50 border border-outline-variant p-4 rounded text-center">
+                <div>
+                    <span class="font-label-caps text-label-caps text-on-surface-variant block mb-1 text-[10px]">Stock Actual</span>
+                    <span id="detail-stock" class="text-2xl font-bold text-on-surface">0</span>
+                </div>
+                <div>
+                    <span class="font-label-caps text-label-caps text-on-surface-variant block mb-1 text-[10px]">Umbral Bajo</span>
+                    <span id="detail-low-threshold" class="text-2xl font-bold text-error">0</span>
+                </div>
+                <div>
+                    <span class="font-label-caps text-label-caps text-on-surface-variant block mb-1 text-[10px]">Umbral Medio</span>
+                    <span id="detail-medium-threshold" class="text-2xl font-bold text-primary-container">0</span>
+                </div>
+            </div>
+
+            <!-- Threshold Analysis info -->
+            <div class="border-l-2 border-primary-container pl-3 py-1 space-y-1">
+                <h5 class="font-label-caps text-[10px] uppercase text-primary-container tracking-wider font-bold">Diagnóstico de Stock</h5>
+                <p id="detail-diagnosis" class="font-body-sm text-body-sm text-on-surface-variant">El stock se encuentra en estado óptimo.</p>
+            </div>
+
+            <!-- Footer Actions -->
+            <div class="pt-4 border-t border-surface-container-highest flex justify-between items-center">
+                <button id="detail-delete-btn" class="bg-error-container/20 border border-error/50 text-error hover:bg-error-container/40 hover:text-white transition-colors px-4 py-2 rounded font-label-caps text-label-caps flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-[16px]">delete</span> Eliminar
+                </button>
+                <div class="flex gap-2">
+                    <button onclick="closeDetailModal()" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-4 py-2 rounded font-label-caps text-label-caps">
+                        Cerrar
+                    </button>
+                    <button id="detail-edit-btn" class="bg-primary-container text-on-primary-container hover:bg-primary-fixed hover:text-on-primary transition-colors px-5 py-2 rounded font-label-caps text-label-caps font-semibold flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-[16px]">edit</span> Editar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 3. Edit Confirmation Modal -->
+<div id="confirm-edit-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
+    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-md modal-container shadow-2xl p-6 text-center space-y-4">
+        <span class="material-symbols-outlined text-primary-container text-5xl">warning</span>
+        <h4 class="font-headline-lg text-lg font-bold text-on-surface">Confirmar Modificación</h4>
+        <p class="font-body-md text-body-md text-on-surface-variant">
+            ¿Está seguro de realizar los cambios en <span id="confirm-edit-item-name" class="text-primary-container font-semibold">"Ahumador Inoxidable"</span>?
+        </p>
+        <p class="text-xs text-on-surface-variant/60">
+            Los datos anteriores serán sobrescritos y el estado del stock se recalculará según los nuevos umbrales.
+        </p>
+        <div class="pt-4 flex justify-center gap-3">
+            <button onclick="closeConfirmEditModal()" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2 rounded font-label-caps text-label-caps">
+                No, Cancelar
+            </button>
+            <button id="confirm-edit-yes-btn" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2 rounded font-label-caps text-label-caps font-semibold">
+                Sí, Guardar Cambios
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- 4. Delete Confirmation Modal 1 -->
+<div id="confirm-delete-1-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
+    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-md modal-container shadow-2xl p-6 text-center space-y-4">
+        <span class="material-symbols-outlined text-error text-5xl">delete_forever</span>
+        <h4 class="font-headline-lg text-lg font-bold text-on-surface">¿Eliminar Equipamiento?</h4>
+        <p class="font-body-md text-body-md text-on-surface-variant">
+            ¿Está seguro de que desea eliminar el equipamiento <span id="confirm-delete-1-item-name" class="text-error font-semibold">"Ahumador Inoxidable"</span>?
+        </p>
+        <p class="text-sm text-error/80 font-medium">
+            Esta acción no se puede deshacer y el ítem será borrado del inventario.
+        </p>
+        <div class="pt-4 flex justify-center gap-3">
+            <button onclick="closeConfirmDelete1Modal()" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2 rounded font-label-caps text-label-caps">
+                Cancelar
+            </button>
+            <button id="confirm-delete-1-yes-btn" class="bg-error-container/30 border border-error text-error hover:bg-error/20 transition-colors px-6 py-2 rounded font-label-caps text-label-caps font-semibold">
+                Sí, deseo eliminarlo
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- 5. Delete Confirmation Modal 2 -->
+<div id="confirm-delete-2-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop bg-black/90 modal-hidden p-4">
+    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-md modal-container shadow-2xl p-6 text-center space-y-4">
+        <span class="material-symbols-outlined text-error text-5xl animate-pulse">report</span>
+        <h4 class="font-headline-lg text-lg font-bold text-error uppercase tracking-wider">Confirmación Adicional</h4>
+        <p class="font-body-md text-body-md text-on-surface">
+            Por favor, confirme una vez más: ¿realmente desea eliminar permanentemente <span id="confirm-delete-2-item-name" class="text-primary-container font-semibold">"Ahumador Inoxidable"</span> de los registros?
+        </p>
+        <p class="text-xs text-on-surface-variant/80">
+            Esta es la confirmación definitiva. Presiona continuar para ejecutar la eliminación.
+        </p>
+        <div class="pt-4 flex justify-center gap-3">
+            <button onclick="closeConfirmDelete2Modal()" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2 rounded font-label-caps text-label-caps">
+                Cancelar
+            </button>
+            <button id="confirm-delete-2-yes-btn" class="bg-error text-on-error hover:bg-red-400 transition-colors px-6 py-2 rounded font-label-caps text-label-caps font-bold">
+                Confirmar y Eliminar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- 6. Duplicate Conflict Warning Modal -->
+<div id="confirm-conflict-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
+    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-md modal-container shadow-2xl p-6 text-center space-y-4">
+        <span class="material-symbols-outlined text-amber-500 text-5xl">warning</span>
+        <h4 class="font-headline-lg text-lg font-bold text-on-surface">Advertencia de Duplicado</h4>
+        <p class="font-body-md text-body-md text-on-surface-variant">
+            Se ha detectado un conflicto: ya existe un equipamiento registrado con el Nombre/Descripción: <span id="conflict-item-name" class="text-primary-container font-semibold">"Ahumador Inoxidable"</span>.
+        </p>
+        <p class="text-sm text-on-surface-variant">
+            ¿Está seguro de que desea continuar y guardar de todas formas?
+        </p>
+        <div class="pt-4 flex justify-center gap-3">
+            <button onclick="closeConflictModal()" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2 rounded font-label-caps text-label-caps">
+                No, Corregir
+            </button>
+            <button id="conflict-yes-btn" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2 rounded font-label-caps text-label-caps font-semibold">
+                Sí, Guardar de todas formas
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Notification Toast Container -->
+<div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 pointer-events-none"></div>
+
+<!-- ================= SCRIPTS SECTION ================= -->
+@section Scripts {
+<script>
+    // Local memory and parameters
+    let currentEquipments = [];
+    let selectedTypeFilter = "all";
+    let currentSortBy = "none";
+    let customReorderActive = false;
+    let originalName = "";
+    
+    // Drag and Drop Dragged Element Reference
+    let dragSourceEl = null;
+    
+    // Track element state
+    let isSubmitting = false;
+    let tempSaveData = null;
+    let pendingDeleteId = null;
+    let pendingDeleteName = "";
+    let bypassConflictCheck = false;
+
+    // DOM Elements
+    const searchInput = document.getElementById("search-input");
+    const filterCategory = document.getElementById("filter-category");
+    const filterStatus = document.getElementById("filter-status");
+    const filterType = document.getElementById("filter-type");
+    
+    const filterSortName = document.getElementById("filter-sort-name");
+    const filterSortStock = document.getElementById("filter-sort-stock");
+    const toggleCustomReorder = document.getElementById("toggle-custom-reorder");
+    const reorderStatus = document.getElementById("reorder-status");
+    const reorderIcon = document.getElementById("reorder-icon");
+    const dragHint = document.getElementById("drag-hint");
+    
+    const standardFiltersRow = document.getElementById("standard-filters-row");
+    const extraFiltersContainer = document.getElementById("extra-filters-container");
+    
+    const tableBody = document.getElementById("inventory-table-body");
+    const cardsContainer = document.getElementById("inventory-cards-container");
+    const emptyState = document.getElementById("empty-state");
+    const itemsCountBadge = document.getElementById("items-count");
+
+    // Modal elements
+    const formModal = document.getElementById("form-modal");
+    const formModalTitle = document.getElementById("form-modal-title");
+    const equipmentForm = document.getElementById("equipment-form");
+    const formErrorBanner = document.getElementById("form-error-banner");
+    
+    const formId = document.getElementById("form-id");
+    const formName = document.getElementById("form-name");
+    const formCategory = document.getElementById("form-category");
+    const formType = document.getElementById("form-type");
+    const formStock = document.getElementById("form-stock");
+    const formLowThreshold = document.getElementById("form-low-threshold");
+    const formMediumThreshold = document.getElementById("form-medium-threshold");
+
+    const detailModal = document.getElementById("detail-modal");
+    const detailName = document.getElementById("detail-name");
+    const detailCategoryIcon = document.getElementById("detail-category-icon");
+    const detailCategory = document.getElementById("detail-category");
+    const detailCategoryBadge = document.getElementById("detail-category-badge");
+    const detailType = document.getElementById("detail-type");
+    const detailStock = document.getElementById("detail-stock");
+    const detailLowThreshold = document.getElementById("detail-low-threshold");
+    const detailMediumThreshold = document.getElementById("detail-medium-threshold");
+    const detailStatusBadge = document.getElementById("detail-status-badge");
+    const detailDiagnosis = document.getElementById("detail-diagnosis");
+    const detailEditBtn = document.getElementById("detail-edit-btn");
+    const detailDeleteBtn = document.getElementById("detail-delete-btn");
+
+    const confirmEditModal = document.getElementById("confirm-edit-modal");
+    const confirmEditItemName = document.getElementById("confirm-edit-item-name");
+    const confirmEditYesBtn = document.getElementById("confirm-edit-yes-btn");
+
+    const confirmDelete1Modal = document.getElementById("confirm-delete-1-modal");
+    const confirmDelete1ItemName = document.getElementById("confirm-delete-1-item-name");
+    const confirmDelete1YesBtn = document.getElementById("confirm-delete-1-yes-btn");
+
+    const confirmDelete2Modal = document.getElementById("confirm-delete-2-modal");
+    const confirmDelete2ItemName = document.getElementById("confirm-delete-2-item-name");
+    const confirmDelete2YesBtn = document.getElementById("confirm-delete-2-yes-btn");
+
+    const confirmConflictModal = document.getElementById("confirm-conflict-modal");
+
+    // Start
+    document.addEventListener("DOMContentLoaded", () => {
+        // Load data
+        loadInventory();
+
+        // Listeners for live filtering (with slight debounce on search)
+        let searchTimeout;
+        searchInput.addEventListener("input", () => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(loadInventory, 300);
+        });
+
+        filterCategory.addEventListener("change", loadInventory);
+        filterStatus.addEventListener("change", loadInventory);
+        
+        filterType.addEventListener("change", (e) => {
+            selectedTypeFilter = e.target.value;
+            loadInventory();
+        });
+
+        filterSortName.addEventListener("change", (e) => {
+            if (e.target.value !== "none") {
+                filterSortStock.value = "none";
+            }
+            currentSortBy = e.target.value;
+            loadInventory();
+        });
+
+        filterSortStock.addEventListener("change", (e) => {
+            if (e.target.value !== "none") {
+                filterSortName.value = "none";
+            }
+            currentSortBy = e.target.value;
+            loadInventory();
+        });
+
+        toggleCustomReorder.addEventListener("change", function() {
+            customReorderActive = this.checked;
+            reorderStatus.innerText = customReorderActive ? "Activado" : "Desactivado";
+
+            if (customReorderActive) {
+                // Style switch active state and hint
+                reorderStatus.classList.remove("text-on-surface-variant");
+                reorderStatus.classList.add("text-primary-container", "font-bold");
+                reorderIcon.classList.add("animate-pulse");
+                dragHint.classList.remove("hidden");
+
+                // Hide standard filters and extra filters container
+                standardFiltersRow.classList.add("hidden");
+                extraFiltersContainer.classList.add("hidden");
+            } else {
+                // Style switch inactive state and hide hint
+                reorderStatus.classList.add("text-on-surface-variant");
+                reorderStatus.classList.remove("text-primary-container", "font-bold");
+                reorderIcon.classList.remove("animate-pulse");
+                dragHint.classList.add("hidden");
+
+                // Show standard filters and extra filters container
+                standardFiltersRow.classList.remove("hidden");
+                extraFiltersContainer.classList.remove("hidden");
+            }
+            
+            loadInventory();
+        });
+    });
+
+    // Load inventory from server
+    async function loadInventory() {
+        itemsCountBadge.innerText = "Cargando...";
+
+        try {
+            let url = "";
+            if (customReorderActive) {
+                // Under reordering mode, fetch all items sorted by DisplayOrder (no filters)
+                url = `/Mas/GetEquipments?sortBy=default`;
+            } else {
+                // Under normal mode, apply standard search, dropdown filters and stock sorting
+                const search = searchInput.value.trim();
+                const category = filterCategory.value;
+                const status = filterStatus.value;
+                const stockFilter = "all";
+                url = `/Mas/GetEquipments?search=${encodeURIComponent(search)}&category=${category}&status=${status}&stockFilter=${stockFilter}&type=${selectedTypeFilter}&sortBy=${currentSortBy}`;
+            }
+
+            const response = await fetch(url);
+            const result = await response.json();
+            
+            if (result.success) {
+                currentEquipments = result.data;
+                
+                // Populate unique types select filter
+                populateTypesFilter(result.types);
+
+                // Render lists
+                renderTable(currentEquipments);
+                renderCards(currentEquipments);
+                
+                // Update badge and handle empty state
+                itemsCountBadge.innerText = `${currentEquipments.length} Ítems`;
+                
+                if (currentEquipments.length === 0) {
+                    emptyState.classList.remove("hidden");
+                    emptyState.classList.add("flex");
+                } else {
+                    emptyState.classList.remove("flex");
+                    emptyState.classList.add("hidden");
+                }
+            } else {
+                console.error("Error al cargar equipamiento:", result.message);
+                itemsCountBadge.innerText = "Error";
+            }
+        } catch (err) {
+            console.error("Error de conexión:", err);
+            itemsCountBadge.innerText = "Error";
+        }
+    }
+
+    // Populate the type selector
+    function populateTypesFilter(types) {
+        // Save selected type
+        const prevValue = selectedTypeFilter;
+        
+        filterType.innerHTML = '<option value="all">Todos</option>';
+        
+        // Also populate datalist
+        const datalist = document.getElementById("existing-types");
+        if (datalist) {
+            datalist.innerHTML = "";
+        }
+
+        types.forEach(t => {
+            if (t) {
+                const opt = document.createElement("option");
+                opt.value = t;
+                opt.textContent = t;
+                if (t === prevValue) {
+                    opt.selected = true;
+                }
+                filterType.appendChild(opt);
+
+                // Populate datalist
+                if (datalist) {
+                    const dlOpt = document.createElement("option");
+                    dlOpt.value = t;
+                    datalist.appendChild(dlOpt);
+                }
+            }
+        });
+        
+        // Restore value in memory in case it's no longer present
+        if (!types.includes(prevValue)) {
+            selectedTypeFilter = "all";
+            filterType.value = "all";
+        }
+    }
+
+    // Category Styling Helpers
+    function getCategoryIcon(cat) {
+        switch(cat) {
+            case "Material": return "inventory_2";
+            case "Herramienta": return "handyman";
+            case "Medicamento": return "medication";
+            default: return "more_horiz";
+        }
+    }
+
+    function getCategoryBadgeClass(cat) {
+        switch(cat) {
+            case "Material": return "border-blue-500/30 text-blue-400 bg-blue-500/10";
+            case "Herramienta": return "border-amber-500/30 text-amber-400 bg-amber-500/10";
+            case "Medicamento": return "border-emerald-500/30 text-emerald-400 bg-emerald-500/10";
+            default: return "border-outline-variant text-on-surface-variant bg-surface-container";
+        }
+    }
+
+    // Status Styling Helpers
+    function getStatusBadge(status) {
+        switch(status) {
+            case "Alto":
+                return `<span class="inline-block px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/30 rounded font-label-caps text-label-caps text-emerald-400 text-[10px] uppercase font-bold tracking-wider">Alto</span>`;
+            case "Medio":
+                return `<span class="inline-block px-2.5 py-1 bg-primary-container/10 border border-primary-container rounded font-label-caps text-label-caps text-primary-container text-[10px] uppercase font-bold tracking-wider">Medio</span>`;
+            case "Bajo":
+                return `<span class="inline-block px-2.5 py-1 bg-error-container/30 border border-error rounded font-label-caps text-label-caps text-error text-[10px] uppercase font-bold tracking-wider animate-pulse">Bajo</span>`;
+            default:
+                return `<span class="inline-block px-2.5 py-1 bg-surface-container-high border border-outline-variant rounded font-label-caps text-label-caps text-on-surface-variant text-[10px] uppercase font-bold tracking-wider">Desconocido</span>`;
+        }
+    }
+
+    // Render Table Row
+    function renderTable(list) {
+        tableBody.innerHTML = "";
+        
+        list.forEach(item => {
+            const tr = document.createElement("tr");
+            tr.className = "border-b border-surface-container-highest hover:bg-surface-container transition-colors group cursor-pointer draggable-item";
+            tr.setAttribute("data-id", item.id);
+            
+            // Draggable only in custom reordering mode
+            if (customReorderActive) {
+                tr.setAttribute("draggable", "true");
+            }
+            
+            // Allow row click for details, except when clicking action buttons
+            tr.onclick = (e) => {
+                if (!e.target.closest("button") && !e.target.closest("a") && !e.target.closest(".cursor-grab")) {
+                    openDetailModal(item.id);
+                }
+            };
+
+            tr.innerHTML = `
+                <td class="py-4 px-4">
+                    <div class="flex items-center gap-2">
+                        ${customReorderActive ? `<span class="material-symbols-outlined text-[18px] text-on-surface-variant/40 hover:text-primary-container cursor-grab select-none">drag_indicator</span>` : ''}
+                        <span class="inline-flex items-center gap-1.5 font-label-caps text-[10px] border px-2 py-0.5 rounded ${getCategoryBadgeClass(item.category)}">
+                            <span class="material-symbols-outlined text-[14px]">${getCategoryIcon(item.category)}</span>
+                            ${item.category}
+                        </span>
+                    </div>
+                </td>
+                <td class="py-4 px-4 font-body-sm text-body-sm text-on-surface font-semibold group-hover:text-primary-container transition-colors">
+                    ${item.name}
+                </td>
+                <td class="py-4 px-4 font-body-sm text-body-sm text-on-surface-variant">
+                    ${item.type}
+                </td>
+                <td class="py-4 px-4 font-body-sm text-body-sm text-right font-bold ${item.stock === 0 ? 'text-error' : 'text-on-surface'}">
+                    ${item.stock} unidades
+                </td>
+                <td class="py-4 px-4 text-center">
+                    ${getStatusBadge(item.status)}
+                </td>
+                <td class="py-4 px-4 text-center">
+                    <div class="flex items-center justify-center gap-2">
+                        <button onclick="openDetailModal(${item.id}); event.stopPropagation();" title="Ver Detalle" class="text-on-surface-variant hover:text-primary-container transition-colors p-1">
+                            <span class="material-symbols-outlined text-[18px]">visibility</span>
+                        </button>
+                        <button onclick="openEditModal(${item.id}); event.stopPropagation();" title="Editar" class="text-on-surface-variant hover:text-primary-container transition-colors p-1">
+                            <span class="material-symbols-outlined text-[18px]">edit</span>
+                        </button>
+                        <button onclick="triggerDelete(${item.id}, '${item.name.replace(/'/g, "\\'")}'); event.stopPropagation();" title="Eliminar" class="text-on-surface-variant hover:text-error transition-colors p-1">
+                            <span class="material-symbols-outlined text-[18px]">delete</span>
+                        </button>
+                    </div>
+                </td>
+            `;
+            tableBody.appendChild(tr);
+        });
+
+        if (customReorderActive) {
+            bindDragAndDrop('#inventory-table-body tr');
+        }
+    }
+
+    // Render Mobile Cards
+    function renderCards(list) {
+        cardsContainer.innerHTML = "";
+        
+        list.forEach(item => {
+            const card = document.createElement("div");
+            card.className = "bg-surface-container-low border border-outline-variant p-4 rounded group hover:border-primary-container transition-colors relative overflow-hidden cursor-pointer draggable-item";
+            card.setAttribute("data-id", item.id);
+
+            // Draggable only in custom reordering mode
+            if (customReorderActive) {
+                card.setAttribute("draggable", "true");
+            }
+            
+            card.onclick = (e) => {
+                if (!e.target.closest("button") && !e.target.closest(".cursor-grab")) {
+                    openDetailModal(item.id);
+                }
+            };
+
+            card.innerHTML = `
+                <div class="absolute top-0 left-0 w-1.5 h-full bg-outline-variant group-hover:bg-primary-container transition-colors"></div>
+                <div class="flex justify-between items-start mb-2 pl-3">
+                    <div class="flex items-start gap-1">
+                        ${customReorderActive ? `<span class="material-symbols-outlined text-[18px] text-on-surface-variant/40 hover:text-primary-container cursor-grab select-none mr-1 mt-0.5">drag_indicator</span>` : ''}
+                        <div>
+                            <h3 class="font-body-md text-body-md font-semibold text-on-surface group-hover:text-primary-container transition-colors mb-1">
+                                ${item.name}
+                            </h3>
+                            <span class="inline-flex items-center gap-1 font-label-caps text-[9px] border px-1.5 py-0.5 rounded ${getCategoryBadgeClass(item.category)}">
+                                <span class="material-symbols-outlined text-[12px]">${getCategoryIcon(item.category)}</span>
+                                ${item.category}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-end gap-1.5">
+                        <span class="font-label-caps text-[10px] bg-background border border-outline-variant text-on-surface px-2 py-0.5 rounded">
+                            Stock: <strong class="${item.stock === 0 ? 'text-error' : 'text-primary-container'}">${item.stock} u</strong>
+                        </span>
+                        ${getStatusBadge(item.status)}
+                    </div>
+                </div>
+                <p class="font-body-sm text-body-sm text-on-surface-variant mb-4 pl-3">
+                    Tipo: <span class="text-on-surface">${item.type}</span>
+                </p>
+                <div class="flex justify-between items-center pl-3 border-t border-surface-container-highest/50 pt-3">
+                    <div></div>
+                    <div class="flex gap-2">
+                        <button onclick="openDetailModal(${item.id}); event.stopPropagation();" class="text-on-surface-variant hover:text-primary-container transition-colors p-1">
+                            <span class="material-symbols-outlined text-[18px]">visibility</span>
+                        </button>
+                        <button onclick="openEditModal(${item.id}); event.stopPropagation();" class="text-on-surface-variant hover:text-primary-container transition-colors p-1">
+                            <span class="material-symbols-outlined text-[18px]">edit</span>
+                        </button>
+                        <button onclick="triggerDelete(${item.id}, '${item.name.replace(/'/g, "\\'")}'); event.stopPropagation();" class="text-on-surface-variant hover:text-error transition-colors p-1">
+                            <span class="material-symbols-outlined text-[18px]">delete</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+            cardsContainer.appendChild(card);
+        });
+
+        if (customReorderActive) {
+            bindDragAndDrop('#inventory-cards-container > div');
+        }
+    }
+
+    // ================= DRAG AND DROP HANDLERS =================
+    
+    function bindDragAndDrop(elementsSelector) {
+        const items = document.querySelectorAll(elementsSelector);
+        items.forEach(item => {
+            item.addEventListener('dragstart', handleDragStart, false);
+            item.addEventListener('dragenter', handleDragEnter, false);
+            item.addEventListener('dragover', handleDragOver, false);
+            item.addEventListener('dragleave', handleDragLeave, false);
+            item.addEventListener('drop', handleDrop, false);
+            item.addEventListener('dragend', handleDragEnd, false);
+        });
+    }
+
+    function handleDragStart(e) {
+        if (!customReorderActive) {
+            e.preventDefault();
+            return;
+        }
+        dragSourceEl = this;
+        this.style.opacity = '0.4';
+        this.classList.add('border-primary-container', 'border-dashed');
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/html', this.innerHTML);
+        e.dataTransfer.setData('text/plain', this.getAttribute('data-id'));
+    }
+
+    function handleDragOver(e) {
+        if (e.preventDefault) {
+            e.preventDefault();
+        }
+        e.dataTransfer.dropEffect = 'move';
+        return false;
+    }
+
+    function handleDragEnter(e) {
+        if (this !== dragSourceEl) {
+            this.classList.add('bg-surface-container-high');
+        }
+    }
+
+    function handleDragLeave(e) {
+        this.classList.remove('bg-surface-container-high');
+    }
+
+    async function handleDrop(e) {
+        if (e.stopPropagation) {
+            e.stopPropagation();
+        }
+        
+        const targetId = this.getAttribute('data-id');
+        const sourceId = e.dataTransfer.getData('text/plain');
+        
+        if (dragSourceEl !== this && sourceId && targetId) {
+            const sourceIndex = currentEquipments.findIndex(item => item.id == sourceId);
+            const targetIndex = currentEquipments.findIndex(item => item.id == targetId);
+            
+            if (sourceIndex !== -1 && targetIndex !== -1) {
+                // Move item in internal array
+                const [movedItem] = currentEquipments.splice(sourceIndex, 1);
+                currentEquipments.splice(targetIndex, 0, movedItem);
+                
+                // Re-render
+                renderTable(currentEquipments);
+                renderCards(currentEquipments);
+                
+                // Persist order in the backend database
+                await persistOrder();
+            }
+        }
+        return false;
+    }
+
+    function handleDragEnd(e) {
+        this.style.opacity = '1';
+        this.classList.remove('border-primary-container', 'border-dashed');
+        
+        const items = document.querySelectorAll('.draggable-item');
+        items.forEach(item => {
+            item.classList.remove('bg-surface-container-high');
+        });
+    }
+
+    async function persistOrder() {
+        const ids = currentEquipments.map(e => e.id);
+        try {
+            const response = await fetch('/Mas/UpdateOrder', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(ids)
+            });
+            const result = await response.json();
+            if (!result.success) {
+                showToast("No se pudo guardar el orden personalizado.", "error");
+            }
+        } catch (err) {
+            console.error(err);
+            showToast("Error de conexión al guardar el orden.", "error");
+        }
+    }
+
+    // ================= TOAST NOTIFICATION HANDLER =================
+    
+    function showToast(message, type = "success") {
+        const container = document.getElementById("toast-container");
+        if (!container) return;
+
+        const toast = document.createElement("div");
+        toast.className = `flex items-center gap-3 bg-surface-container border-l-4 p-4 rounded shadow-2xl transition-all duration-300 transform translate-x-12 opacity-0 pointer-events-auto max-w-sm`;
+        
+        if (type === "success") {
+            toast.className += " border-primary-container";
+        } else if (type === "error") {
+            toast.className += " border-error";
+        }
+
+        const icon = type === "success" ? "check_circle" : "error";
+        const iconColor = type === "success" ? "text-primary-container" : "text-error";
+
+        toast.innerHTML = `
+            <span class="material-symbols-outlined ${iconColor}">${icon}</span>
+            <div class="text-on-surface text-sm font-body-sm font-medium pr-2">${message}</div>
+            <button onclick="this.parentElement.remove()" class="text-on-surface-variant hover:text-on-surface transition-colors ml-auto">
+                <span class="material-symbols-outlined text-[16px]">close</span>
+            </button>
+        `;
+
+        container.appendChild(toast);
+
+        // Animate in
+        setTimeout(() => {
+            toast.classList.remove("translate-x-12", "opacity-0");
+            toast.classList.add("translate-x-0", "opacity-100");
+        }, 50);
+
+        // Auto remove after 3.5s
+        setTimeout(() => {
+            toast.classList.remove("translate-x-0", "opacity-100");
+            toast.classList.add("translate-x-12", "opacity-0");
+            setTimeout(() => toast.remove(), 300);
+        }, 3500);
+    }
+
+    // Modal Visual Controls
+    function showModal(el) {
+        el.classList.remove("modal-hidden");
+        document.body.style.overflow = "hidden"; // Prevent background scroll
+    }
+
+    function hideModal(el) {
+        el.classList.add("modal-hidden");
+        if (document.querySelectorAll('.fixed.inset-0:not(.modal-hidden)').length === 0) {
+            document.body.style.overflow = ""; // Re-enable scroll
+        }
+    }
+
+    // Form Modal Open for Create
+    function openCreateModal() {
+        originalName = "";
+        formId.value = "";
+        formName.value = "";
+        formCategory.value = "Material";
+        formType.value = "";
+        formStock.value = 0;
+        formLowThreshold.value = 5;
+        formMediumThreshold.value = 15;
+        formErrorBanner.innerHTML = "";
+        formErrorBanner.classList.add("hidden");
+        
+        formModalTitle.textContent = "Registrar Nuevo Equipamiento";
+        showModal(formModal);
+    }
+
+    // Form Modal Open for Edit
+    async function openEditModal(id) {
+        // Close detail modal if open
+        closeDetailModal();
+        
+        formErrorBanner.innerHTML = "";
+        formErrorBanner.classList.add("hidden");
+
+        try {
+            const response = await fetch(`/Mas/GetEquipment/${id}`);
+            const result = await response.json();
+            
+            if (result.success) {
+                const item = result.data;
+                formId.value = item.id;
+                formName.value = item.name;
+                originalName = item.name;
+                formCategory.value = item.category;
+                formType.value = item.type;
+                formStock.value = item.stock;
+                formLowThreshold.value = item.lowThreshold;
+                formMediumThreshold.value = item.mediumThreshold;
+
+                formModalTitle.textContent = "Editar Equipamiento";
+                showModal(formModal);
+            } else {
+                showToast("Error al cargar detalles del equipamiento para editar.", "error");
+            }
+        } catch (err) {
+            console.error(err);
+            showToast("Error al conectarse con el servidor.", "error");
+        }
+    }
+
+    function closeFormModal() {
+        hideModal(formModal);
+        equipmentForm.reset();
+    }
+
+    // Handle Form submission
+    async function handleFormSubmit(e) {
+        e.preventDefault();
+        
+        formErrorBanner.innerHTML = "";
+        formErrorBanner.classList.add("hidden");
+
+        // Collect fields
+        const id = formId.value ? parseInt(formId.value) : 0;
+        const name = formName.value.trim();
+        const category = formCategory.value;
+        const type = formType.value.trim();
+        const stock = parseInt(formStock.value);
+        const low = parseInt(formLowThreshold.value);
+        const medium = parseInt(formMediumThreshold.value);
+
+        // Validation client-side checks
+        let errors = [];
+        if (!name) errors.push("La descripción/nombre es obligatoria.");
+        if (!type) errors.push("El tipo es obligatorio.");
+        if (isNaN(stock) || stock < 0) errors.push("El stock no puede ser negativo.");
+        if (isNaN(low) || low < 0) errors.push("El umbral bajo no puede ser negativo.");
+        if (isNaN(medium) || medium < 0) errors.push("El umbral medio no puede ser negativo.");
+        if (medium <= low) errors.push("El umbral medio debe ser mayor que el umbral bajo.");
+
+        if (errors.length > 0) {
+            formErrorBanner.innerHTML = errors.map(err => `<p class="flex items-center gap-1.5"><span class="material-symbols-outlined text-sm">error</span> ${err}</p>`).join("");
+            formErrorBanner.classList.remove("hidden");
+            return;
+        }
+
+        // Object payload
+        const payload = {
+            id: id,
+            name: name,
+            category: category,
+            type: type,
+            stock: stock,
+            lowThreshold: low,
+            mediumThreshold: medium
+        };
+
+        tempSaveData = payload;
+
+        // Duplicate conflict validation check
+        const nameChanged = id === 0 || name.toLowerCase() !== originalName.toLowerCase();
+        if (!bypassConflictCheck && nameChanged) {
+            try {
+                const checkUrl = `/Mas/CheckConflict?id=${id}&name=${encodeURIComponent(name)}&type=${encodeURIComponent(type)}`;
+                const checkResponse = await fetch(checkUrl);
+                const checkResult = await checkResponse.json();
+                
+                if (checkResult.success && checkResult.hasConflict) {
+                    // Populate conflict modal and show
+                    document.getElementById("conflict-item-name").innerText = `"${checkResult.conflictName}"`;
+                    
+                    document.getElementById("conflict-yes-btn").onclick = () => {
+                        bypassConflictCheck = true;
+                        hideModal(confirmConflictModal);
+                        // Re-submit
+                        handleFormSubmit(e);
+                    };
+                    
+                    showModal(confirmConflictModal);
+                    return;
+                }
+            } catch (err) {
+                console.error("Error al verificar duplicidad:", err);
+            }
+        }
+
+        // Reset bypass conflict
+        bypassConflictCheck = false;
+
+        if (id > 0) {
+            // Edit Flow -> Requires confirmation warning
+            confirmEditItemName.innerText = `"${name}"`;
+            confirmEditYesBtn.onclick = executeSaveAction;
+            showModal(confirmEditModal);
+        } else {
+            // Create Flow -> Saves directly
+            executeSaveAction();
+        }
+    }
+
+    // Execute actual Save API call (AJAX POST)
+    async function executeSaveAction() {
+        if (isSubmitting) return;
+        isSubmitting = true;
+        
+        // Disable buttons
+        confirmEditYesBtn.innerText = "Guardando...";
+        confirmEditYesBtn.disabled = true;
+
+        try {
+            const isEdit = tempSaveData.id > 0;
+            const endpoint = isEdit ? "/Mas/EditEquipment" : "/Mas/CreateEquipment";
+            
+            const response = await fetch(endpoint, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(tempSaveData)
+            });
+
+            const result = await response.json();
+            
+            if (result.success) {
+                // Success! Close all modals and reload list dynamically
+                closeConfirmEditModal();
+                closeFormModal();
+                loadInventory();
+                
+                // Show floating notification
+                const msg = isEdit 
+                    ? `El equipamiento "${tempSaveData.name}" se actualizó correctamente.`
+                    : `El equipamiento "${tempSaveData.name}" se registró con éxito.`;
+                showToast(msg, "success");
+            } else {
+                // Server validation failed, show errors on form modal
+                closeConfirmEditModal();
+                const errorsHtml = result.errors.map(err => `<p class="flex items-center gap-1.5"><span class="material-symbols-outlined text-sm">error</span> ${err}</p>`).join("");
+                formErrorBanner.innerHTML = errorsHtml;
+                formErrorBanner.classList.remove("hidden");
+            }
+        } catch (err) {
+            console.error(err);
+            showToast("Error de red al intentar guardar los datos.", "error");
+            closeConfirmEditModal();
+        } finally {
+            isSubmitting = false;
+            confirmEditYesBtn.innerText = "Sí, Guardar Cambios";
+            confirmEditYesBtn.disabled = false;
+        }
+    }
+
+    function closeConfirmEditModal() {
+        hideModal(confirmEditModal);
+    }
+    
+    function closeConflictModal() {
+        hideModal(confirmConflictModal);
+        bypassConflictCheck = false;
+    }
+
+    // Detail Panel View
+    async function openDetailModal(id) {
+        try {
+            const response = await fetch(`/Mas/GetEquipment/${id}`);
+            const result = await response.json();
+            
+            if (result.success) {
+                const item = result.data;
+                
+                detailName.innerText = item.name;
+                detailCategory.innerText = item.category;
+                detailType.innerText = item.type;
+                detailStock.innerText = `${item.stock} unidades`;
+                detailLowThreshold.innerText = `${item.lowThreshold} unidades`;
+                detailMediumThreshold.innerText = `${item.mediumThreshold} unidades`;
+                
+                // Style Category Badge
+                detailCategoryBadge.className = `flex items-center gap-1 font-label-caps text-[10px] uppercase border px-2 py-0.5 rounded ${getCategoryBadgeClass(item.category)}`;
+                detailCategoryIcon.innerText = getCategoryIcon(item.category);
+                
+                // Set Status Badge
+                detailStatusBadge.innerHTML = getStatusBadge(item.status);
+                
+                // Formulate diagnosis description
+                let text = "";
+                if (item.stock <= item.lowThreshold) {
+                    text = `El stock actual (${item.stock} unidades) es menor o igual al umbral crítico bajo configurado (menor o igual a ${item.lowThreshold} unidades). Se requiere reposición inmediata de este insumo.`;
+                } else if (item.stock <= item.mediumThreshold) {
+                    text = `El stock se encuentra en niveles de alerta preventiva (menor o igual a ${item.mediumThreshold} unidades). Considerar solicitar reabastecimiento pronto para evitar desabastecimiento.`;
+                } else {
+                    text = `El stock está en niveles óptimos y saludables (mayor a ${item.mediumThreshold} unidades). No se requiere acción inmediata.`;
+                }
+                detailDiagnosis.innerText = text;
+
+                // Bind Action buttons
+                detailEditBtn.onclick = () => openEditModal(item.id);
+                detailDeleteBtn.onclick = () => triggerDelete(item.id, item.name);
+
+                showModal(detailModal);
+            } else {
+                showToast("No se pudo cargar el detalle del equipamiento.", "error");
+            }
+        } catch (err) {
+            console.error(err);
+            showToast("Error al cargar la información detallada.", "error");
+        }
+    }
+
+    // Trigger Delete flow (double alerts confirmation)
+    function triggerDelete(id, name) {
+        pendingDeleteId = id;
+        pendingDeleteName = name;
+
+        // Populate modal text
+        confirmDelete1ItemName.innerText = `"${name}"`;
+        
+        // Bind first alert affirmative response
+        confirmDelete1YesBtn.onclick = proceedToDeleteStep2;
+        
+        showModal(confirmDelete1Modal);
+    }
+
+    function closeConfirmDelete1Modal() {
+        hideModal(confirmDelete1Modal);
+        clearDeleteState();
+    }
+
+    function proceedToDeleteStep2() {
+        hideModal(confirmDelete1Modal);
+        
+        // Populate modal text
+        confirmDelete2ItemName.innerText = `"${pendingDeleteName}"`;
+        
+        // Bind second alert affirmative response
+        confirmDelete2YesBtn.onclick = executeDeleteAction;
+        
+        showModal(confirmDelete2Modal);
+    }
+
+    function closeConfirmDelete2Modal() {
+        hideModal(confirmDelete2Modal);
+        clearDeleteState();
+    }
+
+    // Call Delete API
+    async function executeDeleteAction() {
+        if (isSubmitting || !pendingDeleteId) return;
+        isSubmitting = true;
+        
+        confirmDelete2YesBtn.innerText = "Eliminando...";
+        confirmDelete2YesBtn.disabled = true;
+
+        const deletedName = pendingDeleteName || "Equipamiento";
+
+        try {
+            const response = await fetch(`/Mas/DeleteEquipment?id=${pendingDeleteId}`, {
+                method: "POST"
+            });
+            const result = await response.json();
+            
+            if (result.success) {
+                // Success! Close everything and refresh list dynamically
+                closeConfirmDelete2Modal();
+                closeDetailModal(); // Close detail panel just in case
+                loadInventory();
+                
+                showToast(`El equipamiento "${deletedName}" se ha eliminado correctamente.`, "success");
+            } else {
+                showToast(result.message || "Error al intentar borrar el equipamiento.", "error");
+                closeConfirmDelete2Modal();
+            }
+        } catch (err) {
+            console.error(err);
+            showToast("Error de conexión al borrar.", "error");
+            closeConfirmDelete2Modal();
+        } finally {
+            isSubmitting = false;
+            confirmDelete2YesBtn.innerText = "Confirmar y Eliminar";
+            confirmDelete2YesBtn.disabled = false;
+            clearDeleteState();
+        }
+    }
+
+    function clearDeleteState() {
+        pendingDeleteId = null;
+        pendingDeleteName = "";
+    }
+    
+    function closeDetailModal() {
+        hideModal(detailModal);
+    }
+</script>
+}

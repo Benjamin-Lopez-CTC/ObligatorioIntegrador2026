@@ -18,7 +18,7 @@ namespace ObligatorioIntegrador2026.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> RegistroLogins(string filter = "all", string search = null)
+        public async Task<IActionResult> RegistroLogins(string filter = "all", string? search = null)
         {
             var today = DateTime.Today;
             var yesterday = DateTime.Now.AddDays(-1);
