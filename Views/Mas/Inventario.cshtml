@@ -15,7 +15,7 @@
         <h2 class="font-display text-display text-on-surface mb-2 tracking-tight">Inventario de Equipamiento</h2>
         <p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">Gestión de herramientas, insumos médicos y materiales de trabajo para operaciones apícolas.</p>
     </div>
-    <button class="bg-primary-container text-on-primary-container hover:bg-primary-fixed transition-colors px-6 py-3 rounded font-label-caps text-label-caps flex items-center justify-center gap-2 whitespace-nowrap shadow-sm">
+    <button class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-3 rounded font-label-caps text-label-caps flex items-center justify-center gap-2 whitespace-nowrap">
         <span class="material-symbols-outlined text-[18px]">add</span>
         Registrar Nuevo Equipo
     </button>
@@ -24,7 +24,7 @@
 <div class="grid grid-cols-1 md:grid-cols-12 gap-gutter mb-12">
     <!-- Category: Herramientas (Spans 8 cols) -->
     <section class="md:col-span-8 bg-surface-container-low border border-outline-variant rounded-lg p-6">
-        <div class="flex items-center gap-3 mb-6 pb-4 border-b border-surface-container-highest">
+        <div class="flex items-center gap-3 mb-6 pb-4 border-b border-outline-variant">
             <span class="material-symbols-outlined text-primary-container icon-fill">handyman</span>
             <h2 class="font-headline-lg text-headline-lg text-on-surface">Herramientas</h2>
         </div>
@@ -63,13 +63,13 @@
     </section>
     <!-- Category: Medicamentos (Spans 4 cols) -->
     <section class="md:col-span-4 bg-surface-container-low border border-outline-variant rounded-lg p-6 flex flex-col">
-        <div class="flex items-center gap-3 mb-6 pb-4 border-b border-surface-container-highest">
+        <div class="flex items-center gap-3 mb-6 pb-4 border-b border-outline-variant">
             <span class="material-symbols-outlined text-primary-container icon-fill">medication</span>
             <h2 class="font-headline-lg text-headline-lg text-on-surface">Medicamentos</h2>
         </div>
         <div class="flex flex-col gap-4 flex-1">
             <!-- Minimal List Item -->
-            <div class="flex justify-between items-center pb-3 border-b border-surface-container-highest group cursor-pointer">
+            <div class="flex justify-between items-center pb-3 border-b border-outline-variant group cursor-pointer">
                 <div>
                     <h3 class="font-body-sm text-body-sm text-on-surface font-medium group-hover:text-primary-container transition-colors">Ácido Oxálico (Glicerina)</h3>
                     <span class="font-label-caps text-label-caps text-on-surface-variant text-[10px]">Tratamiento Varroa</span>
@@ -80,7 +80,7 @@
                 </div>
             </div>
             <!-- Minimal List Item -->
-            <div class="flex justify-between items-center pb-3 border-b border-surface-container-highest group cursor-pointer">
+            <div class="flex justify-between items-center pb-3 border-b border-outline-variant group cursor-pointer">
                 <div>
                     <h3 class="font-body-sm text-body-sm text-on-surface font-medium group-hover:text-primary-container transition-colors">Amitraz (Tiras)</h3>
                     <span class="font-label-caps text-label-caps text-on-surface-variant text-[10px]">Tratamiento Varroa</span>
@@ -90,7 +90,7 @@
                     <div class="font-label-caps text-label-caps text-primary-container text-[10px]">$22.50</div>
                 </div>
             </div>
-            <button class="mt-auto w-full py-2 border border-outline-variant text-on-surface hover:border-primary-container hover:text-primary-container rounded transition-colors font-label-caps text-label-caps flex items-center justify-center gap-2">
+            <button class="mt-auto w-full py-2 px-4 border border-primary-container text-primary-container hover:bg-primary-container/10 rounded transition-colors font-label-caps text-label-caps flex items-center justify-center gap-2">
                 <span class="material-symbols-outlined text-sm">add_shopping_cart</span>
                 Solicitar Insumos
             </button>
@@ -98,14 +98,14 @@
     </section>
     <!-- Category: Materiales (Spans 12 cols) -->
     <section class="md:col-span-12 bg-surface-container-low border border-outline-variant rounded-lg p-6 mt-4">
-        <div class="flex items-center gap-3 mb-6 pb-4 border-b border-surface-container-highest">
+        <div class="flex items-center gap-3 mb-6 pb-4 border-b border-outline-variant">
             <span class="material-symbols-outlined text-primary-container icon-fill">inventory_2</span>
             <h2 class="font-headline-lg text-headline-lg text-on-surface">Materiales y Consumibles</h2>
         </div>
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
-                    <tr class="border-b border-surface-container-highest">
+                    <tr class="border-b border-outline-variant">
                         <th class="font-label-caps text-label-caps text-on-surface-variant py-3 px-4">Descripción</th>
                         <th class="font-label-caps text-label-caps text-on-surface-variant py-3 px-4">Tipo</th>
                         <th class="font-label-caps text-label-caps text-on-surface-variant py-3 px-4 text-right">Stock</th>
@@ -114,7 +114,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="border-b border-surface-container-highest hover:bg-surface-container transition-colors">
+                    <tr class="border-b border-outline-variant hover:bg-surface-container transition-colors">
                         <td class="font-body-sm text-body-sm text-on-surface py-3 px-4">Alzas Melarias (Media)</td>
                         <td class="font-body-sm text-body-sm text-on-surface-variant py-3 px-4">Madera</td>
                         <td class="font-body-sm text-body-sm text-on-surface py-3 px-4 text-right">120</td>
@@ -123,7 +123,7 @@
                             <span class="inline-block px-2 py-1 bg-surface-container-high border border-outline-variant rounded font-label-caps text-label-caps text-on-surface text-[10px]">Adecuado</span>
                         </td>
                     </tr>
-                    <tr class="border-b border-surface-container-highest hover:bg-surface-container transition-colors">
+                    <tr class="border-b border-outline-variant hover:bg-surface-container transition-colors">
                         <td class="font-body-sm text-body-sm text-on-surface py-3 px-4">Marcos Alambrados</td>
                         <td class="font-body-sm text-body-sm text-on-surface-variant py-3 px-4">Madera/Alambre</td>
                         <td class="font-body-sm text-body-sm text-on-surface py-3 px-4 text-right">450</td>

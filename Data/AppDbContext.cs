@@ -10,6 +10,7 @@ namespace ObligatorioIntegrador2026.Data
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<LoginRecord> LoginRecords { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -82,11 +82,11 @@ typography:
     lineHeight: '1.0'
     letterSpacing: 0.1em
 rounded:
-  sm: 0.125rem
-  DEFAULT: 0.25rem
-  md: 0.375rem
-  lg: 0.5rem
-  xl: 0.75rem
+  sm: 0.0625rem
+  DEFAULT: 0.125rem
+  md: 0.1875rem
+  lg: 0.25rem
+  xl: 0.5rem
   full: 9999px
 spacing:
   unit: 8px
@@ -141,14 +141,14 @@ To maintain the clean, minimalist aesthetic, this design system avoids tradition
 
 The shape language is **Soft** but disciplined. 
 
-- **Components:** Standard buttons and input fields use a 0.25rem (4px) radius. This provides a slight hint of approachability while maintaining the overall "technical" feel of the interface.
-- **Large Elements:** Product cards or hero image containers use a 0.5rem (8px) radius.
+- **Components:** Standard buttons and input fields use a 0.125rem (2px) radius. This provides a slight hint of approachability while maintaining the overall "technical" feel of the interface.
+- **Large Elements:** Product cards or hero image containers use a 0.25rem (4px) radius.
 - **Icons:** Should be stroke-based (2px weight) with squared-off ends to match the architectural feel of the typography.
 
 ## Components
 
 ### Buttons
-- **Primary:** Background #FFD900, Text #000000, 4px radius. High-impact for "Order Honey" or "Contact Apiary."
+- **Primary:** Background #FFD900, Text #000000, 2px radius. High-impact for "Order Honey" or "Contact Apiary."
 - **Secondary:** Transparent background, 1px Border #FFD900, Text #FFD900.
 - **Ghost:** White text with no background, used for secondary navigation or "Cancel" actions.
 

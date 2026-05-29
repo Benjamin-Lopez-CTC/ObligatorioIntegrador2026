@@ -98,11 +98,16 @@
                         "surface-container-low": "#1a1c1c",
                         "tertiary-fixed": "#e4e2e1"
                     },
-                    "borderRadius": {
-                        "DEFAULT": "0.125rem",
-                        "lg": "0.25rem",
-                        "xl": "0.5rem",
-                        "full": "0.75rem"
+                    borderRadius: {
+                        'none': '0',
+                        'sm': '0.0625rem',
+                        DEFAULT: '0.125rem',
+                        'md': '0.1875rem',
+                        'lg': '0.25rem',
+                        'xl': '0.5rem',
+                        '2xl': '1rem',
+                        '3xl': '1.5rem',
+                        'full': '9999px',
                     },
                     "spacing": {
                         "gutter": "24px",
@@ -167,7 +172,7 @@
                             <span class="material-symbols-outlined text-[18px]">more_horiz</span> Más
                             <span class="material-symbols-outlined text-[18px]">expand_more</span>
                         </button>
-                        <div class="absolute top-full right-0 w-48 bg-surface-container border border-surface-container-highest rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 flex flex-col py-1">
+                        <div class="absolute top-full left-1/2 -translate-x-1/2 w-48 bg-surface-container border border-outline-variant rounded shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 flex flex-col py-1">
                             <a asp-controller="Mas" asp-action="Movimientos" class="@GetDropdownItemClass("Mas", "Movimientos")">
                                 <span class="material-symbols-outlined text-[18px]">local_shipping</span> Movimientos
                             </a>
@@ -194,9 +199,7 @@
                 </nav>
             </div>
             <div class="flex items-center gap-4">
-                <button class="text-on-surface-variant hover:text-primary-container transition-colors focus:ring-2 focus:ring-primary-container outline-none rounded-full p-1">
-                    <span class="material-symbols-outlined">notifications</span>
-                </button>
+
                 <div class="flex items-center gap-3">
                     <div class="text-right hidden md:block">
                         <p class="font-label-caps text-label-caps text-on-surface">@User.Claims.FirstOrDefault(c => c.Type == "FullName")?.Value</p>
@@ -232,7 +235,7 @@
             <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary-container transition-opacity hidden sm:inline" href="#">Soporte API</a>
             <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary-container transition-opacity" href="#">Privacidad</a>
         </div>
-        <span class="font-body-sm text-body-sm text-on-surface-variant text-center md:text-right">Felipe Alvarez y Benjamin Lopez - 2026</span>
+        <span class="font-body-sm text-body-sm text-on-surface-variant text-center md:text-right">Felipe Álvarez y Benjamín López - 2026</span>
     </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

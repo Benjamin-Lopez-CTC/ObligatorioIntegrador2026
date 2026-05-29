@@ -1,16 +1,90 @@
+@model IEnumerable<ObligatorioIntegrador2026.Models.LoginRecord>
 @{
     ViewData["Title"] = "Registro de Logins";
 }
 
-<div class="max-w-container-max mx-auto px-margin-desktop py-12">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-12">
     <div class="flex justify-between items-end mb-8">
         <div>
-            <h1 class="font-display text-display text-primary mb-2">Registro de Logins</h1>
-            <p class="font-body-md text-on-surface-variant">Historial de accesos al sistema. (Solo Administradores)</p>
+            <h1 class="font-display text-display text-on-surface mb-2 tracking-tight">Registro de Inicios de Sesión</h1>
+            <p class="font-body-md text-body-md text-on-surface-variant">Historial de accesos al sistema. (Solo Administradores)</p>
         </div>
     </div>
 
-    <div class="bg-surface-container border border-secondary-container rounded-lg overflow-hidden p-6">
-        <p class="text-on-surface-variant">Esta vista está en construcción. Aquí se mostrarán los registros de inicio de sesión.</p>
-    </div>
+    <!-- Tech Summary Bento Grid -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <div class="bg-surface-container border border-outline-variant p-6 rounded flex flex-col justify-between">
+            <span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">Total Accesos Hoy</span>
+            <div class="font-display text-display text-primary-container mt-4">@ViewBag.TotalHoy</div>
+        </div>
+        <div class="bg-surface-container border border-outline-variant p-6 rounded flex flex-col justify-between">
+            <span class="font-label-caps text-label-caps text-error uppercase tracking-widest">Intentos Fallidos</span>
+            <div class="font-display text-display text-error mt-4">@ViewBag.Fallidos</div>
+        </div>
+        <div class="bg-surface-container border border-outline-variant p-6 rounded flex flex-col justify-between">
+            <span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">IPs Activas</span>
+            <div class="font-display text-display text-primary-container mt-4">@ViewBag.IpsActivas</div>
+        </div>
+    </section>
+
+    <!-- Filters -->
+    <form method="get" asp-action="RegistroLogins" asp-controller="Admin" class="flex flex-col md:flex-row gap-4 mb-8 items-center justify-between border-b border-outline-variant pb-6">
+        <input type="hidden" name="filter" value="@ViewBag.CurrentFilter" id="filterInput" />
+        <div class="flex flex-wrap gap-4">
+            <button type="button" onclick="document.getElementById('filterInput').value='all'; this.form.submit();" class="px-4 py-2 rounded border @(ViewBag.CurrentFilter == "all" || ViewBag.CurrentFilter == null ? "border-primary-container text-primary-container bg-primary-container/10" : "border-outline-variant text-on-surface-variant hover:border-primary-container") font-label-caps text-label-caps transition-colors">Todos</button>
+            <button type="button" onclick="document.getElementById('filterInput').value='24h'; this.form.submit();" class="px-4 py-2 rounded border @(ViewBag.CurrentFilter == "24h" ? "border-primary-container text-primary-container bg-primary-container/10" : "border-outline-variant text-on-surface-variant hover:border-primary-container") font-label-caps text-label-caps transition-colors">Últimas 24 horas</button>
+            <button type="button" onclick="document.getElementById('filterInput').value='failed'; this.form.submit();" class="px-4 py-2 rounded border @(ViewBag.CurrentFilter == "failed" ? "border-primary-container text-primary-container bg-primary-container/10" : "border-outline-variant text-on-surface-variant hover:border-primary-container") font-label-caps text-label-caps transition-colors">Fallidos</button>
+        </div>
+        <div class="w-full md:w-64 relative flex items-center">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 transform -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+            <input name="search" value="@ViewBag.CurrentSearch" onkeydown="if(event.key === 'Enter') this.form.submit();" class="w-full bg-surface-container border border-outline-variant rounded py-2 pl-10 pr-4 font-label-caps text-label-caps text-on-surface focus:border-primary-container focus:outline-none transition-colors" placeholder="Usuario específico..." type="text"/>
+        </div>
+    </form>
+
+    <!-- Data Table -->
+    <section class="overflow-x-auto bg-surface-container border border-outline-variant rounded">
+        <table class="w-full text-left border-collapse min-w-[800px]">
+            <thead>
+                <tr class="bg-surface-container-high border-b border-outline-variant">
+                    <th class="py-4 px-6 font-label-caps text-label-caps text-on-surface-variant font-normal">FECHA Y HORA</th>
+                    <th class="py-4 px-6 font-label-caps text-label-caps text-on-surface-variant font-normal">USUARIO</th>
+                    <th class="py-4 px-6 font-label-caps text-label-caps text-on-surface-variant font-normal">DIRECCIÓN IP</th>
+                    <th class="py-4 px-6 font-label-caps text-label-caps text-on-surface-variant font-normal">DISPOSITIVO/NAVEGADOR</th>
+                    <th class="py-4 px-6 font-label-caps text-label-caps text-on-surface-variant font-normal">UBICACIÓN</th>
+                    <th class="py-4 px-6 font-label-caps text-label-caps text-on-surface-variant font-normal text-right">ESTADO</th>
+                </tr>
+            </thead>
+            <tbody class="font-body-sm text-body-sm text-on-surface">
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var record in Model)
+                    {
+                        <tr class="border-b border-outline-variant hover:bg-surface-container-high transition-colors">
+                            <td class="py-4 px-6 font-label-caps text-label-caps text-on-surface-variant">@record.AttemptDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                            <td class="py-4 px-6 font-medium">@record.Username</td>
+                            <td class="py-4 px-6 font-label-caps text-label-caps">@record.IpAddress</td>
+                            <td class="py-4 px-6">@record.DeviceBrowser</td>
+                            <td class="py-4 px-6 text-on-surface-variant">@record.Location</td>
+                            <td class="py-4 px-6 text-right">
+                                @if (record.IsSuccess)
+                                {
+                                    <span class="inline-block px-3 py-1 bg-primary-container text-on-primary font-label-caps text-[10px] font-bold rounded">EXITOSO</span>
+                                }
+                                else
+                                {
+                                    <span class="inline-block px-3 py-1 border border-error text-error font-label-caps text-[10px] font-bold rounded">FALLIDO</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr class="border-b border-outline-variant">
+                        <td colspan="6" class="py-8 text-center text-on-surface-variant">No hay registros de inicio de sesión aún.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </section>
 </div>
