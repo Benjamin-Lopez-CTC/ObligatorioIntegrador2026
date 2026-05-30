@@ -16,6 +16,7 @@ namespace ObligatorioIntegrador2026.Data
         public DbSet<Colmena> Colmenas { get; set; }
         public DbSet<Treatment> Treatments { get; set; }
         public DbSet<TreatmentEquipment> TreatmentEquipments { get; set; }
+        public DbSet<NotaTecnica> NotasTecnicas { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -48,13 +49,24 @@ namespace ObligatorioIntegrador2026.Data
 
             // Seed inicial de Colmenas
             modelBuilder.Entity<Colmena>().HasData(
-                new Colmena { Id = 1, Identificador = "#HIVE-0042", CodigoEscaneo = "100001", ApiarioId = 1, Estado = "Óptimo", PesoKg = 45.2, TemperaturaInterna = 34.5, HumedadInterna = 55.0, ProduccionMielKg = 40.0, EsPiloto = true, CantidadAbejas = 45000, UbicacionIntraApiario = "Fila 1, Pos 1", ComportamientoAbejas = "Dócil", EstadoReina = "Presente", UltimaNotaTecnica = "Revisión general, todo normal.", FechaUltimaNota = DateTime.Now.AddDays(-10) },
-                new Colmena { Id = 2, Identificador = "#HIVE-0089", CodigoEscaneo = "100002", ApiarioId = 1, Estado = "Alerta", PesoKg = 42.8, TemperaturaInterna = 32.0, HumedadInterna = 0, ProduccionMielKg = 35.0, EsPiloto = false, CantidadAbejas = 38000, UbicacionIntraApiario = "Fila 1, Pos 2", ComportamientoAbejas = "Defensivo", EstadoReina = "Presente", UltimaNotaTecnica = "Abejas defensivas, observar.", FechaUltimaNota = DateTime.Now.AddDays(-15) },
-                new Colmena { Id = 3, Identificador = "#HIVE-0112", CodigoEscaneo = "100003", ApiarioId = 1, Estado = "Crítico", PesoKg = 31.0, TemperaturaInterna = 36.5, HumedadInterna = 60.0, ProduccionMielKg = 20.0, EsPiloto = true, CantidadAbejas = 15000, UbicacionIntraApiario = "Fila 2, Pos 1", ComportamientoAbejas = "Agresivo", EstadoReina = "Ausente", UltimaNotaTecnica = "Reina no avistada. Posible enjambrazón.", FechaUltimaNota = DateTime.Now.AddDays(-2) },
-                new Colmena { Id = 4, Identificador = "#HIVE-0045", CodigoEscaneo = "100004", ApiarioId = 1, Estado = "Óptimo", PesoKg = 48.1, TemperaturaInterna = 34.2, HumedadInterna = 58.0, ProduccionMielKg = 45.0, EsPiloto = true, CantidadAbejas = 50000, UbicacionIntraApiario = "Fila 2, Pos 2", ComportamientoAbejas = "Dócil", EstadoReina = "Presente", UltimaNotaTecnica = "Excelente producción.", FechaUltimaNota = DateTime.Now.AddDays(-5) },
-                new Colmena { Id = 5, Identificador = "#HIVE-0001", CodigoEscaneo = "100005", ApiarioId = 2, Estado = "Óptimo", PesoKg = 40.0, TemperaturaInterna = 35.1, HumedadInterna = 52.0, ProduccionMielKg = 30.0, EsPiloto = true, CantidadAbejas = 42000, UbicacionIntraApiario = "Fila 1, Pos 1", ComportamientoAbejas = "Dócil", EstadoReina = "Presente", UltimaNotaTecnica = "Alza agregada.", FechaUltimaNota = DateTime.Now.AddDays(-7) },
-                new Colmena { Id = 6, Identificador = "#HIVE-0002", CodigoEscaneo = "100006", ApiarioId = 2, Estado = "Óptimo", PesoKg = 39.5, TemperaturaInterna = 34.8, HumedadInterna = 0, ProduccionMielKg = 30.0, EsPiloto = false, CantidadAbejas = 41000, UbicacionIntraApiario = "Fila 1, Pos 2", ComportamientoAbejas = "Dócil", EstadoReina = "Presente", UltimaNotaTecnica = "Normal.", FechaUltimaNota = DateTime.Now.AddDays(-20) },
-                new Colmena { Id = 7, Identificador = "#HIVE-0003", CodigoEscaneo = "100007", ApiarioId = 3, Estado = "Crítico", PesoKg = 25.0, TemperaturaInterna = 30.0, HumedadInterna = 82.0, ProduccionMielKg = 10.0, EsPiloto = true, CantidadAbejas = 12000, UbicacionIntraApiario = "Única", ComportamientoAbejas = "Agresivo", EstadoReina = "Presente", UltimaNotaTecnica = "Humedad alta.", FechaUltimaNota = DateTime.Now.AddDays(-35) }
+                new Colmena { Id = 1, Identificador = "#HIVE-0042", CodigoEscaneo = "100001", ApiarioId = 1, Estado = "Óptimo", PesoKg = 45.2, TemperaturaInterna = 34.5, HumedadInterna = 55.0, ProduccionMielKg = 40.0, EsPiloto = true, CantidadAbejas = 45000, UbicacionIntraApiario = "Fila 1, Pos 1", ComportamientoAbejas = "Dócil", EstadoReina = "Presente" },
+                new Colmena { Id = 2, Identificador = "#HIVE-0089", CodigoEscaneo = "100002", ApiarioId = 1, Estado = "Alerta", PesoKg = 42.8, TemperaturaInterna = 32.0, HumedadInterna = 0, ProduccionMielKg = 35.0, EsPiloto = false, CantidadAbejas = 38000, UbicacionIntraApiario = "Fila 1, Pos 2", ComportamientoAbejas = "Defensivo", EstadoReina = "Presente" },
+                new Colmena { Id = 3, Identificador = "#HIVE-0112", CodigoEscaneo = "100003", ApiarioId = 1, Estado = "Crítico", PesoKg = 31.0, TemperaturaInterna = 36.5, HumedadInterna = 60.0, ProduccionMielKg = 20.0, EsPiloto = true, CantidadAbejas = 15000, UbicacionIntraApiario = "Fila 2, Pos 1", ComportamientoAbejas = "Agresivo", EstadoReina = "Ausente" },
+                new Colmena { Id = 4, Identificador = "#HIVE-0045", CodigoEscaneo = "100004", ApiarioId = 1, Estado = "Óptimo", PesoKg = 48.1, TemperaturaInterna = 34.2, HumedadInterna = 58.0, ProduccionMielKg = 45.0, EsPiloto = true, CantidadAbejas = 50000, UbicacionIntraApiario = "Fila 2, Pos 2", ComportamientoAbejas = "Dócil", EstadoReina = "Presente" },
+                new Colmena { Id = 5, Identificador = "#HIVE-0001", CodigoEscaneo = "100005", ApiarioId = 2, Estado = "Óptimo", PesoKg = 40.0, TemperaturaInterna = 35.1, HumedadInterna = 52.0, ProduccionMielKg = 30.0, EsPiloto = true, CantidadAbejas = 42000, UbicacionIntraApiario = "Fila 1, Pos 1", ComportamientoAbejas = "Dócil", EstadoReina = "Presente" },
+                new Colmena { Id = 6, Identificador = "#HIVE-0002", CodigoEscaneo = "100006", ApiarioId = 2, Estado = "Óptimo", PesoKg = 39.5, TemperaturaInterna = 34.8, HumedadInterna = 0, ProduccionMielKg = 30.0, EsPiloto = false, CantidadAbejas = 41000, UbicacionIntraApiario = "Fila 1, Pos 2", ComportamientoAbejas = "Dócil", EstadoReina = "Presente" },
+                new Colmena { Id = 7, Identificador = "#HIVE-0003", CodigoEscaneo = "100007", ApiarioId = 3, Estado = "Crítico", PesoKg = 25.0, TemperaturaInterna = 30.0, HumedadInterna = 82.0, ProduccionMielKg = 10.0, EsPiloto = true, CantidadAbejas = 12000, UbicacionIntraApiario = "Única", ComportamientoAbejas = "Agresivo", EstadoReina = "Presente" }
+            );
+
+            // Seed inicial de Notas Tecnicas
+            modelBuilder.Entity<NotaTecnica>().HasData(
+                new NotaTecnica { Id = 1, ColmenaId = 1, Detalles = "Revisión general, todo normal.", EstadoReina = "Presente", EstadoColmena = "Óptimo", Fecha = DateTime.Now.AddDays(-10) },
+                new NotaTecnica { Id = 2, ColmenaId = 2, Detalles = "Abejas defensivas, observar.", EstadoReina = "Presente", EstadoColmena = "Alerta", Fecha = DateTime.Now.AddDays(-15) },
+                new NotaTecnica { Id = 3, ColmenaId = 3, Detalles = "Reina no avistada. Posible enjambrazón.", EstadoReina = "Ausente", EstadoColmena = "Crítico", Fecha = DateTime.Now.AddDays(-2) },
+                new NotaTecnica { Id = 4, ColmenaId = 4, Detalles = "Excelente producción.", EstadoReina = "Presente", EstadoColmena = "Óptimo", Fecha = DateTime.Now.AddDays(-5) },
+                new NotaTecnica { Id = 5, ColmenaId = 5, Detalles = "Alza agregada.", EstadoReina = "Presente", EstadoColmena = "Óptimo", Fecha = DateTime.Now.AddDays(-7) },
+                new NotaTecnica { Id = 6, ColmenaId = 6, Detalles = "Normal.", EstadoReina = "Presente", EstadoColmena = "Óptimo", Fecha = DateTime.Now.AddDays(-20) },
+                new NotaTecnica { Id = 7, ColmenaId = 7, Detalles = "Humedad alta.", EstadoReina = "Presente", EstadoColmena = "Crítico", Fecha = DateTime.Now.AddDays(-35) }
             );
 
             // Seed inicial de Treatments y TreatmentEquipments

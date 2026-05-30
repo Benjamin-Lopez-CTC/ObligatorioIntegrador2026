@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace ObligatorioIntegrador2026.Models
 {
@@ -31,7 +32,6 @@ namespace ObligatorioIntegrador2026.Models
         public string EstadoReina { get; set; } = "Presente";
         public string ComportamientoAbejas { get; set; }
 
-        public string? UltimaNotaTecnica { get; set; }
-        public DateTime? FechaUltimaNota { get; set; }
+        public ICollection<NotaTecnica> NotasTecnicas { get; set; } = new List<NotaTecnica>();
     }
 }

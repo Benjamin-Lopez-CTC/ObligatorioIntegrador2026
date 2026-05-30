@@ -50,7 +50,7 @@ namespace ObligatorioIntegrador2026.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RegistrarNueva([Bind("Identificador,ApiarioId,CantidadAbejas,UbicacionIntraApiario,EstadoReina,ComportamientoAbejas,EsPiloto")] Colmena colmena)
+        public async Task<IActionResult> RegistrarNueva([Bind("Identificador,ApiarioId,CantidadAbejas,UbicacionIntraApiario,EstadoReina,ComportamientoAbejas,EsPiloto")] Colmena colmena, string? returnUrl = null)
         {
             ModelState.Remove("Apiario");
             ModelState.Remove("CodigoEscaneo");
@@ -72,10 +72,12 @@ namespace ObligatorioIntegrador2026.Controllers
                 await _context.SaveChangesAsync();
                 
                 TempData["SuccessMessage"] = "Colmena registrada exitosamente.";
+                if (!string.IsNullOrEmpty(returnUrl)) return Redirect(returnUrl);
                 return RedirectToAction(nameof(Index));
             }
             
             TempData["ErrorMessage"] = "Error al registrar la colmena. Revise los datos e intente nuevamente.";
+            if (!string.IsNullOrEmpty(returnUrl)) return Redirect(returnUrl);
             return RedirectToAction(nameof(Index));
         }
 
@@ -100,11 +102,17 @@ namespace ObligatorioIntegrador2026.Controllers
 
         public async Task<IActionResult> Detalles(int id)
         {
-            var colmena = await _context.Colmenas.Include(c => c.Apiario).FirstOrDefaultAsync(c => c.Id == id);
+            var colmena = await _context.Colmenas.Include(c => c.Apiario).Include(c => c.NotasTecnicas).FirstOrDefaultAsync(c => c.Id == id);
             if (colmena == null) return NotFound();
 
             ActualizarEstadoAutomatico(colmena);
             await _context.SaveChangesAsync();
+
+            ViewBag.Tratamientos = await _context.Treatments
+                .Where(t => t.ColmenaId == id)
+                .OrderByDescending(t => t.Fecha)
+                .Take(2)
+                .ToListAsync();
 
             return View(colmena);
         }
@@ -113,7 +121,7 @@ namespace ObligatorioIntegrador2026.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditarColmena(int id, double? temperatura, double? humedad, double peso, double produccion, string comportamiento)
         {
-            var colmena = await _context.Colmenas.FindAsync(id);
+            var colmena = await _context.Colmenas.Include(c => c.NotasTecnicas).FirstOrDefaultAsync(c => c.Id == id);
             if (colmena == null) return NotFound();
 
             if (colmena.EsPiloto)
@@ -137,15 +145,26 @@ namespace ObligatorioIntegrador2026.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AñadirNotaTecnica(int id, string detalles, string estadoReina, string estadoColmena)
         {
-            var colmena = await _context.Colmenas.FindAsync(id);
+            var colmena = await _context.Colmenas.Include(c => c.NotasTecnicas).FirstOrDefaultAsync(c => c.Id == id);
             if (colmena == null) return NotFound();
 
-            colmena.UltimaNotaTecnica = detalles;
-            colmena.FechaUltimaNota = DateTime.Now;
+            var nuevaNota = new NotaTecnica
+            {
+                ColmenaId = id,
+                Detalles = detalles,
+                EstadoReina = estadoReina,
+                EstadoColmena = estadoColmena,
+                Fecha = DateTime.Now
+            };
+
+            _context.NotasTecnicas.Add(nuevaNota);
+            
             colmena.EstadoReina = estadoReina;
             
             // Allow manual override of state unless automatic rules force it to Alert
             colmena.Estado = estadoColmena;
+
+            colmena.NotasTecnicas.Add(nuevaNota);
 
             ActualizarEstadoAutomatico(colmena);
             await _context.SaveChangesAsync();
@@ -290,9 +309,10 @@ namespace ObligatorioIntegrador2026.Controllers
 
             if (colmena.EstadoReina == "Ausente") alertReason = true;
 
-            if (colmena.FechaUltimaNota.HasValue)
+            if (colmena.NotasTecnicas != null && colmena.NotasTecnicas.Any())
             {
-                if ((DateTime.Now - colmena.FechaUltimaNota.Value).TotalDays > 30) alertReason = true;
+                var ultimaNota = colmena.NotasTecnicas.OrderByDescending(n => n.Fecha).First();
+                if ((DateTime.Now - ultimaNota.Fecha).TotalDays > 30) alertReason = true;
             }
             else
             {

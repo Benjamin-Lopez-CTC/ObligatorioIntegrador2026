@@ -26,12 +26,12 @@
         </div>
 
         <!-- Filters Panel -->
-        <div class="col-span-4 md:col-span-12 bg-surface-container-high border border-outline-variant rounded p-gutter mb-gutter">
+        <div class="col-span-4 md:col-span-12 bg-surface-container-low border border-outline-variant rounded-lg p-6 mb-gutter">
             <div class="flex flex-col md:flex-row gap-gutter">
                 <div class="flex-1 flex flex-col gap-2">
                     <label class="font-label-caps text-label-caps text-on-surface-variant">APIARIO</label>
                     <div class="relative">
-                        <select id="filterApiario" class="w-full bg-surface border border-outline-variant text-on-surface font-body-sm text-body-sm rounded p-3 appearance-none focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container transition-colors">
+                        <select id="filterApiario" class="w-full bg-background border border-outline-variant text-on-surface font-body-sm text-body-sm rounded p-3 appearance-none focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container transition-colors">
                             <option value="">Todos los Apiarios</option>
                             @foreach (var apiario in ViewBag.Apiarios)
                             {
@@ -43,7 +43,7 @@
                 <div class="flex-1 flex flex-col gap-2">
                     <label class="font-label-caps text-label-caps text-on-surface-variant">ESTADO DE SALUD</label>
                     <div class="relative">
-                        <select id="filterEstado" class="w-full bg-surface border border-outline-variant text-on-surface font-body-sm text-body-sm rounded p-3 appearance-none focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container transition-colors">
+                        <select id="filterEstado" class="w-full bg-background border border-outline-variant text-on-surface font-body-sm text-body-sm rounded p-3 appearance-none focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container transition-colors">
                             <option value="">Todos los Estados</option>
                             <option value="Óptimo">Óptimo</option>
                             <option value="Alerta">Alerta</option>
@@ -54,7 +54,7 @@
                 <div class="flex-1 flex flex-col gap-2">
                     <label class="font-label-caps text-label-caps text-on-surface-variant">COMPORTAMIENTO</label>
                     <div class="relative">
-                        <select id="filterComportamiento" class="w-full bg-surface border border-outline-variant text-on-surface font-body-sm text-body-sm rounded p-3 appearance-none focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container transition-colors">
+                        <select id="filterComportamiento" class="w-full bg-background border border-outline-variant text-on-surface font-body-sm text-body-sm rounded p-3 appearance-none focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container transition-colors">
                             <option value="">Cualquiera</option>
                             <option value="Dócil">Dócil</option>
                             <option value="Defensivo">Defensivo</option>
@@ -64,17 +64,17 @@
                 </div>
                 <div class="flex-1 flex flex-col gap-2">
                     <label class="font-label-caps text-label-caps text-on-surface-variant">BÚSQUEDA ID</label>
-                    <input id="filterSearch" placeholder="#HIVE-..." class="w-full bg-surface border border-outline-variant text-on-surface font-body-sm text-body-sm rounded p-3 focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container transition-colors" type="text"/>
+                    <input id="filterSearch" placeholder="#HIVE-..." class="w-full bg-background border border-outline-variant text-on-surface font-body-sm text-body-sm rounded p-3 focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container transition-colors" type="text"/>
                 </div>
             </div>
         </div>
 
         <!-- Data Table Container -->
-        <div class="col-span-4 md:col-span-12 bg-surface-container border border-outline-variant rounded overflow-hidden">
+        <div class="col-span-4 md:col-span-12 bg-surface-container-low border border-outline-variant rounded-lg overflow-hidden p-2 md:p-4">
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="bg-surface-container-high border-b border-outline-variant font-label-caps text-label-caps text-on-surface-variant">
+                        <tr class="border-b border-surface-container-highest font-label-caps text-label-caps text-on-surface-variant">
                             <th class="p-4 font-medium">ID COLMENA</th>
                             <th class="p-4 font-medium">APIARIO DE ORIGEN</th>
                             <th class="p-4 font-medium">ESTADO</th>
@@ -89,7 +89,7 @@
                 </table>
             </div>
             <!-- Pagination -->
-            <div class="bg-surface-container-high border-t border-outline-variant p-4 flex justify-between items-center text-on-surface-variant font-body-sm text-body-sm">
+            <div class="bg-transparent border-t border-surface-container-highest mt-4 pt-4 flex justify-between items-center text-on-surface-variant font-body-sm text-body-sm">
                 <span id="paginationText">Mostrando 0 de 0 colmenas</span>
                 <div class="flex gap-2">
                     <button id="btnPrevPage" class="p-1 border border-outline-variant rounded hover:text-primary-container hover:border-primary-container transition-colors disabled:opacity-50">
@@ -248,7 +248,7 @@
 
             currentItems.forEach(c => {
                 let statusHtml = '';
-                let bgClass = 'hover:bg-surface-container-highest transition-colors';
+                let bgClass = 'hover:bg-surface-container transition-colors';
                 let iconArrow = '';
                 let weightClass = '';
                 let tempClass = '';
@@ -267,25 +267,27 @@
                 }
 
                 const tr = document.createElement('tr');
-                tr.className = 'border-b border-outline-variant ' + bgClass;
+                tr.className = 'border-b border-surface-container-highest ' + bgClass;
                 tr.innerHTML = `
                     <td class="p-4 font-label-caps text-label-caps text-primary-container">
                         <div class="flex items-center gap-3">
-                            <span>${c.identificador || 'S/N'}</span>
-                            ${c.esPiloto ? '<div class="w-6 h-6 flex items-center justify-center border border-outline-variant rounded-sm text-on-surface-variant font-label-caps text-[12px]" title="Colmena Piloto">P</div>' : ''}
+                            <div class="flex flex-col justify-center">
+                                <span>${c.identificador || 'S/N'}</span>
+                                <span class="text-[10px] text-on-surface-variant mt-0.5 leading-none">ID: ${c.codigoEscaneo}</span>
+                            </div>
+                            ${c.esPiloto ? '<div class="w-6 h-6 shrink-0 flex items-center justify-center border border-outline-variant bg-surface-container-high rounded-sm text-on-surface font-label-caps text-[12px]" title="Colmena Piloto">P</div>' : ''}
                         </div>
-                        <div class="text-[10px] text-on-surface-variant mt-0.5">ID: ${c.codigoEscaneo}</div>
                     </td>
                     <td class="p-4">${c.apiarioNombre || 'Desconocido'}</td>
                     <td class="p-4">${statusHtml}</td>
                     <td class="p-4 ${weightClass}">${c.peso} ${weightClass ? iconArrow : ''}</td>
                     <td class="p-4 ${tempClass}">${c.esPiloto ? c.temp + '°C ' + (tempClass ? iconArrow : '') : '<span class="text-on-surface-variant/50">N/A</span>'}</td>
                     <td class="p-4 text-right">
-                        <div class="flex items-center justify-end gap-1">
-                            <a href="/Colmenas/Detalles/${c.id}" class="text-on-surface-variant hover:text-primary-container transition-colors p-2 flex items-center justify-center rounded-full hover:bg-surface-container-high" title="Ver Detalles">
+                        <div class="flex items-center justify-end gap-3 pr-2">
+                            <a href="/Colmenas/Detalles/${c.id}" class="text-on-surface-variant hover:text-primary-container transition-colors flex items-center justify-center" title="Ver Detalles">
                                 <span class="material-symbols-outlined text-[20px]">visibility</span>
                             </a>
-                            <button onclick="openDeleteModal(${c.id}, '${c.identificador || c.codigoEscaneo}')" class="text-on-surface-variant hover:text-error transition-colors p-2 flex items-center justify-center rounded-full hover:bg-surface-container-high" title="Eliminar Colmena">
+                            <button onclick="openDeleteModal(${c.id}, '${c.identificador || c.codigoEscaneo}')" class="text-on-surface-variant hover:text-error transition-colors flex items-center justify-center" title="Eliminar Colmena">
                                 <span class="material-symbols-outlined text-[20px]">delete</span>
                             </button>
                         </div>

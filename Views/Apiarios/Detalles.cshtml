@@ -26,7 +26,7 @@
     <!-- Header & Action -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
         <div>
-            <a asp-action="Index" class="flex items-center gap-2 text-on-surface-variant hover:text-primary-container transition-colors mb-4 group font-label-caps text-label-caps uppercase">
+            <a asp-action="Index" class="flex items-center gap-2 text-on-surface-variant hover:text-primary-container transition-colors mb-4 group font-label-caps text-label-caps uppercase w-fit">
                 <span class="material-symbols-outlined text-sm group-hover:-translate-x-1 transition-transform">arrow_back</span>
                 Volver a Apiarios
             </a>
@@ -43,9 +43,11 @@
     <!-- Bento Grid Layout for Details & Metrics -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-12">
         <!-- General Info Card (Spans 4 cols on Desktop) -->
-        <div class="lg:col-span-4 bg-surface-container-high border border-surface-variant rounded p-gutter flex flex-col justify-between">
-            <div>
-                <h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-6 flex items-center gap-2 border-b border-surface-variant pb-4">
+        <div class="lg:col-span-4 bg-surface-container-low border border-outline-variant rounded-lg p-gutter flex flex-col justify-between relative overflow-hidden group hover:border-primary-container transition-colors">
+            <div class="absolute top-0 left-0 w-1 h-full bg-outline-variant group-hover:bg-primary-container transition-colors"></div>
+            <div class="pl-2 relative z-10 flex-grow flex flex-col justify-between">
+                <div>
+                    <h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-6 flex items-center gap-2 border-b border-surface-container-highest pb-4">
                     <span class="material-symbols-outlined text-primary-container">info</span>
                     Información General
                 </h2>
@@ -70,24 +72,26 @@
                     </div>
                 </dl>
             </div>
-            <div class="mt-8 pt-4 border-t border-surface-variant">
-                <div class="flex justify-between items-center mb-2">
-                    <span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Notas de Estado</span>
-                    @if (Model.UltimaEdicionNota.HasValue)
-                    {
-                        <span class="font-body-sm text-[10px] text-on-surface-variant/70">Editado: @Model.UltimaEdicionNota.Value.ToString("dd/MM/yy HH:mm")</span>
-                    }
+                <div class="mt-8 pt-4 border-t border-surface-container-highest">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Notas de Estado</span>
+                        @if (Model.UltimaEdicionNota.HasValue)
+                        {
+                            <span class="font-body-sm text-[10px] text-on-surface-variant/70">Editado: @Model.UltimaEdicionNota.Value.ToString("dd/MM/yy HH:mm")</span>
+                        }
+                    </div>
+                    <p class="font-body-sm text-body-sm text-on-surface border-l-2 border-primary-container pl-3">
+                        @Model.NotasEstado
+                    </p>
                 </div>
-                <p class="font-body-sm text-body-sm text-on-surface border-l-2 border-primary-container pl-3">
-                    @Model.NotasEstado
-                </p>
             </div>
         </div>
 
         <!-- Metrics Cards Sub-Grid (Spans 8 cols on Desktop) -->
         <div class="lg:col-span-8 grid grid-cols-1 md:grid-cols-3 gap-6">
             <!-- Metric 1 -->
-            <div class="bg-surface-container-high border border-surface-variant rounded p-gutter flex flex-col justify-between relative overflow-hidden group">
+            <div class="bg-surface-container-low border border-outline-variant rounded-lg p-gutter flex flex-col justify-between relative overflow-hidden group hover:border-primary-container transition-colors">
+                <div class="absolute top-0 left-0 w-1 h-full bg-outline-variant group-hover:bg-primary-container transition-colors"></div>
                 <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                     <span class="material-symbols-outlined text-6xl text-primary-container">thermostat</span>
                 </div>
@@ -105,7 +109,8 @@
             </div>
 
             <!-- Metric 2 -->
-            <div class="bg-surface-container-high border border-surface-variant rounded p-gutter flex flex-col justify-between relative overflow-hidden group">
+            <div class="bg-surface-container-low border border-outline-variant rounded-lg p-gutter flex flex-col justify-between relative overflow-hidden group hover:border-primary-container transition-colors">
+                <div class="absolute top-0 left-0 w-1 h-full bg-outline-variant group-hover:bg-primary-container transition-colors"></div>
                 <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                     <span class="material-symbols-outlined text-6xl text-primary-container">humidity_percentage</span>
                 </div>
@@ -123,7 +128,8 @@
             </div>
 
             <!-- Metric 3 -->
-            <div class="bg-surface-container-high border border-surface-variant rounded p-gutter flex flex-col justify-between relative overflow-hidden group">
+            <div class="bg-surface-container-low border border-outline-variant rounded-lg p-gutter flex flex-col justify-between relative overflow-hidden group hover:border-primary-container transition-colors">
+                <div class="absolute top-0 left-0 w-1 h-full bg-outline-variant group-hover:bg-primary-container transition-colors"></div>
                 <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                     <span class="material-symbols-outlined text-6xl text-primary-container">inventory_2</span>
                 </div>
@@ -149,17 +155,17 @@
                 <span class="material-symbols-outlined text-primary-container">grid_view</span>
                 Listado de Colmenas
             </h2>
-            <button class="bg-primary-container text-on-primary-container px-4 py-2 rounded font-label-caps text-label-caps uppercase hover:brightness-110 transition-all flex items-center gap-2">
+            <button id="btnOpenRegistrarColmena" class="bg-primary-container text-[#000000] px-4 py-2 rounded font-label-caps text-label-caps uppercase hover:bg-primary-fixed-dim transition-colors flex items-center gap-2">
                 <span class="material-symbols-outlined text-sm">add</span>
                 Agregar Colmena
             </button>
         </div>
 
-        <div class="col-span-4 md:col-span-12 bg-surface-container border border-outline-variant rounded overflow-hidden">
+        <div class="col-span-4 md:col-span-12 bg-surface-container-low border border-outline-variant rounded-lg overflow-hidden p-2 md:p-4">
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="bg-surface-container-high border-b border-outline-variant font-label-caps text-label-caps text-on-surface-variant">
+                        <tr class="border-b border-surface-container-highest font-label-caps text-label-caps text-on-surface-variant">
                             <th class="p-4 font-medium">ID COLMENA</th>
                             <th class="p-4 font-medium">APIARIO DE ORIGEN</th>
                             <th class="p-4 font-medium">ESTADO</th>
@@ -174,7 +180,7 @@
                 </table>
             </div>
             <!-- Pagination / Footer of table -->
-            <div class="bg-surface-container-high border-t border-outline-variant p-4 flex justify-between items-center text-on-surface-variant font-body-sm text-body-sm">
+            <div class="bg-transparent border-t border-surface-container-highest mt-4 pt-4 flex justify-between items-center text-on-surface-variant font-body-sm text-body-sm">
                 <span id="paginationText">Mostrando 0 de 0 colmenas</span>
                 <div class="flex gap-2">
                     <button id="btnPrevPage" class="p-1 border border-outline-variant rounded hover:text-primary-container hover:border-primary-container transition-colors disabled:opacity-50" disabled>
@@ -188,13 +194,15 @@
         </div>
     </section>
 
+
+
     <!-- Delete Section -->
     <section class="mt-20 mb-12 flex flex-col items-center gap-4">
         <button id="btnDeleteApiario" class="border border-error text-error px-6 py-2.5 rounded font-label-caps text-label-caps uppercase hover:bg-error/10 transition-colors flex items-center gap-2">
             <span class="material-symbols-outlined text-sm">delete</span>
             Eliminar Apiario
         </button>
-        <p class="font-body-sm text-body-sm text-on-surface-variant/70 text-center max-w-md">
+        <p class="font-body-sm text-body-sm text-on-surface-variant/70 text-center max-w-md mt-4">
             Eliminar el apiario también eliminará todas las colmenas asignadas.
         </p>
     </section>
@@ -277,7 +285,70 @@
 </div>
 
 @section Scripts {
-    <script>
+    <!-- Registrar Colmena Modal -->
+<div id="registrarColmenaModal" class="fixed inset-0 bg-black/60 modal-backdrop flex modal-hidden items-center justify-center z-50 p-4">
+    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-md shadow-2xl overflow-hidden modal-container">
+        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between">
+            <h4 class="font-headline-lg text-lg font-bold text-on-surface">Registrar Nueva Colmena</h4>
+            <button id="btnCancelRegistrarColmenaIcon" class="text-on-surface-variant hover:text-primary-container transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <form asp-action="RegistrarNueva" asp-controller="Colmenas" method="post" class="p-6 space-y-4">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="returnUrl" value="/Apiarios/Detalles/@Model.Id" />
+            
+            <div>
+                <label for="Identificador" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Identificador (Opcional)</label>
+                <input type="text" id="Identificador" name="Identificador" placeholder="#HIVE-0123" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+            </div>
+            <div>
+                <label for="ApiarioDummy" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Apiario</label>
+                <input type="text" id="ApiarioDummy" value="@Model.Nombre" disabled class="w-full bg-surface-variant border border-outline-variant px-4 py-2.5 rounded text-on-surface-variant outline-none cursor-not-allowed" />
+                <input type="hidden" name="ApiarioId" value="@Model.Id" />
+            </div>
+            <div>
+                <label for="CantidadAbejas" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Cantidad de Abejas (Aprox.)</label>
+                <input type="number" id="CantidadAbejas" name="CantidadAbejas" placeholder="40000" required min="0" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+            </div>
+            <div>
+                <label for="UbicacionIntraApiario" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Ubicación (Ej: Fila 1, Pos 3)</label>
+                <input type="text" id="UbicacionIntraApiario" name="UbicacionIntraApiario" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="EstadoReina" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Estado Reina</label>
+                    <select id="EstadoReina" name="EstadoReina" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
+                        <option value="Presente" selected>Presente</option>
+                        <option value="Ausente">Ausente</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="ComportamientoAbejas" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Comportamiento</label>
+                    <select id="ComportamientoAbejas" name="ComportamientoAbejas" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
+                        <option value="Dócil">Dócil</option>
+                        <option value="Defensivo">Defensivo</option>
+                        <option value="Agresivo">Agresivo</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 mt-4">
+                <input type="checkbox" id="EsPiloto" name="EsPiloto" value="true" class="w-4 h-4 text-primary-container bg-background border-outline-variant rounded focus:ring-primary-container focus:ring-2" />
+                <label for="EsPiloto" class="font-body-md text-body-md text-on-surface">Convertir en Colmena Piloto</label>
+            </div>
+            <div class="pt-4 border-t border-surface-container-highest flex justify-end gap-3 mt-6">
+                <button type="button" id="btnCancelRegistrarColmena" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2.5 rounded font-label-caps text-label-caps">
+                    Cancelar
+                </button>
+                <button type="submit" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps font-semibold">
+                    Guardar Colmena
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
         // Pagination logic
         const colmenas = @Html.Raw(colmenasJson);
         const apiarioNombre = "@Model.Nombre";
@@ -304,7 +375,7 @@
 
             currentItems.forEach(c => {
                 let statusHtml = '';
-                let bgClass = 'hover:bg-surface-container-highest transition-colors';
+                let bgClass = 'hover:bg-surface-container transition-colors';
                 
                 if(c.estado === 'Óptimo') {
                     statusHtml = `<div class="inline-flex items-center gap-1.5 px-2 py-1 border border-[#4CAF50] rounded bg-[#4CAF50]/10 text-[#4CAF50] font-label-caps text-label-caps"><span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>Óptimo</div>`;
@@ -318,7 +389,7 @@
                 }
 
                 const tr = document.createElement('tr');
-                tr.className = 'border-b border-outline-variant ' + bgClass;
+                tr.className = 'border-b border-surface-container-highest ' + bgClass;
                 tr.innerHTML = `
                     <td class="p-4 font-label-caps text-label-caps text-primary-container">${c.idStr}</td>
                     <td class="p-4">${apiarioNombre}</td>
@@ -397,5 +468,23 @@
         btnEditarNota.addEventListener('click', openEditarNotaModal);
         btnCancelEditarNota.addEventListener('click', closeEditarNotaModal);
         btnCancelEditarNotaIcon.addEventListener('click', closeEditarNotaModal);
+
+        // Registrar Colmena Modal Logic
+        const btnOpenRegistrarColmena = document.getElementById('btnOpenRegistrarColmena');
+        const registrarColmenaModal = document.getElementById('registrarColmenaModal');
+        const btnCancelRegistrarColmena = document.getElementById('btnCancelRegistrarColmena');
+        const btnCancelRegistrarColmenaIcon = document.getElementById('btnCancelRegistrarColmenaIcon');
+
+        function openRegistrarColmenaModal() {
+            registrarColmenaModal.classList.remove('modal-hidden');
+        }
+
+        function closeRegistrarColmenaModal() {
+            registrarColmenaModal.classList.add('modal-hidden');
+        }
+
+        if (btnOpenRegistrarColmena) btnOpenRegistrarColmena.addEventListener('click', openRegistrarColmenaModal);
+        if (btnCancelRegistrarColmena) btnCancelRegistrarColmena.addEventListener('click', closeRegistrarColmenaModal);
+        if (btnCancelRegistrarColmenaIcon) btnCancelRegistrarColmenaIcon.addEventListener('click', closeRegistrarColmenaModal);
     </script>
 }

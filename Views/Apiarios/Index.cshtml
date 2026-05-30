@@ -4,11 +4,12 @@
     ViewData["Title"] = "Gestión de Apiarios";
 }
 
-<main class="w-full max-w-container-max mx-auto px-gutter py-margin-desktop md:py-margin-desktop py-margin-mobile">
+<main class="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-12 md:py-[80px]">
     <!-- Header Section -->
-    <section class="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
+    <section class="flex flex-col md:flex-row justify-between items-start md:items-center mb-[40px] border-b border-surface-container-highest pb-gutter gap-6">
         <div>
-            <h1 class="font-display text-display text-on-surface mb-2">Gestión de Apiarios</h1>
+            <p class="font-label-caps text-label-caps text-on-surface-variant mb-2">GESTIÓN DE INSTALACIONES</p>
+            <h1 class="font-display text-headline-lg-mobile md:text-display text-on-surface mb-2">Gestión de Apiarios</h1>
             <p class="font-body-md text-body-md text-on-surface-variant">Monitoreo y administración de instalaciones apícolas.</p>
         </div>
         <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
@@ -16,7 +17,7 @@
                 <span class="material-symbols-outlined text-[18px]">compare_arrows</span>
                 Comparar Apiarios
             </a>
-            <button id="btnOpenRegistrar" class="bg-primary-container text-on-primary font-label-caps text-label-caps px-6 py-3 rounded hover:bg-primary-fixed-dim transition-colors flex items-center justify-center gap-2">
+            <button id="btnOpenRegistrar" class="bg-primary-container text-[#000000] font-label-caps text-label-caps px-6 py-3 rounded hover:bg-primary-fixed-dim transition-colors flex items-center justify-center gap-2">
                 <span class="material-symbols-outlined text-[18px]">add</span>
                 Registrar Nuevo Apiario
             </button>
@@ -24,7 +25,8 @@
     </section>
 
     <!-- Apiary Grid (Cards) -->
-    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <section class="bg-surface-container-low border border-outline-variant rounded-lg p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         @foreach (var apiario in Model)
         {
             var colmenasCount = apiario.Colmenas?.Count() ?? 0;
@@ -43,11 +45,12 @@
                 estadoProd = "Alta";
             }
 
-            <article class="bg-surface-container-high border border-surface-variant rounded flex flex-col hover:border-primary-container transition-colors">
-                <div class="p-6 flex-grow">
+            <article class="bg-background border border-outline-variant p-4 rounded flex flex-col hover:border-primary-container transition-colors relative overflow-hidden group">
+                <div class="absolute top-0 left-0 w-1 h-full bg-outline-variant group-hover:bg-primary-container transition-colors"></div>
+                <div class="flex-grow flex flex-col justify-between pl-3 relative z-10">
                     <div class="flex justify-between items-start mb-4">
                         <h2 class="font-headline-lg text-headline-lg text-on-surface">@apiario.Nombre</h2>
-                        <span class="font-label-caps text-label-caps bg-surface-variant text-on-surface-variant px-2 py-1 rounded">ID: @apiario.StringIdentificador</span>
+                        <span class="font-label-caps text-label-caps bg-surface-variant text-on-surface-variant px-2 py-1 rounded whitespace-nowrap shrink-0">ID: @apiario.StringIdentificador</span>
                     </div>
                     <div class="space-y-3 mb-6">
                         <div class="flex items-center gap-2 text-on-surface-variant">
@@ -73,16 +76,16 @@
                         <div class="w-full bg-surface-variant h-1 rounded-full overflow-hidden">
                             <div class="bg-@colorProd h-full" style="width: @prodPercent%"></div>
                         </div>
-                    </div>
                 </div>
-                <div class="p-6 border-t border-surface-variant">
-                    <a asp-action="Detalles" asp-route-id="@apiario.Id" class="w-full bg-transparent border border-primary-container text-primary-container font-label-caps text-label-caps px-4 py-2 rounded hover:bg-surface-variant transition-colors flex justify-center items-center gap-2">
+                <div class="mt-4 pt-4 border-t border-surface-container-highest pl-3">
+                    <a asp-action="Detalles" asp-route-id="@apiario.Id" class="w-full bg-transparent border border-outline-variant text-on-surface font-label-caps text-label-caps px-4 py-2 rounded hover:text-primary-container hover:border-primary-container transition-colors flex justify-center items-center gap-2">
                         Ver Detalles
                         <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
                     </a>
                 </div>
             </article>
         }
+        </div>
     </section>
 </main>
 

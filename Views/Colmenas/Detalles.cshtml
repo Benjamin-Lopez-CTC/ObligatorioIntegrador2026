@@ -24,8 +24,12 @@
     double maxMielPorAlza = 24.0; // Assume an alza holds ~24 kg
     double prodPercent = Math.Min(100, Math.Round((Model.ProduccionMielKg / maxMielPorAlza) * 100));
 
-    string reinaLastSeen = Model.FechaUltimaNota.HasValue 
-        ? $"Avistada hace {(int)(DateTime.Now - Model.FechaUltimaNota.Value).TotalDays} días" 
+    var notasSorted = Model.NotasTecnicas?.OrderByDescending(n => n.Fecha).ToList() ?? new List<ObligatorioIntegrador2026.Models.NotaTecnica>();
+    var ultimaNotaObj = notasSorted.FirstOrDefault();
+    var notasRestantes = notasSorted.Skip(1).Take(3).ToList();
+
+    string reinaLastSeen = ultimaNotaObj != null 
+        ? $"Avistada hace {(int)(DateTime.Now - ultimaNotaObj.Fecha).TotalDays} días" 
         : "Sin datos recientes";
 }
 
@@ -33,7 +37,7 @@
     <!-- Header Section -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-surface-container-highest pb-8">
         <div class="flex flex-col gap-4">
-            <a asp-action="Index" class="flex items-center gap-2 text-on-surface-variant hover:text-primary-container transition-colors mb-2 group font-label-caps text-label-caps uppercase w-fit">
+            <a asp-action="Index" class="flex items-center gap-2 text-on-surface-variant hover:text-primary-container transition-colors mb-4 group font-label-caps text-label-caps uppercase w-fit">
                 <span class="material-symbols-outlined text-sm group-hover:-translate-x-1 transition-transform">arrow_back</span>
                 Volver a Colmenas
             </a>
@@ -53,15 +57,12 @@
             </p>
         </div>
         <div class="flex flex-wrap gap-4">
-            <a asp-action="Tratamientos" asp-controller="Colmenas" asp-route-id="@Model.Id" class="border border-primary-container text-primary-container font-label-caps text-label-caps px-6 py-3 rounded-sm flex items-center gap-2 hover:bg-primary-container/10 transition-colors whitespace-nowrap">
-                <span class="material-symbols-outlined text-[18px]">medical_services</span>
-                Gestionar Tratamientos
-            </a>
-            <button id="btnOpenEdit" class="border border-primary-container text-primary-container font-label-caps text-label-caps px-6 py-3 rounded-sm flex items-center gap-2 hover:bg-primary-container/10 transition-colors whitespace-nowrap">
+
+            <button id="btnOpenEdit" class="border border-primary-container text-primary-container font-label-caps text-label-caps px-6 py-3 rounded-sm flex items-center gap-2 hover:bg-surface-container-high transition-colors whitespace-nowrap">
                 <span class="material-symbols-outlined text-[18px]">edit</span>
                 Editar Colmena
             </button>
-            <button id="btnOpenNote" class="bg-primary-container text-on-primary-fixed font-label-caps text-label-caps px-6 py-3 rounded-sm flex items-center gap-2 hover:bg-primary-fixed transition-colors whitespace-nowrap">
+            <button id="btnOpenNote" class="bg-primary-container text-[#000000] font-label-caps text-label-caps px-6 py-3 rounded-sm flex items-center gap-2 hover:bg-primary-fixed-dim transition-colors whitespace-nowrap">
                 <span class="material-symbols-outlined text-[18px]">add</span>
                 Añadir Nota Técnica
             </button>
@@ -73,7 +74,7 @@
         @if (Model.EsPiloto)
         {
             <!-- Temp -->
-            <div class="bg-[#252525] border border-outline-variant rounded-lg p-6 flex flex-col gap-4 hover:border-primary-container transition-colors relative overflow-hidden group">
+            <div class="bg-surface-container-low border border-outline-variant rounded-lg p-6 flex flex-col gap-4 hover:border-primary-container transition-colors relative overflow-hidden group">
                 <div class="absolute top-0 left-0 w-1 h-full bg-surface-container-high group-hover:bg-primary-container transition-colors"></div>
                 <div class="flex justify-between items-center text-primary-container">
                     <span class="material-symbols-outlined text-[24px]">thermostat</span>
@@ -88,7 +89,7 @@
             </div>
 
             <!-- Humidity -->
-            <div class="bg-[#252525] border border-outline-variant rounded-lg p-6 flex flex-col gap-4 hover:border-primary-container transition-colors relative overflow-hidden group">
+            <div class="bg-surface-container-low border border-outline-variant rounded-lg p-6 flex flex-col gap-4 hover:border-primary-container transition-colors relative overflow-hidden group">
                 <div class="absolute top-0 left-0 w-1 h-full bg-surface-container-high group-hover:bg-primary-container transition-colors"></div>
                 <div class="flex justify-between items-center text-primary-container">
                     <span class="material-symbols-outlined text-[24px]">water_drop</span>
@@ -105,7 +106,7 @@
         else
         {
             <!-- Población -->
-            <div class="bg-[#252525] border border-outline-variant rounded-lg p-6 flex flex-col gap-4 hover:border-primary-container transition-colors relative overflow-hidden group">
+            <div class="bg-surface-container-low border border-outline-variant rounded-lg p-6 flex flex-col gap-4 hover:border-primary-container transition-colors relative overflow-hidden group">
                 <div class="absolute top-0 left-0 w-1 h-full bg-surface-container-high group-hover:bg-primary-container transition-colors"></div>
                 <div class="flex justify-between items-center text-primary-container">
                     <span class="material-symbols-outlined text-[24px]">groups</span>
@@ -118,7 +119,7 @@
             </div>
 
             <!-- Peso Actual -->
-            <div class="bg-[#252525] border border-outline-variant rounded-lg p-6 flex flex-col gap-4 hover:border-primary-container transition-colors relative overflow-hidden group">
+            <div class="bg-surface-container-low border border-outline-variant rounded-lg p-6 flex flex-col gap-4 hover:border-primary-container transition-colors relative overflow-hidden group">
                 <div class="absolute top-0 left-0 w-1 h-full bg-surface-container-high group-hover:bg-primary-container transition-colors"></div>
                 <div class="flex justify-between items-center text-primary-container">
                     <span class="material-symbols-outlined text-[24px]">scale</span>
@@ -132,7 +133,7 @@
         }
 
         <!-- Production -->
-        <div class="bg-[#252525] border border-outline-variant rounded-lg p-6 flex flex-col gap-4 hover:border-primary-container transition-colors relative overflow-hidden group lg:col-span-1 md:col-span-2">
+        <div class="bg-surface-container-low border border-outline-variant rounded-lg p-6 flex flex-col gap-4 hover:border-primary-container transition-colors relative overflow-hidden group lg:col-span-1 md:col-span-2">
             <div class="absolute top-0 left-0 w-1 h-full bg-surface-container-high group-hover:bg-primary-container transition-colors"></div>
             <div class="flex justify-between items-center text-primary-container">
                 <span class="material-symbols-outlined text-[24px]">hive</span>
@@ -150,7 +151,7 @@
         </div>
 
         <!-- Queen Status -->
-        <div class="bg-[#252525] border border-outline-variant rounded-lg p-6 flex flex-col gap-4 hover:border-primary-container transition-colors relative overflow-hidden group">
+        <div class="bg-surface-container-low border border-outline-variant rounded-lg p-6 flex flex-col gap-4 hover:border-primary-container transition-colors relative overflow-hidden group">
             <div class="absolute top-0 left-0 w-1 h-full bg-surface-container-high group-hover:bg-primary-container transition-colors"></div>
             <div class="flex justify-between items-center text-primary-container">
                 <span class="material-symbols-outlined text-[24px]">workspace_premium</span>
@@ -168,7 +169,7 @@
         <!-- Left Column: Primary Info -->
         <div class="lg:col-span-1 flex flex-col gap-6">
             <h2 class="font-headline-lg text-[24px] text-on-surface border-b border-surface-container-highest pb-3">Información Principal</h2>
-            <div class="bg-[#252525] border border-outline-variant rounded-lg p-6 flex flex-col gap-6">
+            <div class="bg-surface-container-low border border-outline-variant rounded-lg p-6 flex flex-col gap-6">
                 <div class="flex flex-col gap-1">
                     <span class="font-label-caps text-label-caps text-on-surface-variant">UBICACIÓN</span>
                     <div class="flex items-center gap-2 text-on-surface">
@@ -196,7 +197,7 @@
 
             <div class="flex flex-col gap-6 mt-6">
                 <h2 class="font-headline-lg text-[24px] text-on-surface border-b border-surface-container-highest pb-3">Valoración de Producción</h2>
-                <div class="bg-[#252525] border border-outline-variant rounded-lg p-6 flex flex-col gap-6">
+                <div class="bg-surface-container-low border border-outline-variant rounded-lg p-6 flex flex-col gap-6">
                     <div class="flex flex-col gap-1">
                         <span class="font-label-caps text-label-caps text-on-surface-variant">PRECIO POR KILO</span>
                         <div class="flex items-center gap-2 text-on-surface">
@@ -217,84 +218,111 @@
         </div>
 
         <!-- Right Column: Inspection History & Notes -->
-        <div class="lg:col-span-2 flex flex-col gap-12">
+        <div class="lg:col-span-2 flex flex-col gap-10">
+            <!-- Tratamientos Recientes Section -->
             <div class="flex flex-col gap-6">
                 <div class="flex justify-between items-end border-b border-surface-container-highest pb-3">
-                    <h2 class="font-headline-lg text-[24px] text-on-surface">Historial de Inspecciones</h2>
-                    <button class="font-label-caps text-label-caps text-primary-container hover:text-primary-fixed transition-colors">VER TODO</button>
+                    <h2 class="font-headline-lg text-[24px] text-on-surface">Tratamientos Recientes</h2>
+                    <a asp-action="Tratamientos" asp-controller="Colmenas" asp-route-id="@Model.Id" class="font-label-caps text-label-caps text-primary-container hover:text-primary-fixed transition-colors uppercase">Ver historial completo</a>
                 </div>
                 <div class="flex flex-col gap-unit">
-                    <!-- History Item 1 -->
-                    <div class="bg-[#252525] border border-outline-variant rounded-lg p-5 flex flex-col md:flex-row gap-6 md:items-center hover:border-surface-container-high transition-colors opacity-70">
-                        <div class="flex flex-col min-w-[120px]">
-                            <span class="font-label-caps text-label-caps text-on-surface">12 NOV 2023</span>
-                            <span class="font-body-sm text-body-sm text-on-surface-variant">14:30 hrs</span>
-                        </div>
-                        <div class="w-px h-12 bg-surface-container-highest hidden md:block"></div>
-                        <div class="flex-grow flex flex-col gap-2">
-                            <div class="flex items-center gap-3">
-                                <span class="font-body-md text-body-md font-semibold text-primary-container">Tratamiento Varroa</span>
-                                <span class="bg-surface-container-high px-2 py-0.5 rounded text-[10px] font-label-caps text-on-surface-variant border border-outline-variant">SANITARIO</span>
+                    @if (ViewBag.Tratamientos != null)
+                    {
+                        var tratamientos = (IEnumerable<ObligatorioIntegrador2026.Models.Treatment>)ViewBag.Tratamientos;
+                        if (tratamientos.Any())
+                        {
+                            foreach (var tratamiento in tratamientos)
+                            {
+                                <div class="bg-surface-container-low border border-outline-variant rounded-lg p-5 flex flex-col md:flex-row gap-6 md:items-center hover:border-surface-container-high transition-colors">
+                                    <div class="flex flex-col min-w-[120px]">
+                                        <span class="font-label-caps text-label-caps text-on-surface uppercase">@tratamiento.Fecha.ToString("dd MMM yyyy")</span>
+                                        <span class="font-body-sm text-body-sm text-on-surface-variant">@tratamiento.Fecha.ToString("HH:mm") hrs</span>
+                                    </div>
+                                    <div class="w-px h-12 bg-surface-container-highest hidden md:block"></div>
+                                    <div class="flex-grow flex flex-col gap-2">
+                                        <div class="flex items-center gap-3">
+                                            <span class="font-body-md text-body-md font-semibold text-primary-container">@tratamiento.Titulo</span>
+                                            <span class="bg-surface-container-high px-2 py-0.5 rounded text-[10px] font-label-caps text-on-surface-variant border border-outline-variant uppercase">@tratamiento.Tipo</span>
+                                        </div>
+                                        <p class="font-body-sm text-body-sm text-on-surface-variant">
+                                            @(string.IsNullOrEmpty(tratamiento.Nota) ? "Sin observaciones adicionales." : tratamiento.Nota)
+                                        </p>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="text-center py-6 text-on-surface-variant font-body-sm">
+                                No hay tratamientos recientes para esta colmena.
                             </div>
-                            <p class="font-body-sm text-body-sm text-on-surface-variant">
-                                Aplicación de tratamiento orgánico (Ácido Oxálico). Caída de ácaros estimada en 2%. Revisión de cría normal.
-                            </p>
-                        </div>
-                    </div>
-                    <!-- History Item 2 -->
-                    <div class="bg-[#252525] border border-outline-variant rounded-lg p-5 flex flex-col md:flex-row gap-6 md:items-center hover:border-surface-container-high transition-colors opacity-70">
-                        <div class="flex flex-col min-w-[120px]">
-                            <span class="font-label-caps text-label-caps text-on-surface">28 OCT 2023</span>
-                            <span class="font-body-sm text-body-sm text-on-surface-variant">09:15 hrs</span>
-                        </div>
-                        <div class="w-px h-12 bg-surface-container-highest hidden md:block"></div>
-                        <div class="flex-grow flex flex-col gap-2">
-                            <div class="flex items-center gap-3">
-                                <span class="font-body-md text-body-md font-semibold text-primary-container">Cosecha Parcial</span>
-                                <span class="bg-surface-container-high px-2 py-0.5 rounded text-[10px] font-label-caps text-on-surface-variant border border-outline-variant">PRODUCCIÓN</span>
-                            </div>
-                            <p class="font-body-sm text-body-sm text-on-surface-variant">
-                                Extracción de 4 marcos operculados de la primera alza.
-                            </p>
-                        </div>
-                    </div>
+                        }
+                    }
                 </div>
             </div>
 
+            <!-- Notas Tecnicas Section -->
             <div class="flex flex-col gap-6">
-                <div class="flex justify-between items-end border-b border-surface-container-highest pb-3">
-                    <h2 class="font-headline-lg text-[24px] text-on-surface">Última Nota Técnica</h2>
-                </div>
-                
-                @if (Model.FechaUltimaNota.HasValue && !string.IsNullOrEmpty(Model.UltimaNotaTecnica))
-                {
-                    <div class="bg-[#252525] border-l-4 border-l-primary-container border border-outline-variant rounded-lg p-5 flex flex-col md:flex-row gap-6 md:items-center hover:border-surface-container-high transition-colors">
-                        <div class="flex flex-col min-w-[120px]">
-                            <span class="font-label-caps text-label-caps text-on-surface">@Model.FechaUltimaNota.Value.ToString("dd MMM yyyy").ToUpper()</span>
-                            <span class="font-body-sm text-body-sm text-on-surface-variant">@Model.FechaUltimaNota.Value.ToString("HH:mm") hrs</span>
-                        </div>
-                        <div class="w-px h-12 bg-surface-container-highest hidden md:block"></div>
-                        <div class="flex-grow flex flex-col gap-2">
-                            <div class="flex items-center gap-3">
-                                <span class="font-body-md text-body-md font-semibold text-primary-container">Nota Técnica</span>
-                                <span class="bg-primary-container/10 px-2 py-0.5 rounded text-[10px] font-label-caps text-primary-container border border-primary-container/30 uppercase">@Model.Estado</span>
-                            </div>
-                            <p class="font-body-sm text-body-sm text-on-surface-variant">
-                                @Model.UltimaNotaTecnica
-                            </p>
-                        </div>
-                        <div class="flex items-center gap-2 text-on-surface-variant">
-                            <span class="material-symbols-outlined text-[24px]">description</span>
-                        </div>
-                    </div>
-                }
-                else
-                {
-                    <div class="text-center py-6 text-on-surface-variant font-body-sm">
-                        No hay notas técnicas registradas para esta colmena.
-                    </div>
-                }
+            <div class="flex justify-between items-end border-b border-surface-container-highest pb-3">
+                <h2 class="font-headline-lg text-[24px] text-on-surface">Notas Técnicas</h2>
+                <button id="btnOpenAllNotes" class="font-label-caps text-label-caps text-primary-container hover:text-primary-fixed transition-colors">VER TODAS LAS NOTAS</button>
             </div>
+            
+            
+            @if (ultimaNotaObj != null)
+            {
+                <div class="bg-surface-container-low border-l-4 border-l-primary-container border border-outline-variant rounded-lg p-5 flex flex-col md:flex-row gap-6 md:items-center hover:border-surface-container-high transition-colors">
+                    <div class="flex flex-col min-w-[120px]">
+                        <span class="font-label-caps text-label-caps text-on-surface">@ultimaNotaObj.Fecha.ToString("dd MMM yyyy").ToUpper()</span>
+                        <span class="font-body-sm text-body-sm text-on-surface-variant">@ultimaNotaObj.Fecha.ToString("HH:mm") hrs</span>
+                    </div>
+                    <div class="w-px h-12 bg-surface-container-highest hidden md:block"></div>
+                    <div class="flex-grow flex flex-col gap-2">
+                        <div class="flex items-center gap-3">
+                            <span class="font-body-md text-body-md font-semibold text-primary-container">Última Nota</span>
+                            <span class="bg-primary-container/10 px-2 py-0.5 rounded text-[10px] font-label-caps text-primary-container border border-primary-container/30 uppercase">@ultimaNotaObj.EstadoColmena</span>
+                        </div>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant">
+                            @ultimaNotaObj.Detalles
+                        </p>
+                    </div>
+                    <div class="flex flex-col items-end gap-1 text-on-surface-variant text-[10px] font-label-caps border-l border-surface-container-highest pl-4 hidden md:flex">
+                        <span>Reina: @ultimaNotaObj.EstadoReina</span>
+                        <span class="material-symbols-outlined text-[16px] text-primary-container mt-1">description</span>
+                    </div>
+                </div>
+
+                @if (notasRestantes.Any())
+                {
+                    <div class="flex flex-col gap-unit mt-4">
+                        @foreach (var nota in notasRestantes)
+                        {
+                            <div class="bg-surface-container-low border border-outline-variant rounded-lg p-5 flex flex-col md:flex-row gap-6 md:items-center hover:border-surface-container-high transition-colors opacity-70">
+                                <div class="flex flex-col min-w-[120px]">
+                                    <span class="font-label-caps text-label-caps text-on-surface">@nota.Fecha.ToString("dd MMM yyyy").ToUpper()</span>
+                                    <span class="font-body-sm text-body-sm text-on-surface-variant">@nota.Fecha.ToString("HH:mm") hrs</span>
+                                </div>
+                                <div class="w-px h-12 bg-surface-container-highest hidden md:block"></div>
+                                <div class="flex-grow flex flex-col gap-2">
+                                    <div class="flex items-center gap-3">
+                                        <span class="font-body-md text-body-md font-semibold text-primary-container">Registro Histórico</span>
+                                        <span class="bg-surface-container-high px-2 py-0.5 rounded text-[10px] font-label-caps text-on-surface-variant border border-outline-variant uppercase">@nota.EstadoColmena</span>
+                                    </div>
+                                    <p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">
+                                        @nota.Detalles
+                                    </p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="text-center py-6 text-on-surface-variant font-body-sm">
+                    No hay notas técnicas registradas para esta colmena.
+                </div>
+            }
         </div>
     </div>
 
@@ -439,6 +467,59 @@
     </div>
 </div>
 
+<!-- All Notes Modal -->
+<div id="allNotesModal" class="fixed inset-0 z-50 flex modal-backdrop modal-hidden items-center justify-center bg-black/85 p-4">
+    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-4xl shadow-2xl flex flex-col max-h-[85vh] modal-container">
+        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between shrink-0">
+            <h4 class="font-headline-lg text-lg font-bold text-on-surface flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary-container">history</span>
+                Historial Completo de Notas
+            </h4>
+            <button id="btnCancelAllNotesIcon" class="text-on-surface-variant hover:text-primary-container transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="p-6 overflow-y-auto space-y-4 grow custom-scrollbar">
+            @if (Model.NotasTecnicas != null && Model.NotasTecnicas.Any())
+            {
+                foreach (var nota in Model.NotasTecnicas.OrderByDescending(n => n.Fecha))
+                {
+                    <div class="bg-surface-container-low border border-outline-variant rounded-lg p-5 flex flex-col md:flex-row gap-6 md:items-center hover:border-surface-container-high transition-colors">
+                        <div class="flex flex-col min-w-[120px]">
+                            <span class="font-label-caps text-label-caps text-on-surface">@nota.Fecha.ToString("dd MMM yyyy").ToUpper()</span>
+                            <span class="font-body-sm text-body-sm text-on-surface-variant">@nota.Fecha.ToString("HH:mm") hrs</span>
+                        </div>
+                        <div class="w-px h-12 bg-surface-container-highest hidden md:block"></div>
+                        <div class="flex-grow flex flex-col gap-2">
+                            <div class="flex items-center gap-3">
+                                <span class="font-body-md text-body-md font-semibold text-primary-container">Nota de Evaluación</span>
+                                <span class="bg-surface-container-high px-2 py-0.5 rounded text-[10px] font-label-caps text-on-surface-variant border border-outline-variant uppercase">@nota.EstadoColmena</span>
+                            </div>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant">
+                                @nota.Detalles
+                            </p>
+                        </div>
+                        <div class="flex flex-col items-end gap-1 text-on-surface-variant text-[10px] font-label-caps border-l border-surface-container-highest pl-4 shrink-0 mt-4 md:mt-0">
+                            <span class="whitespace-nowrap">Reina: @nota.EstadoReina</span>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="text-center py-10 text-on-surface-variant font-body-sm">
+                    No hay notas técnicas registradas.
+                </div>
+            }
+        </div>
+        <div class="pt-4 pb-4 px-6 border-t border-surface-container-highest flex justify-end shrink-0">
+            <button type="button" id="btnCancelAllNotes" class="bg-surface-container-high border border-outline text-on-surface hover:bg-surface-container-highest transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps font-semibold">
+                Cerrar Historial
+            </button>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
         // Modal Logic Helper
@@ -461,6 +542,9 @@
         
         // Setup Note Modal
         setupModal('btnOpenNote', 'noteModal', ['btnCancelNote', 'btnCancelNoteIcon']);
+        
+        // Setup All Notes Modal
+        setupModal('btnOpenAllNotes', 'allNotesModal', ['btnCancelAllNotes', 'btnCancelAllNotesIcon']);
 
         // Setup Delete Modal (global function for inline onclick)
         const deleteModal = document.getElementById('deleteModal');

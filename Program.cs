@@ -31,6 +31,7 @@ using (var scope = app.Services.CreateScope())
         _ = context.Apiarios.FirstOrDefault();
         _ = context.Colmenas.FirstOrDefault();
         _ = context.Treatments.FirstOrDefault();
+        _ = context.NotasTecnicas.FirstOrDefault();
         tableExists = true;
     }
     catch (Exception ex)
