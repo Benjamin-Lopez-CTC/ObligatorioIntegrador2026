@@ -14,6 +14,8 @@ namespace ObligatorioIntegrador2026.Data
         public DbSet<Equipment> Equipments { get; set; }
         public DbSet<Apiario> Apiarios { get; set; }
         public DbSet<Colmena> Colmenas { get; set; }
+        public DbSet<Treatment> Treatments { get; set; }
+        public DbSet<TreatmentEquipment> TreatmentEquipments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -53,6 +55,16 @@ namespace ObligatorioIntegrador2026.Data
                 new Colmena { Id = 5, Identificador = "#HIVE-0001", CodigoEscaneo = "100005", ApiarioId = 2, Estado = "Óptimo", PesoKg = 40.0, TemperaturaInterna = 35.1, HumedadInterna = 52.0, ProduccionMielKg = 30.0, EsPiloto = true, CantidadAbejas = 42000, UbicacionIntraApiario = "Fila 1, Pos 1", ComportamientoAbejas = "Dócil", EstadoReina = "Presente", UltimaNotaTecnica = "Alza agregada.", FechaUltimaNota = DateTime.Now.AddDays(-7) },
                 new Colmena { Id = 6, Identificador = "#HIVE-0002", CodigoEscaneo = "100006", ApiarioId = 2, Estado = "Óptimo", PesoKg = 39.5, TemperaturaInterna = 34.8, HumedadInterna = 0, ProduccionMielKg = 30.0, EsPiloto = false, CantidadAbejas = 41000, UbicacionIntraApiario = "Fila 1, Pos 2", ComportamientoAbejas = "Dócil", EstadoReina = "Presente", UltimaNotaTecnica = "Normal.", FechaUltimaNota = DateTime.Now.AddDays(-20) },
                 new Colmena { Id = 7, Identificador = "#HIVE-0003", CodigoEscaneo = "100007", ApiarioId = 3, Estado = "Crítico", PesoKg = 25.0, TemperaturaInterna = 30.0, HumedadInterna = 82.0, ProduccionMielKg = 10.0, EsPiloto = true, CantidadAbejas = 12000, UbicacionIntraApiario = "Única", ComportamientoAbejas = "Agresivo", EstadoReina = "Presente", UltimaNotaTecnica = "Humedad alta.", FechaUltimaNota = DateTime.Now.AddDays(-35) }
+            );
+
+            // Seed inicial de Treatments y TreatmentEquipments
+            modelBuilder.Entity<Treatment>().HasData(
+                new Treatment { Id = 1, ColmenaId = 1, Titulo = "Aplicación Ácido Oxálico", Tipo = "Medicinal", Nota = "Tratamiento por goteo. Dosis estándar 50ml por colmena. Temperatura ambiente 18°C.", Fecha = new DateTime(2025, 10, 12, 14, 30, 0) },
+                new Treatment { Id = 2, ColmenaId = 1, Titulo = "Alimentación de Soporte", Tipo = "Mantenimiento", Nota = "Jarabe de azúcar 2:1. 2 Litros suministrados en alimentador de techo.", Fecha = new DateTime(2025, 08, 28, 9, 15, 0) }
+            );
+
+            modelBuilder.Entity<TreatmentEquipment>().HasData(
+                new TreatmentEquipment { Id = 1, TreatmentId = 1, EquipmentName = "Ácido Oxálico (Glicerina)", Cantidad = 1 }
             );
         }
     }

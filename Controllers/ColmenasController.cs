@@ -154,6 +154,130 @@ namespace ObligatorioIntegrador2026.Controllers
             return RedirectToAction(nameof(Detalles), new { id = id });
         }
 
+        public async Task<IActionResult> Tratamientos(int id)
+        {
+            var colmena = await _context.Colmenas.Include(c => c.Apiario).FirstOrDefaultAsync(c => c.Id == id);
+            if (colmena == null) return NotFound();
+
+            var equipments = await _context.Equipments.OrderBy(e => e.DisplayOrder).ToListAsync();
+            
+            var options = new System.Text.Json.JsonSerializerOptions
+            {
+                PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase,
+                ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
+            };
+            ViewBag.EquipmentsJson = System.Text.Json.JsonSerializer.Serialize(equipments, options);
+
+            return View(colmena);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetTratamientosList(int id)
+        {
+            var list = await _context.Treatments
+                .Where(t => t.ColmenaId == id)
+                .Select(t => new {
+                    id = t.Id,
+                    titulo = t.Titulo,
+                    tipo = t.Tipo,
+                    nota = t.Nota,
+                    fecha = t.Fecha.ToString("yyyy-MM-dd HH:mm:ss"),
+                    fechaDisplay = t.Fecha.ToString("dd MMM yyyy HH:mm").ToUpper(),
+                    equipamientos = t.EquipamientosUsados.Select(eq => new {
+                        id = eq.Id,
+                        name = eq.EquipmentName,
+                        cantidad = eq.Cantidad
+                    }).ToList()
+                })
+                .ToListAsync();
+
+            return Json(new { success = true, data = list });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RegistrarTratamiento([FromBody] TreatmentInputModel model)
+        {
+            if (model == null)
+            {
+                return Json(new { success = false, errors = new[] { "Datos inválidos." } });
+            }
+
+            if (string.IsNullOrWhiteSpace(model.Titulo))
+            {
+                return Json(new { success = false, errors = new[] { "El título del tratamiento es obligatorio." } });
+            }
+
+            if (string.IsNullOrWhiteSpace(model.Tipo))
+            {
+                return Json(new { success = false, errors = new[] { "El tipo de tratamiento es obligatorio." } });
+            }
+
+            // Filter out empty rows (where equipment id is not selected or zero)
+            var activeEquipments = model.Equipamientos.Where(e => e.EquipmentId > 0).ToList();
+
+            // Validate that if quantity is specified, equipment is also selected, and vice-versa
+            foreach (var eq in activeEquipments)
+            {
+                if (eq.Cantidad <= 0)
+                {
+                    return Json(new { success = false, errors = new[] { "La cantidad del equipamiento debe ser mayor que cero." } });
+                }
+            }
+
+            // Check for duplicate equipments
+            var duplicates = activeEquipments.GroupBy(e => e.EquipmentId).Where(g => g.Count() > 1).ToList();
+            if (duplicates.Any())
+            {
+                return Json(new { success = false, errors = new[] { "No se puede seleccionar el mismo equipamiento más de una vez." } });
+            }
+
+            // Verify stock and existence
+            foreach (var eq in activeEquipments)
+            {
+                var dbEq = await _context.Equipments.FindAsync(eq.EquipmentId);
+                if (dbEq == null)
+                {
+                    return Json(new { success = false, errors = new[] { "Uno de los equipamientos seleccionados no existe en el inventario." } });
+                }
+                if (eq.Cantidad > dbEq.Stock)
+                {
+                    return Json(new { success = false, errors = new[] { $"La cantidad solicitada de '{dbEq.Name}' ({eq.Cantidad}u) supera el stock disponible ({dbEq.Stock}u)." } });
+                }
+            }
+
+            // Create treatment
+            var treatment = new Treatment
+            {
+                ColmenaId = model.ColmenaId,
+                Titulo = model.Titulo,
+                Tipo = model.Tipo,
+                Nota = model.Nota,
+                Fecha = DateTime.Now
+            };
+
+            // Deduct stock and add treatment equipment copies
+            foreach (var eq in activeEquipments)
+            {
+                var dbEq = await _context.Equipments.FindAsync(eq.EquipmentId);
+                if (dbEq != null)
+                {
+                    dbEq.Stock -= eq.Cantidad;
+                    _context.Equipments.Update(dbEq);
+
+                    treatment.EquipamientosUsados.Add(new TreatmentEquipment
+                    {
+                        EquipmentName = dbEq.Name,
+                        Cantidad = eq.Cantidad
+                    });
+                }
+            }
+
+            _context.Treatments.Add(treatment);
+            await _context.SaveChangesAsync();
+
+            return Json(new { success = true, message = "Tratamiento registrado exitosamente." });
+        }
+
         private void ActualizarEstadoAutomatico(Colmena colmena)
         {
             bool alertReason = false;
@@ -181,5 +305,20 @@ namespace ObligatorioIntegrador2026.Controllers
                 colmena.Estado = "Alerta";
             }
         }
+    }
+
+    public class TreatmentInputModel
+    {
+        public int ColmenaId { get; set; }
+        public string Titulo { get; set; } = string.Empty;
+        public string Tipo { get; set; } = string.Empty;
+        public string? Nota { get; set; }
+        public List<EquipmentInputModel> Equipamientos { get; set; } = new List<EquipmentInputModel>();
+    }
+
+    public class EquipmentInputModel
+    {
+        public int EquipmentId { get; set; }
+        public int Cantidad { get; set; }
     }
 }
