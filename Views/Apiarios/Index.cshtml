@@ -1,137 +1,147 @@
+@model IEnumerable<ObligatorioIntegrador2026.Models.Apiario>
+
 @{
     ViewData["Title"] = "Gestión de Apiarios";
 }
 
-<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
-<!-- Header Section -->
-<section class="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6 mt-8">
-    <div>
-        <h1 class="font-display text-display text-on-surface mb-2">Gestión de Apiarios</h1>
-        <p class="font-body-md text-body-md text-on-surface-variant">Monitoreo y administración de instalaciones apícolas.</p>
+<main class="w-full max-w-container-max mx-auto px-gutter py-margin-desktop md:py-margin-desktop py-margin-mobile">
+    <!-- Header Section -->
+    <section class="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
+        <div>
+            <h1 class="font-display text-display text-on-surface mb-2">Gestión de Apiarios</h1>
+            <p class="font-body-md text-body-md text-on-surface-variant">Monitoreo y administración de instalaciones apícolas.</p>
+        </div>
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
+            <a asp-controller="Mas" asp-action="CompararApiarios" class="border border-outline text-on-surface font-label-caps text-label-caps px-6 py-3 rounded hover:bg-surface-container-high transition-colors flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">compare_arrows</span>
+                Comparar Apiarios
+            </a>
+            <button id="btnOpenRegistrar" class="bg-primary-container text-on-primary font-label-caps text-label-caps px-6 py-3 rounded hover:bg-primary-fixed-dim transition-colors flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">add</span>
+                Registrar Nuevo Apiario
+            </button>
+        </div>
+    </section>
+
+    <!-- Apiary Grid (Cards) -->
+    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        @foreach (var apiario in Model)
+        {
+            var colmenasCount = apiario.Colmenas?.Count() ?? 0;
+            var prodTotal = apiario.Colmenas?.Sum(c => c.ProduccionMielKg) ?? 0;
+            var prodPercent = Math.Min(100, Math.Round((prodTotal / 300.0) * 100));
+            var estadoProd = "Media";
+            var colorProd = "primary-container";
+            
+            if (prodPercent >= 90)
+            {
+                estadoProd = "Crítica"; // Near limit
+                colorProd = "error";
+            }
+            else if (prodPercent >= 70)
+            {
+                estadoProd = "Alta";
+            }
+
+            <article class="bg-surface-container-high border border-surface-variant rounded flex flex-col hover:border-primary-container transition-colors">
+                <div class="p-6 flex-grow">
+                    <div class="flex justify-between items-start mb-4">
+                        <h2 class="font-headline-lg text-headline-lg text-on-surface">@apiario.Nombre</h2>
+                        <span class="font-label-caps text-label-caps bg-surface-variant text-on-surface-variant px-2 py-1 rounded">ID: @apiario.StringIdentificador</span>
+                    </div>
+                    <div class="space-y-3 mb-6">
+                        <div class="flex items-center gap-2 text-on-surface-variant">
+                            <span class="material-symbols-outlined text-[16px]">location_on</span>
+                            <span class="font-body-md text-body-md">@apiario.UbicacionTexto</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-on-surface-variant">
+                            <span class="material-symbols-outlined text-[16px]">hive</span>
+                            <span class="font-body-md text-body-md">@colmenasCount Colmenas</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-on-surface-variant">
+                            <span class="material-symbols-outlined text-[16px]">calendar_today</span>
+                            <span class="font-body-md text-body-md">Últ. Insp: @(apiario.UltimaInspeccion?.ToString("dd MMM yyyy") ?? "N/A")</span>
+                        </div>
+                    </div>
+
+                    <!-- Progress/Status -->
+                    <div class="mb-4">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-label-caps text-label-caps text-on-surface-variant">Producción: @estadoProd</span>
+                            <span class="font-label-caps text-label-caps text-@colorProd">@prodPercent%</span>
+                        </div>
+                        <div class="w-full bg-surface-variant h-1 rounded-full overflow-hidden">
+                            <div class="bg-@colorProd h-full" style="width: @prodPercent%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 border-t border-surface-variant">
+                    <a asp-action="Detalles" asp-route-id="@apiario.Id" class="w-full bg-transparent border border-primary-container text-primary-container font-label-caps text-label-caps px-4 py-2 rounded hover:bg-surface-variant transition-colors flex justify-center items-center gap-2">
+                        Ver Detalles
+                        <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                    </a>
+                </div>
+            </article>
+        }
+    </section>
+</main>
+
+<!-- Registrar Nuevo Apiario Modal -->
+<div id="registrarModal" class="fixed inset-0 bg-black/60 modal-backdrop flex modal-hidden items-center justify-center z-50 p-4">
+    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-md shadow-2xl overflow-hidden modal-container">
+        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between">
+            <h4 class="font-headline-lg text-lg font-bold text-on-surface">Registrar Nuevo Apiario</h4>
+            <button id="btnCancelRegistrarIcon" class="text-on-surface-variant hover:text-primary-container transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <form asp-action="RegistrarNuevo" method="post" class="p-6 space-y-4">
+            @Html.AntiForgeryToken()
+            <div>
+                <label for="Nombre" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Nombre *</label>
+                <input type="text" id="Nombre" name="Nombre" required placeholder="Ej. Apiario Central" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+            </div>
+            <div>
+                <label for="StringIdentificador" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Identificador (Opcional)</label>
+                <input type="text" id="StringIdentificador" name="StringIdentificador" placeholder="Ej. 004" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+            </div>
+            <div>
+                <label for="UbicacionTexto" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Ubicación *</label>
+                <input type="text" id="UbicacionTexto" name="UbicacionTexto" required placeholder="Ej. Lote 5, Sector Este" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+            </div>
+            <div>
+                <label for="FechaCreacion" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Fecha de Creación</label>
+                <input type="text" id="FechaCreacion" value="@DateTime.Now.ToString("dd MMMM, yyyy")" disabled class="w-full bg-surface-variant border border-outline-variant px-4 py-2.5 rounded text-on-surface-variant outline-none cursor-not-allowed opacity-70" />
+            </div>
+            <div class="pt-4 border-t border-surface-container-highest flex justify-end gap-3">
+                <button type="button" id="btnCancelRegistrar" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2.5 rounded font-label-caps text-label-caps">
+                    Cancelar
+                </button>
+                <button type="submit" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps font-semibold">
+                    Registrar Apiario
+                </button>
+            </div>
+        </form>
     </div>
-    <button class="bg-primary-container text-on-primary font-label-caps text-label-caps px-6 py-3 rounded hover:bg-primary-fixed transition-colors flex items-center gap-2">
-        <span class="material-symbols-outlined text-[18px]">add</span>
-        Registrar Nuevo Apiario
-    </button>
-</section>
-<!-- Apiary Grid (Cards) -->
-<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-    <!-- Card 1 -->
-    <article class="bg-surface-container-high border border-outline-variant rounded flex flex-col hover:border-primary-container transition-colors">
-        <div class="p-6 flex-grow">
-            <div class="flex justify-between items-start mb-4">
-                <h2 class="font-headline-lg text-headline-lg text-on-surface">Apiario Norte</h2>
-                <span class="font-label-caps text-label-caps bg-surface-variant text-on-surface-variant px-2 py-1 rounded">ID: 001</span>
-            </div>
-            <div class="space-y-3 mb-6">
-                <div class="flex items-center gap-2 text-on-surface-variant">
-                    <span class="material-symbols-outlined text-[16px]">location_on</span>
-                    <span class="font-body-md text-body-md">Valle Central</span>
-                </div>
-                <div class="flex items-center gap-2 text-on-surface-variant">
-                    <span class="material-symbols-outlined text-[16px]">hive</span>
-                    <span class="font-body-md text-body-md">45 Colmenas</span>
-                </div>
-                <div class="flex items-center gap-2 text-on-surface-variant">
-                    <span class="material-symbols-outlined text-[16px]">calendar_today</span>
-                    <span class="font-body-md text-body-md">Últ. Insp: 12 Oct 2026</span>
-                </div>
-            </div>
-            <!-- Progress/Status -->
-            <div class="mb-4">
-                <div class="flex justify-between items-center mb-1">
-                    <span class="font-label-caps text-label-caps text-on-surface-variant">Producción: Alta</span>
-                    <span class="font-label-caps text-label-caps text-primary-container">85%</span>
-                </div>
-                <div class="w-full bg-surface-variant h-1 rounded-full overflow-hidden">
-                    <div class="bg-primary-container h-full" style="width: 85%"></div>
-                </div>
-            </div>
-        </div>
-        <div class="p-6 border-t border-outline-variant">
-            <button class="w-full bg-transparent border border-primary-container text-primary-container font-label-caps text-label-caps px-4 py-2 rounded hover:bg-primary-container/10 transition-colors flex justify-center items-center gap-2">
-                Ver Detalles
-                <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
-            </button>
-        </div>
-    </article>
-    <!-- Card 2 -->
-    <article class="bg-surface-container-high border border-outline-variant rounded flex flex-col hover:border-primary-container transition-colors">
-        <div class="p-6 flex-grow">
-            <div class="flex justify-between items-start mb-4">
-                <h2 class="font-headline-lg text-headline-lg text-on-surface">Apiario Sur</h2>
-                <span class="font-label-caps text-label-caps bg-surface-variant text-on-surface-variant px-2 py-1 rounded">ID: 002</span>
-            </div>
-            <div class="space-y-3 mb-6">
-                <div class="flex items-center gap-2 text-on-surface-variant">
-                    <span class="material-symbols-outlined text-[16px]">location_on</span>
-                    <span class="font-body-md text-body-md">Colinas Bajas</span>
-                </div>
-                <div class="flex items-center gap-2 text-on-surface-variant">
-                    <span class="material-symbols-outlined text-[16px]">hive</span>
-                    <span class="font-body-md text-body-md">32 Colmenas</span>
-                </div>
-                <div class="flex items-center gap-2 text-on-surface-variant">
-                    <span class="material-symbols-outlined text-[16px]">calendar_today</span>
-                    <span class="font-body-md text-body-md">Últ. Insp: 05 Oct 2026</span>
-                </div>
-            </div>
-            <!-- Progress/Status -->
-            <div class="mb-4">
-                <div class="flex justify-between items-center mb-1">
-                    <span class="font-label-caps text-label-caps text-on-surface-variant">Producción: Media</span>
-                    <span class="font-label-caps text-label-caps text-primary-container">60%</span>
-                </div>
-                <div class="w-full bg-surface-variant h-1 rounded-full overflow-hidden">
-                    <div class="bg-primary-container h-full" style="width: 60%"></div>
-                </div>
-            </div>
-        </div>
-        <div class="p-6 border-t border-outline-variant">
-            <button class="w-full bg-transparent border border-primary-container text-primary-container font-label-caps text-label-caps px-4 py-2 rounded hover:bg-primary-container/10 transition-colors flex justify-center items-center gap-2">
-                Ver Detalles
-                <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
-            </button>
-        </div>
-    </article>
-    <!-- Card 3 -->
-    <article class="bg-surface-container-high border border-outline-variant rounded flex flex-col hover:border-primary-container transition-colors">
-        <div class="p-6 flex-grow">
-            <div class="flex justify-between items-start mb-4">
-                <h2 class="font-headline-lg text-headline-lg text-on-surface">Apiario Este</h2>
-                <span class="font-label-caps text-label-caps bg-surface-variant text-on-surface-variant px-2 py-1 rounded">ID: 003</span>
-            </div>
-            <div class="space-y-3 mb-6">
-                <div class="flex items-center gap-2 text-on-surface-variant">
-                    <span class="material-symbols-outlined text-[16px]">location_on</span>
-                    <span class="font-body-md text-body-md">Bosque Nativo</span>
-                </div>
-                <div class="flex items-center gap-2 text-on-surface-variant">
-                    <span class="material-symbols-outlined text-[16px]">hive</span>
-                    <span class="font-body-md text-body-md">60 Colmenas</span>
-                </div>
-                <div class="flex items-center gap-2 text-on-surface-variant">
-                    <span class="material-symbols-outlined text-[16px]">calendar_today</span>
-                    <span class="font-body-md text-body-md">Últ. Insp: 15 Oct 2026</span>
-                </div>
-            </div>
-            <!-- Progress/Status -->
-            <div class="mb-4">
-                <div class="flex justify-between items-center mb-1">
-                    <span class="font-label-caps text-label-caps text-on-surface-variant">Producción: Crítica</span>
-                    <span class="font-label-caps text-label-caps text-error">95%</span>
-                </div>
-                <div class="w-full bg-surface-variant h-1 rounded-full overflow-hidden">
-                    <div class="bg-error h-full" style="width: 95%"></div>
-                </div>
-            </div>
-        </div>
-        <div class="p-6 border-t border-outline-variant">
-            <button class="w-full bg-transparent border border-primary-container text-primary-container font-label-caps text-label-caps px-4 py-2 rounded hover:bg-primary-container/10 transition-colors flex justify-center items-center gap-2">
-                Ver Detalles
-                <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
-            </button>
-        </div>
-    </article>
-</section>
 </div>
+
+@section Scripts {
+    <script>
+        const btnOpen = document.getElementById('btnOpenRegistrar');
+        const modal = document.getElementById('registrarModal');
+        const btnCancel1 = document.getElementById('btnCancelRegistrar');
+        const btnCancel2 = document.getElementById('btnCancelRegistrarIcon');
+
+        function openModal() {
+            modal.classList.remove('modal-hidden');
+        }
+
+        function closeModal() {
+            modal.classList.add('modal-hidden');
+        }
+
+        btnOpen.addEventListener('click', openModal);
+        btnCancel1.addEventListener('click', closeModal);
+        btnCancel2.addEventListener('click', closeModal);
+    </script>
+}

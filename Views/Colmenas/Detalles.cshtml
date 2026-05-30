@@ -1,0 +1,474 @@
+@model ObligatorioIntegrador2026.Models.Colmena
+
+@{
+    ViewData["Title"] = "Detalle de Colmena";
+    
+    string statusHtml = "";
+    string statusText = Model.Estado;
+    if (Model.Estado == "Óptimo")
+    {
+        statusHtml = $"<span class=\"bg-surface-container-high border border-[#4CAF50] text-[#4CAF50] font-label-caps text-label-caps px-2 py-1 rounded-sm uppercase flex items-center gap-1\"><span class=\"material-symbols-outlined text-[14px]\" style=\"font-variation-settings: 'FILL' 1;\">check_circle</span>{statusText}</span>";
+    }
+    else if (Model.Estado == "Alerta")
+    {
+        statusHtml = $"<span class=\"bg-primary-container/10 border border-primary-container text-primary-container font-label-caps text-label-caps px-2 py-1 rounded-sm uppercase flex items-center gap-1\"><span class=\"material-symbols-outlined text-[14px]\" style=\"font-variation-settings: 'FILL' 1;\">info</span>{statusText}</span>";
+    }
+    else if (Model.Estado == "Crítico")
+    {
+        statusHtml = $"<span class=\"bg-error-container/5 border border-error text-error font-label-caps text-label-caps px-2 py-1 rounded-sm uppercase flex items-center gap-1\"><span class=\"material-symbols-outlined text-[14px]\" style=\"font-variation-settings: 'FILL' 1;\">warning</span>{statusText}</span>";
+    }
+
+    double precioPorKg = 4.50;
+    double valorTotal = Model.ProduccionMielKg * precioPorKg;
+
+    double maxMielPorAlza = 24.0; // Assume an alza holds ~24 kg
+    double prodPercent = Math.Min(100, Math.Round((Model.ProduccionMielKg / maxMielPorAlza) * 100));
+
+    string reinaLastSeen = Model.FechaUltimaNota.HasValue 
+        ? $"Avistada hace {(int)(DateTime.Now - Model.FechaUltimaNota.Value).TotalDays} días" 
+        : "Sin datos recientes";
+}
+
+<main class="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-12 flex flex-col gap-10">
+    <!-- Header Section -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-surface-container-highest pb-8">
+        <div class="flex flex-col gap-4">
+            <a asp-action="Index" class="flex items-center gap-2 text-on-surface-variant hover:text-primary-container transition-colors mb-2 group font-label-caps text-label-caps uppercase w-fit">
+                <span class="material-symbols-outlined text-sm group-hover:-translate-x-1 transition-transform">arrow_back</span>
+                Volver a Colmenas
+            </a>
+            <div class="flex items-center gap-4">
+                <h1 class="font-display text-display md:text-[40px] text-[32px] text-primary-container">
+                    @(string.IsNullOrEmpty(Model.Identificador) ? Model.CodigoEscaneo : Model.Identificador)
+                </h1>
+                @Html.Raw(statusHtml)
+                @if (Model.EsPiloto)
+                {
+                    <span class="bg-surface-container-high border border-outline-variant text-on-surface font-label-caps text-label-caps px-2 py-1 rounded-sm uppercase flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">science</span>PILOTO</span>
+                }
+            </div>
+            <p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+                Código de Escaneo: @Model.CodigoEscaneo <br/>
+                @(Model.Estado == "Alerta" || Model.Estado == "Crítico" ? "Requiere inspección prioritaria debido a alertas activas." : "Inspección de rutina requerida según calendario.")
+            </p>
+        </div>
+        <div class="flex flex-wrap gap-4">
+            <button class="border border-primary-container text-primary-container font-label-caps text-label-caps px-6 py-3 rounded-sm flex items-center gap-2 hover:bg-primary-container/10 transition-colors whitespace-nowrap opacity-50 cursor-not-allowed" disabled>
+                <span class="material-symbols-outlined text-[18px]">medical_services</span>
+                Gestionar Tratamiento
+            </button>
+            <button id="btnOpenEdit" class="border border-primary-container text-primary-container font-label-caps text-label-caps px-6 py-3 rounded-sm flex items-center gap-2 hover:bg-primary-container/10 transition-colors whitespace-nowrap">
+                <span class="material-symbols-outlined text-[18px]">edit</span>
+                Editar Colmena
+            </button>
+            <button id="btnOpenNote" class="bg-primary-container text-on-primary-fixed font-label-caps text-label-caps px-6 py-3 rounded-sm flex items-center gap-2 hover:bg-primary-fixed transition-colors whitespace-nowrap">
+                <span class="material-symbols-outlined text-[18px]">add</span>
+                Añadir Nota Técnica
+            </button>
+        </div>
+    </div>
+
+    <!-- Metrics Grid (Bento Style) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-unit">
+        @if (Model.EsPiloto)
+        {
+            <!-- Temp -->
+            <div class="bg-[#252525] border border-outline-variant rounded-lg p-6 flex flex-col gap-4 hover:border-primary-container transition-colors relative overflow-hidden group">
+                <div class="absolute top-0 left-0 w-1 h-full bg-surface-container-high group-hover:bg-primary-container transition-colors"></div>
+                <div class="flex justify-between items-center text-primary-container">
+                    <span class="material-symbols-outlined text-[24px]">thermostat</span>
+                    <span class="font-label-caps text-label-caps text-on-surface-variant">SENSOR T1</span>
+                </div>
+                <div>
+                    <div class="font-display text-[32px] font-bold text-on-surface">@Model.TemperaturaInterna.ToString("0.0")°C</div>
+                    <div class="font-body-sm text-body-sm @(Model.TemperaturaInterna < 30 || Model.TemperaturaInterna > 38 ? "text-error" : "text-on-surface-variant") mt-1">
+                        @(Model.TemperaturaInterna < 30 || Model.TemperaturaInterna > 38 ? "Nivel Peligroso" : "Nivel estable")
+                    </div>
+                </div>
+            </div>
+
+            <!-- Humidity -->
+            <div class="bg-[#252525] border border-outline-variant rounded-lg p-6 flex flex-col gap-4 hover:border-primary-container transition-colors relative overflow-hidden group">
+                <div class="absolute top-0 left-0 w-1 h-full bg-surface-container-high group-hover:bg-primary-container transition-colors"></div>
+                <div class="flex justify-between items-center text-primary-container">
+                    <span class="material-symbols-outlined text-[24px]">water_drop</span>
+                    <span class="font-label-caps text-label-caps text-on-surface-variant">SENSOR H1</span>
+                </div>
+                <div>
+                    <div class="font-display text-[32px] font-bold text-on-surface">@Model.HumedadInterna.ToString("0.0")%</div>
+                    <div class="font-body-sm text-body-sm @(Model.HumedadInterna < 40 || Model.HumedadInterna > 80 ? "text-error" : "text-on-surface-variant") mt-1">
+                        @(Model.HumedadInterna < 40 || Model.HumedadInterna > 80 ? "Humedad Peligrosa" : "Humedad nominal")
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <!-- Población -->
+            <div class="bg-[#252525] border border-outline-variant rounded-lg p-6 flex flex-col gap-4 hover:border-primary-container transition-colors relative overflow-hidden group">
+                <div class="absolute top-0 left-0 w-1 h-full bg-surface-container-high group-hover:bg-primary-container transition-colors"></div>
+                <div class="flex justify-between items-center text-primary-container">
+                    <span class="material-symbols-outlined text-[24px]">groups</span>
+                    <span class="font-label-caps text-label-caps text-on-surface-variant">POBLACIÓN</span>
+                </div>
+                <div>
+                    <div class="font-display text-[32px] font-bold text-on-surface">@Model.CantidadAbejas.ToString("N0")</div>
+                    <div class="font-body-sm text-body-sm text-on-surface-variant mt-1">Abejas aprox.</div>
+                </div>
+            </div>
+
+            <!-- Peso Actual -->
+            <div class="bg-[#252525] border border-outline-variant rounded-lg p-6 flex flex-col gap-4 hover:border-primary-container transition-colors relative overflow-hidden group">
+                <div class="absolute top-0 left-0 w-1 h-full bg-surface-container-high group-hover:bg-primary-container transition-colors"></div>
+                <div class="flex justify-between items-center text-primary-container">
+                    <span class="material-symbols-outlined text-[24px]">scale</span>
+                    <span class="font-label-caps text-label-caps text-on-surface-variant">PESO ACTUAL</span>
+                </div>
+                <div>
+                    <div class="font-display text-[32px] font-bold text-on-surface">@Model.PesoKg.ToString("0.0") kg</div>
+                    <div class="font-body-sm text-body-sm text-on-surface-variant mt-1">Peso total de la colmena</div>
+                </div>
+            </div>
+        }
+
+        <!-- Production -->
+        <div class="bg-[#252525] border border-outline-variant rounded-lg p-6 flex flex-col gap-4 hover:border-primary-container transition-colors relative overflow-hidden group lg:col-span-1 md:col-span-2">
+            <div class="absolute top-0 left-0 w-1 h-full bg-surface-container-high group-hover:bg-primary-container transition-colors"></div>
+            <div class="flex justify-between items-center text-primary-container">
+                <span class="material-symbols-outlined text-[24px]">hive</span>
+                <span class="font-label-caps text-label-caps text-on-surface-variant">ESTIMACIÓN</span>
+            </div>
+            <div>
+                <div class="font-display text-[32px] font-bold text-on-surface">@Model.ProduccionMielKg.ToString("0.0") kg</div>
+                <div class="font-body-sm text-body-sm text-on-surface-variant mt-2 flex items-center gap-2">
+                    <span class="">Alza completada al @prodPercent%</span>
+                </div>
+                <div class="w-full h-1 bg-[#333333] mt-3 rounded-full overflow-hidden">
+                    <div class="h-full bg-primary-container" style="width: @prodPercent%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Queen Status -->
+        <div class="bg-[#252525] border border-outline-variant rounded-lg p-6 flex flex-col gap-4 hover:border-primary-container transition-colors relative overflow-hidden group">
+            <div class="absolute top-0 left-0 w-1 h-full bg-surface-container-high group-hover:bg-primary-container transition-colors"></div>
+            <div class="flex justify-between items-center text-primary-container">
+                <span class="material-symbols-outlined text-[24px]">workspace_premium</span>
+                <span class="font-label-caps text-label-caps text-on-surface-variant">REINA</span>
+            </div>
+            <div>
+                <div class="font-headline-lg text-headline-lg @(Model.EstadoReina == "Ausente" ? "text-error" : "text-on-surface")">@Model.EstadoReina</div>
+                <div class="font-body-sm text-body-sm @(Model.EstadoReina == "Ausente" ? "text-error" : "text-on-surface-variant") mt-1">@reinaLastSeen</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Two Column Layout -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-4">
+        <!-- Left Column: Primary Info -->
+        <div class="lg:col-span-1 flex flex-col gap-6">
+            <h2 class="font-headline-lg text-[24px] text-on-surface border-b border-surface-container-highest pb-3">Información Principal</h2>
+            <div class="bg-[#252525] border border-outline-variant rounded-lg p-6 flex flex-col gap-6">
+                <div class="flex flex-col gap-1">
+                    <span class="font-label-caps text-label-caps text-on-surface-variant">UBICACIÓN</span>
+                    <div class="flex items-center gap-2 text-on-surface">
+                        <span class="material-symbols-outlined text-primary-container text-[20px]">location_on</span>
+                        <span class="font-body-md text-body-md">@Model.Apiario.Nombre - @Model.UbicacionIntraApiario</span>
+                    </div>
+                </div>
+                <div class="w-full h-[1px] bg-surface-container-highest"></div>
+                <div class="flex flex-col gap-1">
+                    <span class="font-label-caps text-label-caps text-on-surface-variant">POBLACIÓN ESTIMADA</span>
+                    <div class="flex items-center gap-2 text-on-surface">
+                        <span class="material-symbols-outlined text-primary-container text-[20px]">groups</span>
+                        <span class="font-body-md text-body-md">~@Model.CantidadAbejas.ToString("N0") abejas</span>
+                    </div>
+                </div>
+                <div class="w-full h-[1px] bg-surface-container-highest"></div>
+                <div class="flex flex-col gap-1">
+                    <span class="font-label-caps text-label-caps text-on-surface-variant">COMPORTAMIENTO</span>
+                    <div class="flex items-center gap-2 text-on-surface">
+                        <span class="material-symbols-outlined text-primary-container text-[20px]">psychology</span>
+                        <span class="font-body-md text-body-md">@Model.ComportamientoAbejas</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-6 mt-6">
+                <h2 class="font-headline-lg text-[24px] text-on-surface border-b border-surface-container-highest pb-3">Valoración de Producción</h2>
+                <div class="bg-[#252525] border border-outline-variant rounded-lg p-6 flex flex-col gap-6">
+                    <div class="flex flex-col gap-1">
+                        <span class="font-label-caps text-label-caps text-on-surface-variant">PRECIO POR KILO</span>
+                        <div class="flex items-center gap-2 text-on-surface">
+                            <span class="material-symbols-outlined text-primary-container text-[20px]">payments</span>
+                            <span class="font-body-md text-body-md">$@precioPorKg.ToString("0.00") / kg</span>
+                        </div>
+                    </div>
+                    <div class="w-full h-[1px] bg-surface-container-highest"></div>
+                    <div class="flex flex-col gap-1">
+                        <span class="font-label-caps text-label-caps text-on-surface-variant">VALOR TOTAL ESTIMADO</span>
+                        <div class="flex items-center gap-2 text-on-surface">
+                            <span class="material-symbols-outlined text-primary-container text-[20px]">account_balance_wallet</span>
+                            <span class="font-body-md text-body-md font-bold">$@valorTotal.ToString("0.00")</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Inspection History & Notes -->
+        <div class="lg:col-span-2 flex flex-col gap-12">
+            <div class="flex flex-col gap-6">
+                <div class="flex justify-between items-end border-b border-surface-container-highest pb-3">
+                    <h2 class="font-headline-lg text-[24px] text-on-surface">Historial de Inspecciones</h2>
+                    <button class="font-label-caps text-label-caps text-primary-container hover:text-primary-fixed transition-colors">VER TODO</button>
+                </div>
+                <div class="flex flex-col gap-unit">
+                    <!-- History Item 1 -->
+                    <div class="bg-[#252525] border border-outline-variant rounded-lg p-5 flex flex-col md:flex-row gap-6 md:items-center hover:border-surface-container-high transition-colors opacity-70">
+                        <div class="flex flex-col min-w-[120px]">
+                            <span class="font-label-caps text-label-caps text-on-surface">12 NOV 2023</span>
+                            <span class="font-body-sm text-body-sm text-on-surface-variant">14:30 hrs</span>
+                        </div>
+                        <div class="w-px h-12 bg-surface-container-highest hidden md:block"></div>
+                        <div class="flex-grow flex flex-col gap-2">
+                            <div class="flex items-center gap-3">
+                                <span class="font-body-md text-body-md font-semibold text-primary-container">Tratamiento Varroa</span>
+                                <span class="bg-surface-container-high px-2 py-0.5 rounded text-[10px] font-label-caps text-on-surface-variant border border-outline-variant">SANITARIO</span>
+                            </div>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant">
+                                Aplicación de tratamiento orgánico (Ácido Oxálico). Caída de ácaros estimada en 2%. Revisión de cría normal.
+                            </p>
+                        </div>
+                    </div>
+                    <!-- History Item 2 -->
+                    <div class="bg-[#252525] border border-outline-variant rounded-lg p-5 flex flex-col md:flex-row gap-6 md:items-center hover:border-surface-container-high transition-colors opacity-70">
+                        <div class="flex flex-col min-w-[120px]">
+                            <span class="font-label-caps text-label-caps text-on-surface">28 OCT 2023</span>
+                            <span class="font-body-sm text-body-sm text-on-surface-variant">09:15 hrs</span>
+                        </div>
+                        <div class="w-px h-12 bg-surface-container-highest hidden md:block"></div>
+                        <div class="flex-grow flex flex-col gap-2">
+                            <div class="flex items-center gap-3">
+                                <span class="font-body-md text-body-md font-semibold text-primary-container">Cosecha Parcial</span>
+                                <span class="bg-surface-container-high px-2 py-0.5 rounded text-[10px] font-label-caps text-on-surface-variant border border-outline-variant">PRODUCCIÓN</span>
+                            </div>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant">
+                                Extracción de 4 marcos operculados de la primera alza.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-6">
+                <div class="flex justify-between items-end border-b border-surface-container-highest pb-3">
+                    <h2 class="font-headline-lg text-[24px] text-on-surface">Última Nota Técnica</h2>
+                </div>
+                
+                @if (Model.FechaUltimaNota.HasValue && !string.IsNullOrEmpty(Model.UltimaNotaTecnica))
+                {
+                    <div class="bg-[#252525] border-l-4 border-l-primary-container border border-outline-variant rounded-lg p-5 flex flex-col md:flex-row gap-6 md:items-center hover:border-surface-container-high transition-colors">
+                        <div class="flex flex-col min-w-[120px]">
+                            <span class="font-label-caps text-label-caps text-on-surface">@Model.FechaUltimaNota.Value.ToString("dd MMM yyyy").ToUpper()</span>
+                            <span class="font-body-sm text-body-sm text-on-surface-variant">@Model.FechaUltimaNota.Value.ToString("HH:mm") hrs</span>
+                        </div>
+                        <div class="w-px h-12 bg-surface-container-highest hidden md:block"></div>
+                        <div class="flex-grow flex flex-col gap-2">
+                            <div class="flex items-center gap-3">
+                                <span class="font-body-md text-body-md font-semibold text-primary-container">Nota Técnica</span>
+                                <span class="bg-primary-container/10 px-2 py-0.5 rounded text-[10px] font-label-caps text-primary-container border border-primary-container/30 uppercase">@Model.Estado</span>
+                            </div>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant">
+                                @Model.UltimaNotaTecnica
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2 text-on-surface-variant">
+                            <span class="material-symbols-outlined text-[24px]">description</span>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-6 text-on-surface-variant font-body-sm">
+                        No hay notas técnicas registradas para esta colmena.
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="flex justify-center mt-8 pt-8 border-t border-surface-container-highest">
+        <button onclick="openDeleteModal()" class="border border-error text-error font-label-caps text-label-caps px-6 py-3 rounded-lg flex items-center gap-2 hover:bg-error/10 transition-colors whitespace-nowrap">
+            <span class="material-symbols-outlined text-[18px]">delete</span>
+            Eliminar Colmena
+        </button>
+    </div>
+</main>
+
+<!-- Delete Modal -->
+<div id="deleteModal" class="fixed inset-0 z-50 flex modal-backdrop modal-hidden items-center justify-center bg-black/85 p-4">
+    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-md shadow-2xl p-6 text-center space-y-4 modal-container">
+        <span class="material-symbols-outlined text-error text-5xl">delete_forever</span>
+        <h4 class="font-headline-lg text-lg font-bold text-on-surface">¿Eliminar Colmena?</h4>
+        <p class="font-body-md text-body-md text-on-surface-variant">
+            ¿Está seguro de que desea eliminar la colmena <span class="text-error font-semibold">@(string.IsNullOrEmpty(Model.Identificador) ? Model.CodigoEscaneo : Model.Identificador)</span>?
+        </p>
+        <p class="text-sm text-error/80 font-medium">
+            Esta acción es irreversible y los datos se perderán.
+        </p>
+        <div class="pt-4 flex justify-center gap-3">
+            <button id="btnCancelDelete" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2 rounded font-label-caps text-label-caps">
+                Cancelar
+            </button>
+            <form asp-action="Eliminar" asp-controller="Colmenas" method="post" class="m-0">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Id" />
+                <button type="submit" class="bg-error-container/30 border border-error text-error hover:bg-error/20 transition-colors px-6 py-2 rounded font-label-caps text-label-caps font-semibold">
+                    Sí, eliminarla
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Add Note Modal -->
+<div id="noteModal" class="fixed inset-0 z-50 flex modal-backdrop modal-hidden items-center justify-center bg-black/85 p-4">
+    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-md shadow-2xl overflow-hidden modal-container">
+        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between">
+            <h4 class="font-headline-lg text-lg font-bold text-on-surface">Añadir Nota Técnica</h4>
+            <button id="btnCancelNoteIcon" class="text-on-surface-variant hover:text-primary-container transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <form asp-action="AñadirNotaTecnica" method="post" class="p-6 space-y-4">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@Model.Id" />
+            
+            <div>
+                <label for="detalles" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Detalles de la Nota</label>
+                <textarea id="detalles" name="detalles" rows="4" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" placeholder="Observaciones generales..."></textarea>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="estadoReina" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Estado de la Reina</label>
+                    <select id="estadoReina" name="estadoReina" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
+                        <option value="Presente" selected="@(Model.EstadoReina == "Presente")">Presente</option>
+                        <option value="Ausente" selected="@(Model.EstadoReina == "Ausente")">Ausente</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="estadoColmena" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Estado General</label>
+                    <select id="estadoColmena" name="estadoColmena" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
+                        <option value="Óptimo" selected="@(Model.Estado == "Óptimo")">Óptimo</option>
+                        <option value="Alerta" selected="@(Model.Estado == "Alerta")">Alerta</option>
+                        <option value="Crítico" selected="@(Model.Estado == "Crítico")">Crítico</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="pt-4 border-t border-surface-container-highest flex justify-end gap-3 mt-6">
+                <button type="button" id="btnCancelNote" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2.5 rounded font-label-caps text-label-caps">
+                    Cancelar
+                </button>
+                <button type="submit" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps font-semibold">
+                    Guardar Nota
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Colmena Modal -->
+<div id="editModal" class="fixed inset-0 z-50 flex modal-backdrop modal-hidden items-center justify-center bg-black/85 p-4">
+    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-md shadow-2xl overflow-hidden modal-container">
+        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between">
+            <h4 class="font-headline-lg text-lg font-bold text-on-surface">Editar Parámetros</h4>
+            <button id="btnCancelEditIcon" class="text-on-surface-variant hover:text-primary-container transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <form asp-action="EditarColmena" method="post" class="p-6 space-y-4">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@Model.Id" />
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="peso" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Peso (Kg)</label>
+                    <input type="number" step="0.1" id="peso" name="peso" value="@Model.PesoKg" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                </div>
+                <div>
+                    <label for="produccion" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Producción Miel (Kg)</label>
+                    <input type="number" step="0.1" id="produccion" name="produccion" value="@Model.ProduccionMielKg" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                </div>
+            </div>
+
+            @if (Model.EsPiloto)
+            {
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="temperatura" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Temperatura (°C)</label>
+                        <input type="number" step="0.1" id="temperatura" name="temperatura" value="@Model.TemperaturaInterna" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                    </div>
+                    <div>
+                        <label for="humedad" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Humedad (%)</label>
+                        <input type="number" step="0.1" id="humedad" name="humedad" value="@Model.HumedadInterna" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                    </div>
+                </div>
+            }
+
+            <div>
+                <label for="comportamiento" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Comportamiento</label>
+                <select id="comportamiento" name="comportamiento" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
+                    <option value="Dócil" selected="@(Model.ComportamientoAbejas == "Dócil")">Dócil</option>
+                    <option value="Defensivo" selected="@(Model.ComportamientoAbejas == "Defensivo")">Defensivo</option>
+                    <option value="Agresivo" selected="@(Model.ComportamientoAbejas == "Agresivo")">Agresivo</option>
+                </select>
+            </div>
+
+            <div class="pt-4 border-t border-surface-container-highest flex justify-end gap-3 mt-6">
+                <button type="button" id="btnCancelEdit" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2.5 rounded font-label-caps text-label-caps">
+                    Cancelar
+                </button>
+                <button type="submit" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps font-semibold">
+                    Guardar Cambios
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Modal Logic Helper
+        function setupModal(openBtnId, modalId, cancelBtnIds) {
+            const modal = document.getElementById(modalId);
+            const openBtn = document.getElementById(openBtnId);
+            if (openBtn) {
+                openBtn.addEventListener('click', () => modal.classList.remove('modal-hidden'));
+            }
+            cancelBtnIds.forEach(id => {
+                const btn = document.getElementById(id);
+                if (btn) {
+                    btn.addEventListener('click', () => modal.classList.add('modal-hidden'));
+                }
+            });
+        }
+
+        // Setup Edit Modal
+        setupModal('btnOpenEdit', 'editModal', ['btnCancelEdit', 'btnCancelEditIcon']);
+        
+        // Setup Note Modal
+        setupModal('btnOpenNote', 'noteModal', ['btnCancelNote', 'btnCancelNoteIcon']);
+
+        // Setup Delete Modal (global function for inline onclick)
+        const deleteModal = document.getElementById('deleteModal');
+        window.openDeleteModal = function() {
+            deleteModal.classList.remove('modal-hidden');
+        }
+        document.getElementById('btnCancelDelete').addEventListener('click', () => {
+            deleteModal.classList.add('modal-hidden');
+        });
+    </script>
+}

@@ -27,12 +27,14 @@ using (var scope = app.Services.CreateScope())
     bool tableExists = false;
     try
     {
-        _ = context.Equipments.Any();
+        _ = context.Equipments.FirstOrDefault();
+        _ = context.Apiarios.FirstOrDefault();
+        _ = context.Colmenas.FirstOrDefault();
         tableExists = true;
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"Equipments table does not exist or table check failed: {ex.Message}");
+        Console.WriteLine($"Equipments or Apiarios table does not exist or table check failed: {ex.Message}");
         tableExists = false;
     }
 

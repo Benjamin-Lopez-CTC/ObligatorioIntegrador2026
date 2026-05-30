@@ -144,6 +144,21 @@
             background-color: #1E1E1E;
             color: #e3e2e2;
         }
+        /* Custom animations for modals */
+        .modal-backdrop {
+            transition: opacity 0.25s ease-out;
+        }
+        .modal-container {
+            transition: transform 0.25s ease-out, opacity 0.25s ease-out;
+        }
+        .modal-hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .modal-hidden .modal-container {
+            transform: scale(0.95);
+            opacity: 0;
+        }
     </style>
 </head>
 <body class="font-body-md text-body-md antialiased overflow-x-hidden bg-surface min-h-screen flex flex-col">
@@ -175,9 +190,6 @@
                         <div class="absolute top-full left-1/2 -translate-x-1/2 w-48 bg-surface-container border border-outline-variant rounded shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 flex flex-col py-1">
                             <a asp-controller="Mas" asp-action="Movimientos" class="@GetDropdownItemClass("Mas", "Movimientos")">
                                 <span class="material-symbols-outlined text-[18px]">local_shipping</span> Movimientos
-                            </a>
-                            <a asp-controller="Mas" asp-action="CompararApiarios" class="@GetDropdownItemClass("Mas", "CompararApiarios")">
-                                <span class="material-symbols-outlined text-[18px]">compare_arrows</span> Comparar Apiarios
                             </a>
                             <a asp-controller="Mas" asp-action="CompararColmenas" class="@GetDropdownItemClass("Mas", "CompararColmenas")">
                                 <span class="material-symbols-outlined text-[18px]">difference</span> Comparar Colmenas
@@ -238,8 +250,70 @@
         <span class="font-body-sm text-body-sm text-on-surface-variant text-center md:text-right">Felipe Álvarez y Benjamín López - 2026</span>
     </footer>
 
+    <!-- Global Notification Toast Container -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 pointer-events-none"></div>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    
+    <script>
+        function showToast(message, type = "success") {
+            const container = document.getElementById("toast-container");
+            if (!container) return;
+
+            const toast = document.createElement("div");
+            toast.className = `flex items-center gap-3 bg-surface-container border-l-4 p-4 rounded shadow-2xl transition-all duration-300 transform translate-x-12 opacity-0 pointer-events-auto max-w-sm`;
+            
+            if (type === "success") {
+                toast.className += " border-primary-container";
+            } else if (type === "error") {
+                toast.className += " border-error";
+            }
+
+            const icon = type === "success" ? "check_circle" : "error";
+            const iconColor = type === "success" ? "text-primary-container" : "text-error";
+
+            toast.innerHTML = `
+                <span class="material-symbols-outlined ${iconColor}">${icon}</span>
+                <div class="text-on-surface text-sm font-body-sm font-medium pr-2">${message}</div>
+                <button onclick="this.parentElement.remove()" class="text-on-surface-variant hover:text-on-surface transition-colors ml-auto">
+                    <span class="material-symbols-outlined text-[16px]">close</span>
+                </button>
+            `;
+
+            container.appendChild(toast);
+
+            // Animate in
+            setTimeout(() => {
+                toast.classList.remove("translate-x-12", "opacity-0");
+                toast.classList.add("translate-x-0", "opacity-100");
+            }, 50);
+
+            // Auto remove after 3.5s
+            setTimeout(() => {
+                toast.classList.remove("translate-x-0", "opacity-100");
+                toast.classList.add("translate-x-12", "opacity-0");
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+    </script>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                showToast("@TempData["SuccessMessage"]", "success");
+            });
+        </script>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                showToast("@TempData["ErrorMessage"]", "error");
+            });
+        </script>
+    }
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

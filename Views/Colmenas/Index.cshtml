@@ -1,194 +1,357 @@
+@model IEnumerable<ObligatorioIntegrador2026.Models.Colmena>
+
 @{
     ViewData["Title"] = "Gestión Global de Colmenas";
 }
 
-<!-- Grid Container -->
-<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop grid grid-cols-4 md:grid-cols-12 gap-gutter mt-8">
-    <!-- Page Header -->
-    <div class="col-span-4 md:col-span-12 flex flex-col md:flex-row justify-between items-start md:items-center mb-[40px] border-b border-outline-variant pb-gutter">
-        <div>
-            <p class="font-label-caps text-label-caps text-on-surface-variant mb-2">INVENTARIO TÉCNICO</p>
-            <h1 class="font-display text-headline-lg-mobile md:text-display text-on-surface">Gestión Global de Colmenas</h1>
-        </div>
-        <div class="flex flex-col sm:flex-row gap-unit mt-6 md:mt-0 w-full md:w-auto">
-            <button class="flex items-center justify-center gap-2 border border-primary-container text-primary-container px-4 py-3 rounded hover:bg-primary-container/10 transition-colors font-label-caps text-label-caps">
-                <span class="material-symbols-outlined text-[16px]">qr_code_scanner</span>
-                Escanear Código ID
-            </button>
-            <button class="flex items-center justify-center gap-2 bg-primary-container text-on-primary px-6 py-3 rounded hover:bg-primary-fixed transition-colors font-label-caps text-label-caps">
-                <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">add</span>
-                Registrar Nueva Colmena
-            </button>
-        </div>
-    </div>
-    <!-- Filters Panel -->
-    <div class="col-span-4 md:col-span-12 bg-surface-container-high border border-outline-variant rounded p-gutter mb-gutter">
-        <div class="flex flex-col md:flex-row gap-gutter">
-            <div class="flex-1 flex flex-col gap-2">
-                <label class="font-label-caps text-label-caps text-on-surface-variant">APIARIO</label>
-                <div class="relative">
-                    <select class="w-full bg-surface border border-outline-variant text-on-surface font-body-sm text-body-sm rounded p-3 appearance-none focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container transition-colors">
-                        <option>Todos los Apiarios</option>
-                        <option>Sector Norte Alpha</option>
-                        <option>Sector Sur Beta</option>
-                    </select>
-                    <span class="material-symbols-outlined absolute right-3 top-3 text-on-surface-variant pointer-events-none">expand_more</span>
-                </div>
+<main class="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-[80px]">
+    <!-- Grid Container -->
+    <div class="grid grid-cols-4 md:grid-cols-12 gap-gutter">
+        <!-- Page Header -->
+        <div class="col-span-4 md:col-span-12 flex flex-col md:flex-row justify-between items-start md:items-center mb-[40px] border-b border-outline-variant pb-gutter">
+            <div>
+                <p class="font-label-caps text-label-caps text-on-surface-variant mb-2">INVENTARIO TÉCNICO</p>
+                <h1 class="font-display text-headline-lg-mobile md:text-display text-on-surface">Gestión Global de Colmenas</h1>
             </div>
-            <div class="flex-1 flex flex-col gap-2">
-                <label class="font-label-caps text-label-caps text-on-surface-variant">ESTADO DE SALUD</label>
-                <div class="relative">
-                    <select class="w-full bg-surface border border-outline-variant text-on-surface font-body-sm text-body-sm rounded p-3 appearance-none focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container transition-colors">
-                        <option>Todos los Estados</option>
-                        <option>Óptimo</option>
-                        <option>Alerta</option>
-                        <option>Crítico</option>
-                    </select>
-                    <span class="material-symbols-outlined absolute right-3 top-3 text-on-surface-variant pointer-events-none">expand_more</span>
-                </div>
-            </div>
-            <div class="flex-1 flex flex-col gap-2">
-                <label class="font-label-caps text-label-caps text-on-surface-variant">TIPO DE ABEJA</label>
-                <div class="relative">
-                    <select class="w-full bg-surface border border-outline-variant text-on-surface font-body-sm text-body-sm rounded p-3 appearance-none focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container transition-colors">
-                        <option>Cualquiera</option>
-                        <option>Apis mellifera</option>
-                        <option>Buckfast</option>
-                    </select>
-                    <span class="material-symbols-outlined absolute right-3 top-3 text-on-surface-variant pointer-events-none">expand_more</span>
-                </div>
-            </div>
-            <div class="flex-1 flex flex-col gap-2">
-                <label class="font-label-caps text-label-caps text-on-surface-variant">ÚLTIMA INSPECCIÓN</label>
-                <input class="w-full bg-surface border border-outline-variant text-on-surface font-body-sm text-body-sm rounded p-3 focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container transition-colors css-color-scheme-dark" style="color-scheme: dark;" type="date" />
-            </div>
-        </div>
-    </div>
-    <!-- Data Table Container (Responsive) -->
-    <div class="col-span-4 md:col-span-12 bg-surface-container border border-outline-variant rounded overflow-hidden mb-12">
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-surface-container-high border-b border-outline-variant font-label-caps text-label-caps text-on-surface-variant">
-                        <th class="p-4 font-medium">ID COLMENA</th>
-                        <th class="p-4 font-medium">APIARIO DE ORIGEN</th>
-                        <th class="p-4 font-medium">ESTADO</th>
-                        <th class="p-4 font-medium">PESO (KG)</th>
-                        <th class="p-4 font-medium">TEMP. INT.</th>
-                        <th class="p-4 font-medium text-right">ACCIÓN</th>
-                    </tr>
-                </thead>
-                <tbody class="font-body-sm text-body-sm text-on-surface">
-                    <!-- Row 1 -->
-                    <tr class="border-b border-outline-variant hover:bg-surface-container-highest transition-colors">
-                        <td class="p-4 font-label-caps text-label-caps text-primary-container">#HIVE-0042</td>
-                        <td class="p-4">Sector Norte Alpha</td>
-                        <td class="p-4">
-                            <div class="inline-flex items-center gap-1.5 px-2 py-1 border border-primary-container rounded bg-primary-container/10 text-primary-container font-label-caps text-label-caps">
-                                <span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-                                Óptimo
-                            </div>
-                        </td>
-                        <td class="p-4">42.5</td>
-                        <td class="p-4">34.5°C</td>
-                        <td class="p-4 text-right">
-                            <div class="flex items-center justify-end gap-2">
-                                <button class="text-on-surface-variant hover:text-error transition-colors p-2 flex items-center justify-center" title="Eliminar colmena">
-                                    <span class="material-symbols-outlined text-[20px]">delete</span>
-                                </button>
-                                <button class="text-on-surface-variant hover:text-primary-container transition-colors p-2 flex items-center gap-2 font-label-caps text-label-caps">
-                                    Ver Detalles
-                                    <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <!-- Row 2 -->
-                    <tr class="border-b border-outline-variant hover:bg-surface-container-highest transition-colors bg-error-container/5">
-                        <td class="p-4 font-label-caps text-label-caps text-primary-container">#HIVE-0089</td>
-                        <td class="p-4">Sector Sur Beta</td>
-                        <td class="p-4">
-                            <div class="inline-flex items-center gap-1.5 px-2 py-1 border border-error rounded bg-error/10 text-error font-label-caps text-label-caps">
-                                <span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">warning</span>
-                                Crítico
-                            </div>
-                        </td>
-                        <td class="p-4 text-error">28.1 <span class="material-symbols-outlined text-[14px] align-middle">arrow_downward</span></td>
-                        <td class="p-4">32.0°C</td>
-                        <td class="p-4 text-right">
-                            <div class="flex items-center justify-end gap-2">
-                                <button class="text-on-surface-variant hover:text-error transition-colors p-2 flex items-center justify-center" title="Eliminar colmena">
-                                    <span class="material-symbols-outlined text-[20px]">delete</span>
-                                </button>
-                                <button class="text-on-surface-variant hover:text-primary-container transition-colors p-2 flex items-center gap-2 font-label-caps text-label-caps">
-                                    Ver Detalles
-                                    <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <!-- Row 3 -->
-                    <tr class="border-b border-outline-variant hover:bg-surface-container-highest transition-colors">
-                        <td class="p-4 font-label-caps text-label-caps text-primary-container">#HIVE-0112</td>
-                        <td class="p-4">Sector Este Gamma</td>
-                        <td class="p-4">
-                            <div class="inline-flex items-center gap-1.5 px-2 py-1 border border-primary-container rounded bg-primary-container/10 text-primary-container font-label-caps text-label-caps">
-                                <span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">info</span>
-                                Alerta
-                            </div>
-                        </td>
-                        <td class="p-4">35.0</td>
-                        <td class="p-4 text-primary-container">36.5°C <span class="material-symbols-outlined text-[14px] align-middle">arrow_upward</span></td>
-                        <td class="p-4 text-right">
-                            <div class="flex items-center justify-end gap-2">
-                                <button class="text-on-surface-variant hover:text-error transition-colors p-2 flex items-center justify-center" title="Eliminar colmena">
-                                    <span class="material-symbols-outlined text-[20px]">delete</span>
-                                </button>
-                                <button class="text-on-surface-variant hover:text-primary-container transition-colors p-2 flex items-center gap-2 font-label-caps text-label-caps">
-                                    Ver Detalles
-                                    <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <!-- Row 4 -->
-                    <tr class="hover:bg-surface-container-highest transition-colors">
-                        <td class="p-4 font-label-caps text-label-caps text-primary-container">#HIVE-0045</td>
-                        <td class="p-4">Sector Norte Alpha</td>
-                        <td class="p-4">
-                            <div class="inline-flex items-center gap-1.5 px-2 py-1 border border-primary-container rounded bg-primary-container/10 text-primary-container font-label-caps text-label-caps">
-                                <span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-                                Óptimo
-                            </div>
-                        </td>
-                        <td class="p-4">40.2</td>
-                        <td class="p-4">34.2°C</td>
-                        <td class="p-4 text-right">
-                            <div class="flex items-center justify-end gap-2">
-                                <button class="text-on-surface-variant hover:text-error transition-colors p-2 flex items-center justify-center" title="Eliminar colmena">
-                                    <span class="material-symbols-outlined text-[20px]">delete</span>
-                                </button>
-                                <button class="text-on-surface-variant hover:text-primary-container transition-colors p-2 flex items-center gap-2 font-label-caps text-label-caps">
-                                    Ver Detalles
-                                    <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <!-- Pagination / Footer of table -->
-        <div class="bg-surface-container-high border-t border-outline-variant p-4 flex justify-between items-center text-on-surface-variant font-body-sm text-body-sm">
-            <span class="">Mostrando 4 de 128 colmenas</span>
-            <div class="flex gap-2">
-                <button class="p-1 border border-outline-variant rounded hover:text-primary-container hover:border-primary-container transition-colors disabled:opacity-50" disabled="">
-                    <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+            <div class="flex flex-col sm:flex-row gap-unit mt-6 md:mt-0 w-full md:w-auto">
+                <button class="flex items-center justify-center gap-2 border border-primary-container text-primary-container px-4 py-3 rounded hover:bg-surface-container-high transition-colors font-label-caps text-label-caps cursor-not-allowed opacity-50" disabled>
+                    <span class="material-symbols-outlined text-[16px]">qr_code_scanner</span>
+                    Escanear Código ID
                 </button>
-                <button class="p-1 border border-outline-variant rounded hover:text-primary-container hover:border-primary-container transition-colors">
-                    <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                <button id="btnOpenRegistrar" class="flex items-center justify-center gap-2 bg-primary-container text-[#000000] px-6 py-3 rounded hover:bg-primary-fixed-dim transition-colors font-label-caps text-label-caps">
+                    <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">add</span>
+                    Registrar Nueva Colmena
                 </button>
             </div>
+        </div>
+
+        <!-- Filters Panel -->
+        <div class="col-span-4 md:col-span-12 bg-surface-container-high border border-outline-variant rounded p-gutter mb-gutter">
+            <div class="flex flex-col md:flex-row gap-gutter">
+                <div class="flex-1 flex flex-col gap-2">
+                    <label class="font-label-caps text-label-caps text-on-surface-variant">APIARIO</label>
+                    <div class="relative">
+                        <select id="filterApiario" class="w-full bg-surface border border-outline-variant text-on-surface font-body-sm text-body-sm rounded p-3 appearance-none focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container transition-colors">
+                            <option value="">Todos los Apiarios</option>
+                            @foreach (var apiario in ViewBag.Apiarios)
+                            {
+                                <option value="@apiario.Nombre">@apiario.Nombre</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="flex-1 flex flex-col gap-2">
+                    <label class="font-label-caps text-label-caps text-on-surface-variant">ESTADO DE SALUD</label>
+                    <div class="relative">
+                        <select id="filterEstado" class="w-full bg-surface border border-outline-variant text-on-surface font-body-sm text-body-sm rounded p-3 appearance-none focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container transition-colors">
+                            <option value="">Todos los Estados</option>
+                            <option value="Óptimo">Óptimo</option>
+                            <option value="Alerta">Alerta</option>
+                            <option value="Crítico">Crítico</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex-1 flex flex-col gap-2">
+                    <label class="font-label-caps text-label-caps text-on-surface-variant">COMPORTAMIENTO</label>
+                    <div class="relative">
+                        <select id="filterComportamiento" class="w-full bg-surface border border-outline-variant text-on-surface font-body-sm text-body-sm rounded p-3 appearance-none focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container transition-colors">
+                            <option value="">Cualquiera</option>
+                            <option value="Dócil">Dócil</option>
+                            <option value="Defensivo">Defensivo</option>
+                            <option value="Agresivo">Agresivo</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex-1 flex flex-col gap-2">
+                    <label class="font-label-caps text-label-caps text-on-surface-variant">BÚSQUEDA ID</label>
+                    <input id="filterSearch" placeholder="#HIVE-..." class="w-full bg-surface border border-outline-variant text-on-surface font-body-sm text-body-sm rounded p-3 focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container transition-colors" type="text"/>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Table Container -->
+        <div class="col-span-4 md:col-span-12 bg-surface-container border border-outline-variant rounded overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-surface-container-high border-b border-outline-variant font-label-caps text-label-caps text-on-surface-variant">
+                            <th class="p-4 font-medium">ID COLMENA</th>
+                            <th class="p-4 font-medium">APIARIO DE ORIGEN</th>
+                            <th class="p-4 font-medium">ESTADO</th>
+                            <th class="p-4 font-medium">PESO (KG)</th>
+                            <th class="p-4 font-medium">TEMP. INT.</th>
+                            <th class="p-4 font-medium text-right">ACCIÓN</th>
+                        </tr>
+                    </thead>
+                    <tbody id="hiveTableBody" class="font-body-sm text-body-sm text-on-surface">
+                        <!-- Filled by JS -->
+                    </tbody>
+                </table>
+            </div>
+            <!-- Pagination -->
+            <div class="bg-surface-container-high border-t border-outline-variant p-4 flex justify-between items-center text-on-surface-variant font-body-sm text-body-sm">
+                <span id="paginationText">Mostrando 0 de 0 colmenas</span>
+                <div class="flex gap-2">
+                    <button id="btnPrevPage" class="p-1 border border-outline-variant rounded hover:text-primary-container hover:border-primary-container transition-colors disabled:opacity-50">
+                        <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+                    </button>
+                    <button id="btnNextPage" class="p-1 border border-outline-variant rounded hover:text-primary-container hover:border-primary-container transition-colors disabled:opacity-50">
+                        <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Registrar Colmena Modal -->
+<div id="registrarModal" class="fixed inset-0 bg-black/60 modal-backdrop flex modal-hidden items-center justify-center z-50 p-4">
+    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-md shadow-2xl overflow-hidden modal-container">
+        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between">
+            <h4 class="font-headline-lg text-lg font-bold text-on-surface">Registrar Nueva Colmena</h4>
+            <button id="btnCancelRegistrarIcon" class="text-on-surface-variant hover:text-primary-container transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <form asp-action="RegistrarNueva" method="post" class="p-6 space-y-4">
+            @Html.AntiForgeryToken()
+            <div>
+                <label for="Identificador" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Identificador (Opcional)</label>
+                <input type="text" id="Identificador" name="Identificador" placeholder="#HIVE-0123" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+            </div>
+            <div>
+                <label for="ApiarioId" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Apiario</label>
+                <select id="ApiarioId" name="ApiarioId" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
+                    @foreach (var apiario in ViewBag.Apiarios)
+                    {
+                        <option value="@apiario.Id">@apiario.Nombre</option>
+                    }
+                </select>
+            </div>
+            <div>
+                <label for="CantidadAbejas" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Cantidad de Abejas (Aprox.)</label>
+                <input type="number" id="CantidadAbejas" name="CantidadAbejas" placeholder="40000" required min="0" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+            </div>
+            <div>
+                <label for="UbicacionIntraApiario" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Ubicación (Ej: Fila 1, Pos 3)</label>
+                <input type="text" id="UbicacionIntraApiario" name="UbicacionIntraApiario" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="EstadoReina" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Estado Reina</label>
+                    <select id="EstadoReina" name="EstadoReina" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
+                        <option value="Presente" selected>Presente</option>
+                        <option value="Ausente">Ausente</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="ComportamientoAbejas" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Comportamiento</label>
+                    <select id="ComportamientoAbejas" name="ComportamientoAbejas" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
+                        <option value="Dócil">Dócil</option>
+                        <option value="Defensivo">Defensivo</option>
+                        <option value="Agresivo">Agresivo</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 mt-4">
+                <input type="checkbox" id="EsPiloto" name="EsPiloto" value="true" class="w-4 h-4 text-primary-container bg-background border-outline-variant rounded focus:ring-primary-container focus:ring-2" />
+                <label for="EsPiloto" class="font-body-md text-body-md text-on-surface">Convertir en Colmena Piloto</label>
+            </div>
+            <div class="pt-4 border-t border-surface-container-highest flex justify-end gap-3 mt-6">
+                <button type="button" id="btnCancelRegistrar" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2.5 rounded font-label-caps text-label-caps">
+                    Cancelar
+                </button>
+                <button type="submit" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps font-semibold">
+                    Guardar Colmena
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div id="deleteModal" class="fixed inset-0 z-50 flex modal-backdrop modal-hidden items-center justify-center bg-black/85 p-4">
+    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-md shadow-2xl p-6 text-center space-y-4 modal-container">
+        <span class="material-symbols-outlined text-error text-5xl">delete_forever</span>
+        <h4 class="font-headline-lg text-lg font-bold text-on-surface">¿Eliminar Colmena?</h4>
+        <p class="font-body-md text-body-md text-on-surface-variant">
+            ¿Está seguro de que desea eliminar la colmena <span id="deleteColmenaName" class="text-error font-semibold"></span>?
+        </p>
+        <p class="text-sm text-error/80 font-medium">
+            Esta acción es irreversible y los datos se perderán.
+        </p>
+        <div class="pt-4 flex justify-center gap-3">
+            <button id="btnCancelDelete" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2 rounded font-label-caps text-label-caps">
+                Cancelar
+            </button>
+            <form asp-action="Eliminar" method="post" id="deleteForm" class="m-0">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" id="deleteColmenaId" value="" />
+                <button type="submit" class="bg-error-container/30 border border-error text-error hover:bg-error/20 transition-colors px-6 py-2 rounded font-label-caps text-label-caps font-semibold">
+                    Sí, eliminarla
+                </button>
+            </form>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        const rawColmenas = @Html.Raw(ViewBag.ColmenasJson);
+        
+        // DOM Elements
+        const tbody = document.getElementById('hiveTableBody');
+        const pagText = document.getElementById('paginationText');
+        const btnPrev = document.getElementById('btnPrevPage');
+        const btnNext = document.getElementById('btnNextPage');
+
+        const filterApiario = document.getElementById('filterApiario');
+        const filterEstado = document.getElementById('filterEstado');
+        const filterComportamiento = document.getElementById('filterComportamiento');
+        const filterSearch = document.getElementById('filterSearch');
+
+        // Pagination State
+        const ITEMS_PER_PAGE = 10;
+        let currentPage = 1;
+        let filteredColmenas = [...rawColmenas];
+
+        function applyFilters() {
+            const apiarioVal = filterApiario.value;
+            const estadoVal = filterEstado.value;
+            const comportamientoVal = filterComportamiento.value;
+            const searchVal = filterSearch.value.toLowerCase();
+
+            filteredColmenas = rawColmenas.filter(c => {
+                const matchApiario = !apiarioVal || c.apiarioNombre === apiarioVal;
+                const matchEstado = !estadoVal || c.estado === estadoVal;
+                const matchComportamiento = !comportamientoVal || c.comportamiento === comportamientoVal;
+                const matchSearch = !searchVal || (c.identificador && c.identificador.toLowerCase().includes(searchVal)) || c.codigoEscaneo.includes(searchVal);
+                
+                return matchApiario && matchEstado && matchComportamiento && matchSearch;
+            });
+
+            currentPage = 1;
+            renderTable();
+        }
+
+        function renderTable() {
+            tbody.innerHTML = '';
+            const totalPages = Math.ceil(filteredColmenas.length / ITEMS_PER_PAGE);
+            
+            const start = (currentPage - 1) * ITEMS_PER_PAGE;
+            const end = Math.min(start + ITEMS_PER_PAGE, filteredColmenas.length);
+            const currentItems = filteredColmenas.slice(start, end);
+
+            if(currentItems.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-on-surface-variant font-label-caps tracking-widest">NO HAY COLMENAS</td></tr>';
+            }
+
+            currentItems.forEach(c => {
+                let statusHtml = '';
+                let bgClass = 'hover:bg-surface-container-highest transition-colors';
+                let iconArrow = '';
+                let weightClass = '';
+                let tempClass = '';
+                
+                if(c.estado === 'Óptimo') {
+                    statusHtml = `<div class="inline-flex items-center gap-1.5 px-2 py-1 border border-[#4CAF50] rounded bg-[#4CAF50]/10 text-[#4CAF50] font-label-caps text-label-caps"><span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>Óptimo</div>`;
+                } else if(c.estado === 'Alerta') {
+                    statusHtml = `<div class="inline-flex items-center gap-1.5 px-2 py-1 border border-primary-container rounded bg-primary-container/10 text-primary-container font-label-caps text-label-caps"><span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">info</span>Alerta</div>`;
+                    tempClass = 'text-primary-container';
+                    iconArrow = '<span class="material-symbols-outlined text-[14px] align-middle">arrow_upward</span>';
+                } else if(c.estado === 'Crítico') {
+                    statusHtml = `<div class="inline-flex items-center gap-1.5 px-2 py-1 border border-error rounded bg-error/10 text-error font-label-caps text-label-caps"><span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">warning</span>Crítico</div>`;
+                    bgClass += ' bg-error-container/5';
+                    weightClass = 'text-error';
+                    iconArrow = '<span class="material-symbols-outlined text-[14px] align-middle">arrow_downward</span>';
+                }
+
+                const tr = document.createElement('tr');
+                tr.className = 'border-b border-outline-variant ' + bgClass;
+                tr.innerHTML = `
+                    <td class="p-4 font-label-caps text-label-caps text-primary-container">
+                        <div class="flex items-center gap-3">
+                            <span>${c.identificador || 'S/N'}</span>
+                            ${c.esPiloto ? '<div class="w-6 h-6 flex items-center justify-center border border-outline-variant rounded-sm text-on-surface-variant font-label-caps text-[12px]" title="Colmena Piloto">P</div>' : ''}
+                        </div>
+                        <div class="text-[10px] text-on-surface-variant mt-0.5">ID: ${c.codigoEscaneo}</div>
+                    </td>
+                    <td class="p-4">${c.apiarioNombre || 'Desconocido'}</td>
+                    <td class="p-4">${statusHtml}</td>
+                    <td class="p-4 ${weightClass}">${c.peso} ${weightClass ? iconArrow : ''}</td>
+                    <td class="p-4 ${tempClass}">${c.esPiloto ? c.temp + '°C ' + (tempClass ? iconArrow : '') : '<span class="text-on-surface-variant/50">N/A</span>'}</td>
+                    <td class="p-4 text-right">
+                        <div class="flex items-center justify-end gap-1">
+                            <a href="/Colmenas/Detalles/${c.id}" class="text-on-surface-variant hover:text-primary-container transition-colors p-2 flex items-center justify-center rounded-full hover:bg-surface-container-high" title="Ver Detalles">
+                                <span class="material-symbols-outlined text-[20px]">visibility</span>
+                            </a>
+                            <button onclick="openDeleteModal(${c.id}, '${c.identificador || c.codigoEscaneo}')" class="text-on-surface-variant hover:text-error transition-colors p-2 flex items-center justify-center rounded-full hover:bg-surface-container-high" title="Eliminar Colmena">
+                                <span class="material-symbols-outlined text-[20px]">delete</span>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            pagText.textContent = `Mostrando ${filteredColmenas.length === 0 ? 0 : start + 1} a ${end} de ${filteredColmenas.length} colmenas`;
+            
+            btnPrev.disabled = currentPage === 1;
+            btnNext.disabled = currentPage === Math.max(1, totalPages);
+        }
+
+        // Event Listeners for Filters
+        filterApiario.addEventListener('change', applyFilters);
+        filterEstado.addEventListener('change', applyFilters);
+        filterComportamiento.addEventListener('change', applyFilters);
+        filterSearch.addEventListener('input', applyFilters);
+
+        // Pagination Events
+        btnPrev.addEventListener('click', () => {
+            if(currentPage > 1) {
+                currentPage--;
+                renderTable();
+            }
+        });
+
+        btnNext.addEventListener('click', () => {
+            const totalPages = Math.ceil(filteredColmenas.length / ITEMS_PER_PAGE);
+            if(currentPage < totalPages) {
+                currentPage++;
+                renderTable();
+            }
+        });
+
+        // Initialize Table
+        renderTable();
+
+        // Modal Logic
+        const modal = document.getElementById('registrarModal');
+        
+        function openModal() {
+            modal.classList.remove('modal-hidden');
+        }
+        function closeModal() {
+            modal.classList.add('modal-hidden');
+        }
+
+        document.getElementById('btnOpenRegistrar').addEventListener('click', openModal);
+        document.getElementById('btnCancelRegistrar').addEventListener('click', closeModal);
+        document.getElementById('btnCancelRegistrarIcon').addEventListener('click', closeModal);
+
+        // Delete Modal Logic
+        const deleteModal = document.getElementById('deleteModal');
+        const deleteColmenaId = document.getElementById('deleteColmenaId');
+        const deleteColmenaName = document.getElementById('deleteColmenaName');
+
+        window.openDeleteModal = function(id, name) {
+            deleteColmenaId.value = id;
+            deleteColmenaName.textContent = name;
+            deleteModal.classList.remove('modal-hidden');
+        };
+
+        document.getElementById('btnCancelDelete').addEventListener('click', () => {
+            deleteModal.classList.add('modal-hidden');
+        });
+    </script>
+}

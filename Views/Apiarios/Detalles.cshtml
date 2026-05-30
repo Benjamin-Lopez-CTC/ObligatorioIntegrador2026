@@ -1,0 +1,401 @@
+@model ObligatorioIntegrador2026.Models.Apiario
+@using System.Text.Json
+
+@{
+    ViewData["Title"] = "Detalles del Apiario";
+    
+    var colmenas = Model.Colmenas?.ToList() ?? new List<ObligatorioIntegrador2026.Models.Colmena>();
+    var pilotHives = colmenas.Where(c => c.EsPiloto).ToList();
+    
+    var avgTemp = pilotHives.Any() ? Math.Round(pilotHives.Average(c => c.TemperaturaInterna), 1) : 0;
+    
+    var prodTotal = colmenas.Sum(c => c.ProduccionMielKg);
+    var prodPercent = Math.Min(100, Math.Round((prodTotal / 300.0) * 100));
+
+    // Convertir a JSON para pasarlo al cliente
+    var colmenasJson = JsonSerializer.Serialize(colmenas.Select(c => new {
+        idStr = c.Identificador,
+        estado = c.Estado,
+        peso = c.PesoKg,
+        temp = c.TemperaturaInterna,
+        id = c.Id
+    }));
+}
+
+<main class="flex-grow w-full max-w-container-max mx-auto px-gutter py-10 md:py-margin-desktop">
+    <!-- Header & Action -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+        <div>
+            <a asp-action="Index" class="flex items-center gap-2 text-on-surface-variant hover:text-primary-container transition-colors mb-4 group font-label-caps text-label-caps uppercase">
+                <span class="material-symbols-outlined text-sm group-hover:-translate-x-1 transition-transform">arrow_back</span>
+                Volver a Apiarios
+            </a>
+            <h1 class="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-on-surface">Detalles del Apiario: <span class="text-primary-container">@Model.Nombre</span></h1>
+        </div>
+        <div class="flex gap-4">
+            <button id="btnEditarNota" class="border border-primary-container text-primary-container rounded flex items-center gap-2 px-4 py-2 font-label-caps text-label-caps uppercase hover:bg-surface-container-high transition-colors">
+                <span class="material-symbols-outlined text-sm">edit</span>
+                Editar Nota
+            </button>
+        </div>
+    </div>
+
+    <!-- Bento Grid Layout for Details & Metrics -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-12">
+        <!-- General Info Card (Spans 4 cols on Desktop) -->
+        <div class="lg:col-span-4 bg-surface-container-high border border-surface-variant rounded p-gutter flex flex-col justify-between">
+            <div>
+                <h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-6 flex items-center gap-2 border-b border-surface-variant pb-4">
+                    <span class="material-symbols-outlined text-primary-container">info</span>
+                    Información General
+                </h2>
+                <dl class="space-y-4">
+                    <div>
+                        <dt class="font-label-caps text-label-caps text-on-surface-variant uppercase">Ubicación</dt>
+                        <dd class="text-on-surface mt-1 flex items-start gap-2">
+                            <span class="material-symbols-outlined text-sm text-outline-variant mt-0.5">location_on</span>
+                            <span>
+                                @Model.UbicacionTexto<br/>
+                                <span class="text-on-surface-variant font-body-sm text-body-sm">@Model.UbicacionCoordenadas</span>
+                            </span>
+                        </dd>
+                    </div>
+                    <div>
+                        <dt class="font-label-caps text-label-caps text-on-surface-variant uppercase">Cantidad de Colmenas</dt>
+                        <dd class="text-on-surface mt-1">@colmenas.Count() Colmenas</dd>
+                    </div>
+                    <div>
+                        <dt class="font-label-caps text-label-caps text-on-surface-variant uppercase">Fecha de Creación</dt>
+                        <dd class="text-on-surface mt-1">@Model.FechaCreacion.ToString("dd MMMM, yyyy")</dd>
+                    </div>
+                </dl>
+            </div>
+            <div class="mt-8 pt-4 border-t border-surface-variant">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Notas de Estado</span>
+                    @if (Model.UltimaEdicionNota.HasValue)
+                    {
+                        <span class="font-body-sm text-[10px] text-on-surface-variant/70">Editado: @Model.UltimaEdicionNota.Value.ToString("dd/MM/yy HH:mm")</span>
+                    }
+                </div>
+                <p class="font-body-sm text-body-sm text-on-surface border-l-2 border-primary-container pl-3">
+                    @Model.NotasEstado
+                </p>
+            </div>
+        </div>
+
+        <!-- Metrics Cards Sub-Grid (Spans 8 cols on Desktop) -->
+        <div class="lg:col-span-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Metric 1 -->
+            <div class="bg-surface-container-high border border-surface-variant rounded p-gutter flex flex-col justify-between relative overflow-hidden group">
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <span class="material-symbols-outlined text-6xl text-primary-container">thermostat</span>
+                </div>
+                <h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest relative z-10">Temperatura Promedio</h3>
+                <div class="mt-8 relative z-10">
+                    <div class="flex items-baseline gap-2">
+                        <span class="font-display text-display text-on-surface">@avgTemp</span>
+                        <span class="text-primary-container font-headline-lg text-headline-lg">°C</span>
+                    </div>
+                    <div class="flex items-center gap-2 mt-2 font-body-sm text-body-sm text-on-surface-variant">
+                        <span class="material-symbols-outlined text-sm text-error">trending_up</span>
+                        <span class="">+1.2°C respecto a sem. pasada</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Metric 2 -->
+            <div class="bg-surface-container-high border border-surface-variant rounded p-gutter flex flex-col justify-between relative overflow-hidden group">
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <span class="material-symbols-outlined text-6xl text-primary-container">humidity_percentage</span>
+                </div>
+                <h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest relative z-10">Humedad Interna</h3>
+                <div class="mt-8 relative z-10">
+                    <div class="flex items-baseline gap-2">
+                        <span class="font-display text-display text-on-surface">@Model.HumedadInterna</span>
+                        <span class="text-primary-container font-headline-lg text-headline-lg">%</span>
+                    </div>
+                    <div class="flex items-center gap-2 mt-2 font-body-sm text-body-sm text-on-surface-variant">
+                        <span class="material-symbols-outlined text-sm text-outline-variant">horizontal_rule</span>
+                        <span class="">Estable (Rango óptimo)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Metric 3 -->
+            <div class="bg-surface-container-high border border-surface-variant rounded p-gutter flex flex-col justify-between relative overflow-hidden group">
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <span class="material-symbols-outlined text-6xl text-primary-container">inventory_2</span>
+                </div>
+                <h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest relative z-10">Producción Estimada</h3>
+                <div class="mt-8 relative z-10">
+                    <div class="flex items-baseline gap-2">
+                        <span class="font-display text-display text-on-surface">@prodTotal</span>
+                        <span class="text-primary-container font-headline-lg text-headline-lg">kg</span>
+                    </div>
+                    <div class="mt-4 w-full bg-surface-variant h-1 rounded-full overflow-hidden">
+                        <div class="bg-primary-container h-full" style="width: @prodPercent%"></div>
+                    </div>
+                    <div class="mt-2 font-label-caps text-label-caps text-on-surface-variant text-right">@prodPercent% ALCANZADO</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hive List Section -->
+    <section class="mb-12">
+        <div class="flex flex-row items-center justify-between mb-6 gap-3">
+            <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface flex items-center gap-3">
+                <span class="material-symbols-outlined text-primary-container">grid_view</span>
+                Listado de Colmenas
+            </h2>
+            <button class="bg-primary-container text-on-primary-container px-4 py-2 rounded font-label-caps text-label-caps uppercase hover:brightness-110 transition-all flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm">add</span>
+                Agregar Colmena
+            </button>
+        </div>
+
+        <div class="col-span-4 md:col-span-12 bg-surface-container border border-outline-variant rounded overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-surface-container-high border-b border-outline-variant font-label-caps text-label-caps text-on-surface-variant">
+                            <th class="p-4 font-medium">ID COLMENA</th>
+                            <th class="p-4 font-medium">APIARIO DE ORIGEN</th>
+                            <th class="p-4 font-medium">ESTADO</th>
+                            <th class="p-4 font-medium">PESO (KG)</th>
+                            <th class="p-4 font-medium">TEMP. INT.</th>
+                            <th class="p-4 font-medium text-right">ACCIÓN</th>
+                        </tr>
+                    </thead>
+                    <tbody id="hiveTableBody" class="font-body-sm text-body-sm text-on-surface">
+                        <!-- Llenado por JS -->
+                    </tbody>
+                </table>
+            </div>
+            <!-- Pagination / Footer of table -->
+            <div class="bg-surface-container-high border-t border-outline-variant p-4 flex justify-between items-center text-on-surface-variant font-body-sm text-body-sm">
+                <span id="paginationText">Mostrando 0 de 0 colmenas</span>
+                <div class="flex gap-2">
+                    <button id="btnPrevPage" class="p-1 border border-outline-variant rounded hover:text-primary-container hover:border-primary-container transition-colors disabled:opacity-50" disabled>
+                        <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+                    </button>
+                    <button id="btnNextPage" class="p-1 border border-outline-variant rounded hover:text-primary-container hover:border-primary-container transition-colors disabled:opacity-50" disabled>
+                        <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Delete Section -->
+    <section class="mt-20 mb-12 flex flex-col items-center gap-4">
+        <button id="btnDeleteApiario" class="border border-error text-error px-6 py-2.5 rounded font-label-caps text-label-caps uppercase hover:bg-error/10 transition-colors flex items-center gap-2">
+            <span class="material-symbols-outlined text-sm">delete</span>
+            Eliminar Apiario
+        </button>
+        <p class="font-body-sm text-body-sm text-on-surface-variant/70 text-center max-w-md">
+            Eliminar el apiario también eliminará todas las colmenas asignadas.
+        </p>
+    </section>
+</main>
+
+<!-- Delete Modal 1 -->
+<div id="deleteModal1" class="fixed inset-0 z-50 flex modal-backdrop modal-hidden items-center justify-center bg-black/85 p-4">
+    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-md shadow-2xl p-6 text-center space-y-4 modal-container">
+        <span class="material-symbols-outlined text-error text-5xl">delete_forever</span>
+        <h4 class="font-headline-lg text-lg font-bold text-on-surface">¿Eliminar Apiario?</h4>
+        <p class="font-body-md text-body-md text-on-surface-variant">
+            ¿Está seguro de que desea eliminar el apiario <span class="text-error font-semibold">"@Model.Nombre"</span>?
+        </p>
+        <p class="text-sm text-error/80 font-medium">
+            Esta acción eliminará todas las colmenas asignadas.
+        </p>
+        <div class="pt-4 flex justify-center gap-3">
+            <button id="btnCancelDelete1" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2 rounded font-label-caps text-label-caps">
+                Cancelar
+            </button>
+            <button id="btnProceedDelete" class="bg-error-container/30 border border-error text-error hover:bg-error/20 transition-colors px-6 py-2 rounded font-label-caps text-label-caps font-semibold">
+                Sí, deseo eliminarlo
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal 2 -->
+<div id="deleteModal2" class="fixed inset-0 z-50 flex modal-backdrop modal-hidden items-center justify-center bg-black/90 p-4">
+    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-md shadow-2xl p-6 text-center space-y-4 modal-container">
+        <span class="material-symbols-outlined text-error text-5xl animate-pulse">report</span>
+        <h4 class="font-headline-lg text-lg font-bold text-error uppercase tracking-wider">Confirmación Adicional</h4>
+        <p class="font-body-md text-body-md text-on-surface">
+            Por favor, confirme una vez más: ¿realmente desea eliminar permanentemente el apiario <span class="text-primary-container font-semibold">"@Model.Nombre"</span> y todas sus colmenas asociadas?
+        </p>
+        <p class="text-xs text-on-surface-variant/80">
+            Esta es la confirmación definitiva. Presiona continuar para ejecutar la eliminación.
+        </p>
+        <div class="pt-4 flex justify-center gap-3">
+            <button id="btnCancelDelete2" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2 rounded font-label-caps text-label-caps">
+                Cancelar
+            </button>
+            <form asp-action="Eliminar" method="post" id="deleteForm" class="m-0">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Id" />
+                <button type="submit" class="bg-error text-on-error hover:bg-red-400 transition-colors px-6 py-2 rounded font-label-caps text-label-caps font-bold">
+                    Confirmar y Eliminar
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Note Modal -->
+<div id="editarNotaModal" class="fixed inset-0 bg-black/60 modal-backdrop flex modal-hidden items-center justify-center z-50 p-4">
+    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-md shadow-2xl overflow-hidden modal-container">
+        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between">
+            <h4 class="font-headline-lg text-lg font-bold text-on-surface">Editar Notas de Estado</h4>
+            <button id="btnCancelEditarNotaIcon" class="text-on-surface-variant hover:text-primary-container transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <form asp-action="EditarNota" method="post" class="p-6 space-y-4">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@Model.Id" />
+            <div>
+                <label for="NotasEstado" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Notas de Estado</label>
+                <textarea id="NotasEstado" name="NotasEstado" rows="4" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors resize-none">@Model.NotasEstado</textarea>
+            </div>
+            <div class="pt-4 border-t border-surface-container-highest flex justify-end gap-3">
+                <button type="button" id="btnCancelEditarNota" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2.5 rounded font-label-caps text-label-caps">
+                    Cancelar
+                </button>
+                <button type="submit" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps font-semibold">
+                    Guardar Nota
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Pagination logic
+        const colmenas = @Html.Raw(colmenasJson);
+        const apiarioNombre = "@Model.Nombre";
+        
+        const ITEMS_PER_PAGE = 10;
+        let currentPage = 1;
+        const totalPages = Math.ceil(colmenas.length / ITEMS_PER_PAGE);
+
+        const tbody = document.getElementById('hiveTableBody');
+        const pagText = document.getElementById('paginationText');
+        const btnPrev = document.getElementById('btnPrevPage');
+        const btnNext = document.getElementById('btnNextPage');
+
+        function renderTable() {
+            tbody.innerHTML = '';
+            
+            const start = (currentPage - 1) * ITEMS_PER_PAGE;
+            const end = Math.min(start + ITEMS_PER_PAGE, colmenas.length);
+            const currentItems = colmenas.slice(start, end);
+
+            if(currentItems.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-on-surface-variant">No hay colmenas registradas</td></tr>';
+            }
+
+            currentItems.forEach(c => {
+                let statusHtml = '';
+                let bgClass = 'hover:bg-surface-container-highest transition-colors';
+                
+                if(c.estado === 'Óptimo') {
+                    statusHtml = `<div class="inline-flex items-center gap-1.5 px-2 py-1 border border-[#4CAF50] rounded bg-[#4CAF50]/10 text-[#4CAF50] font-label-caps text-label-caps"><span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>Óptimo</div>`;
+                } else if(c.estado === 'Alerta') {
+                    statusHtml = `<div class="inline-flex items-center gap-1.5 px-2 py-1 border border-primary-container rounded bg-primary-container/10 text-primary-container font-label-caps text-label-caps"><span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">info</span>Alerta</div>`;
+                } else if(c.estado === 'Crítico') {
+                    statusHtml = `<div class="inline-flex items-center gap-1.5 px-2 py-1 border border-error rounded bg-error/10 text-error font-label-caps text-label-caps"><span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">warning</span>Crítico</div>`;
+                    bgClass += ' bg-error-container/5';
+                } else {
+                    statusHtml = `<div class="inline-flex items-center gap-1.5 px-2 py-1 border border-outline-variant rounded bg-surface-variant text-on-surface-variant font-label-caps text-label-caps"><span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">info</span>${c.estado}</div>`;
+                }
+
+                const tr = document.createElement('tr');
+                tr.className = 'border-b border-outline-variant ' + bgClass;
+                tr.innerHTML = `
+                    <td class="p-4 font-label-caps text-label-caps text-primary-container">${c.idStr}</td>
+                    <td class="p-4">${apiarioNombre}</td>
+                    <td class="p-4">${statusHtml}</td>
+                    <td class="p-4 ${c.estado === 'Crítico' ? 'text-error' : ''}">${c.peso} ${c.estado === 'Crítico' ? '<span class="material-symbols-outlined text-[14px] align-middle">arrow_downward</span>' : ''}</td>
+                    <td class="p-4">${c.temp}°C</td>
+                    <td class="p-4 text-right">
+                        <div class="flex items-center justify-end gap-2">
+                            <a href="/Colmenas/Detalles/${c.id}" class="text-on-surface-variant hover:text-primary-container transition-colors p-2 flex items-center gap-2 font-label-caps text-label-caps">
+                                Ver Detalles<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                            </a>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            pagText.textContent = `Mostrando ${colmenas.length === 0 ? 0 : start + 1} a ${end} de ${colmenas.length} colmenas`;
+            
+            btnPrev.disabled = currentPage === 1;
+            btnNext.disabled = currentPage === Math.max(1, totalPages);
+        }
+
+        btnPrev.addEventListener('click', () => {
+            if(currentPage > 1) {
+                currentPage--;
+                renderTable();
+            }
+        });
+
+        btnNext.addEventListener('click', () => {
+            if(currentPage < totalPages) {
+                currentPage++;
+                renderTable();
+            }
+        });
+
+        renderTable();
+
+        // Delete Modal Logic
+        const modal1 = document.getElementById('deleteModal1');
+        const modal2 = document.getElementById('deleteModal2');
+        const btnDelete = document.getElementById('btnDeleteApiario');
+        
+        btnDelete.addEventListener('click', () => {
+            modal1.classList.remove('modal-hidden');
+        });
+
+        document.getElementById('btnCancelDelete1').addEventListener('click', () => {
+            modal1.classList.add('modal-hidden');
+        });
+
+        document.getElementById('btnProceedDelete').addEventListener('click', () => {
+            modal1.classList.add('modal-hidden');
+            modal2.classList.remove('modal-hidden');
+        });
+
+        document.getElementById('btnCancelDelete2').addEventListener('click', () => {
+            modal2.classList.add('modal-hidden');
+        });
+
+        // Editar Nota Modal Logic
+        const btnEditarNota = document.getElementById('btnEditarNota');
+        const editarNotaModal = document.getElementById('editarNotaModal');
+        const btnCancelEditarNota = document.getElementById('btnCancelEditarNota');
+        const btnCancelEditarNotaIcon = document.getElementById('btnCancelEditarNotaIcon');
+
+        function openEditarNotaModal() {
+            editarNotaModal.classList.remove('modal-hidden');
+        }
+
+        function closeEditarNotaModal() {
+            editarNotaModal.classList.add('modal-hidden');
+        }
+
+        btnEditarNota.addEventListener('click', openEditarNotaModal);
+        btnCancelEditarNota.addEventListener('click', closeEditarNotaModal);
+        btnCancelEditarNotaIcon.addEventListener('click', closeEditarNotaModal);
+    </script>
+}
