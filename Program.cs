@@ -1,8 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using QuestPDF.Infrastructure;
 using ObligatorioIntegrador2026.Data;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configurar licencia de QuestPDF
+QuestPDF.Settings.License = LicenseType.Community;
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -35,6 +39,7 @@ using (var scope = app.Services.CreateScope())
         _ = context.Colmenas.FirstOrDefault();
         _ = context.Treatments.FirstOrDefault();
         _ = context.NotasTecnicas.FirstOrDefault();
+        _ = context.Movimientos.FirstOrDefault();
         tableExists = true;
     }
     catch (Exception ex)

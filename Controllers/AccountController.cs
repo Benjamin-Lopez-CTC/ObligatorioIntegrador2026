@@ -68,13 +68,45 @@ namespace ObligatorioIntegrador2026.Controllers
             var userAgent = Request.Headers["User-Agent"].ToString();
             userAgent = userAgent.Length > 200 ? userAgent.Substring(0, 200) : userAgent;
 
+            string location = "Desconocida";
+            if (ip == "::1" || ip == "127.0.0.1")
+            {
+                location = "Localhost";
+            }
+            else if (ip != "Desconocida")
+            {
+                try
+                {
+                    using var httpClient = new HttpClient();
+                    // Timeout corto para no bloquear el login si la API falla
+                    httpClient.Timeout = TimeSpan.FromSeconds(3);
+                    var response = await httpClient.GetAsync($"http://ip-api.com/json/{ip}");
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var json = await response.Content.ReadAsStringAsync();
+                        using var doc = System.Text.Json.JsonDocument.Parse(json);
+                        var status = doc.RootElement.GetProperty("status").GetString();
+                        if (status == "success")
+                        {
+                            var city = doc.RootElement.GetProperty("city").GetString();
+                            var country = doc.RootElement.GetProperty("countryCode").GetString();
+                            location = $"{city}, {country}";
+                        }
+                    }
+                }
+                catch
+                {
+                    location = ip; // Fallback
+                }
+            }
+
             var record = new ObligatorioIntegrador2026.Models.LoginRecord
             {
                 AttemptDate = DateTime.Now,
                 Username = username ?? "Desconocido",
                 IpAddress = ip,
                 DeviceBrowser = string.IsNullOrEmpty(userAgent) ? "Desconocido" : userAgent,
-                Location = "Local / Desconocida",
+                Location = location,
                 IsSuccess = isSuccess
             };
 

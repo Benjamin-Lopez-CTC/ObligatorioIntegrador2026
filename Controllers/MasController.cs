@@ -18,9 +18,143 @@ namespace ObligatorioIntegrador2026.Controllers
             _context = context;
         }
 
-        public IActionResult Movimientos()
+        public async Task<IActionResult> Movimientos()
         {
-            return View();
+            var movimientos = await _context.Movimientos
+                .Include(m => m.Colmena)
+                .Include(m => m.ApiarioOrigen)
+                .Include(m => m.ApiarioDestino)
+                .OrderByDescending(m => m.FechaSalida)
+                .ToListAsync();
+
+            var apiarios = await _context.Apiarios.ToListAsync();
+
+            var viewModel = new MovimientosViewModel
+            {
+                Vigentes = movimientos.Where(m => m.Estado == "Vigente").ToList(),
+                Pasados = movimientos.Where(m => m.Estado != "Vigente").ToList(),
+                Apiarios = apiarios
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetColmenasPorApiario(int apiarioId)
+        {
+            var colmenas = await _context.Colmenas
+                .Where(c => c.ApiarioId == apiarioId)
+                .Select(c => new { id = c.Id, text = string.IsNullOrEmpty(c.Identificador) ? c.CodigoEscaneo : c.Identificador })
+                .ToListAsync();
+
+            return Json(new { success = true, data = colmenas });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RegistrarMovimiento([FromBody] MovimientoInputModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Json(new { success = false, message = "Datos inválidos." });
+            }
+
+            if (model.FechaRegreso.Date <= DateTime.Now.Date)
+            {
+                return Json(new { success = false, message = "La fecha de regreso debe ser posterior a la fecha actual." });
+            }
+
+            if (model.ApiarioOrigenId == model.ApiarioDestinoId)
+            {
+                return Json(new { success = false, message = "El apiario de destino no puede ser el mismo que el origen." });
+            }
+
+            var colmena = await _context.Colmenas.FindAsync(model.ColmenaId);
+            if (colmena == null)
+            {
+                return Json(new { success = false, message = "La colmena seleccionada no existe." });
+            }
+
+            var movimiento = new Movimiento
+            {
+                ColmenaId = model.ColmenaId,
+                ApiarioOrigenId = model.ApiarioOrigenId,
+                ApiarioDestinoId = model.ApiarioDestinoId,
+                Razon = model.Razon,
+                FechaSalida = DateTime.Now,
+                FechaRegreso = model.FechaRegreso,
+                Estado = "Vigente"
+            };
+
+            // También actualizamos el ApiarioId de la colmena para reflejar que se movió físicamente
+            colmena.ApiarioId = model.ApiarioDestinoId;
+            _context.Colmenas.Update(colmena);
+
+            _context.Movimientos.Add(movimiento);
+            await _context.SaveChangesAsync();
+
+            return Json(new { success = true });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ActualizarEstadoMovimiento(int id, string nuevoEstado)
+        {
+            var movimiento = await _context.Movimientos
+                .Include(m => m.Colmena)
+                .FirstOrDefaultAsync(m => m.Id == id);
+                
+            if (movimiento == null)
+            {
+                return Json(new { success = false, message = "Movimiento no encontrado." });
+            }
+
+            if (nuevoEstado != "Completado" && nuevoEstado != "Cancelado")
+            {
+                return Json(new { success = false, message = "Estado inválido." });
+            }
+
+            movimiento.Estado = nuevoEstado;
+
+            // Si se cancela o completa, en un caso real se podría devolver la colmena al origen automáticamente.
+            // Según la regla del negocio: "Para trasladarlas de un apiario a otro por un tiempo limitado, nunca permanente."
+            // "Completado" significa que ya retornó al origen? O "Completado" significa que el traslado se efectuó exitosamente y se quedará ahí hasta un próximo movimiento?
+            // "La fecha de regreso...". Es decir, si se completó, es porque volvió a su origen.
+            // Si "Canceló", significa que nunca se movió (o se arrepintió).
+            if (nuevoEstado == "Completado")
+            {
+                movimiento.Colmena.ApiarioId = movimiento.ApiarioDestinoId;
+                _context.Colmenas.Update(movimiento.Colmena);
+            }
+            else if (nuevoEstado == "Cancelado")
+            {
+                movimiento.Colmena.ApiarioId = movimiento.ApiarioOrigenId;
+                _context.Colmenas.Update(movimiento.Colmena);
+            }
+
+            _context.Movimientos.Update(movimiento);
+            await _context.SaveChangesAsync();
+
+            return Json(new { success = true });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditarFechaRegreso(int id, DateTime nuevaFecha)
+        {
+            var movimiento = await _context.Movimientos.FindAsync(id);
+            if (movimiento == null)
+            {
+                return Json(new { success = false, message = "Movimiento no encontrado." });
+            }
+
+            if (nuevaFecha.Date <= DateTime.Now.Date)
+            {
+                return Json(new { success = false, message = "La nueva fecha de regreso debe ser posterior a la fecha actual." });
+            }
+
+            movimiento.FechaRegreso = nuevaFecha;
+            _context.Movimientos.Update(movimiento);
+            await _context.SaveChangesAsync();
+
+            return Json(new { success = true });
         }
 
         public async Task<IActionResult> CompararApiarios()

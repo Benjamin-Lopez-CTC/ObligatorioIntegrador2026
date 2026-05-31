@@ -17,6 +17,7 @@ namespace ObligatorioIntegrador2026.Data
         public DbSet<Treatment> Treatments { get; set; }
         public DbSet<TreatmentEquipment> TreatmentEquipments { get; set; }
         public DbSet<NotaTecnica> NotasTecnicas { get; set; }
+        public DbSet<Movimiento> Movimientos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -77,6 +78,28 @@ namespace ObligatorioIntegrador2026.Data
 
             modelBuilder.Entity<TreatmentEquipment>().HasData(
                 new TreatmentEquipment { Id = 1, TreatmentId = 1, EquipmentName = "Ácido Oxálico (Glicerina)", Cantidad = 1 }
+            );
+
+            // Relaciones de Movimiento para evitar ciclos de cascada
+            modelBuilder.Entity<Movimiento>()
+                .HasOne(m => m.ApiarioOrigen)
+                .WithMany()
+                .HasForeignKey(m => m.ApiarioOrigenId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Movimiento>()
+                .HasOne(m => m.ApiarioDestino)
+                .WithMany()
+                .HasForeignKey(m => m.ApiarioDestinoId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Seed inicial de Movimientos
+            modelBuilder.Entity<Movimiento>().HasData(
+                new Movimiento { Id = 1, ColmenaId = 1, ApiarioOrigenId = 1, ApiarioDestinoId = 2, Razon = "Polinización Alfalfa", FechaSalida = DateTime.Now.AddDays(-5), FechaRegreso = DateTime.Now.AddDays(15), Estado = "Vigente" },
+                new Movimiento { Id = 2, ColmenaId = 2, ApiarioOrigenId = 1, ApiarioDestinoId = 3, Razon = "Refugio Invernal", FechaSalida = DateTime.Now.AddDays(-20), FechaRegreso = DateTime.Now.AddDays(2), Estado = "Vigente" },
+                new Movimiento { Id = 3, ColmenaId = 3, ApiarioOrigenId = 1, ApiarioDestinoId = 2, Razon = "Prueba de campo", FechaSalida = DateTime.Now.AddDays(-10), FechaRegreso = DateTime.Now.AddDays(-2), Estado = "Vigente" }, // Pendiente de retorno
+                new Movimiento { Id = 4, ColmenaId = 5, ApiarioOrigenId = 2, ApiarioDestinoId = 1, Razon = "Floración temprana", FechaSalida = DateTime.Now.AddDays(-40), FechaRegreso = DateTime.Now.AddDays(-10), Estado = "Completado" },
+                new Movimiento { Id = 5, ColmenaId = 6, ApiarioOrigenId = 2, ApiarioDestinoId = 3, Razon = "Error de registro", FechaSalida = DateTime.Now.AddDays(-5), FechaRegreso = DateTime.Now.AddDays(5), Estado = "Cancelado" }
             );
         }
     }
