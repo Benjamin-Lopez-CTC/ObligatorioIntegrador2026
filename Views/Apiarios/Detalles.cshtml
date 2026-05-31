@@ -14,7 +14,9 @@
 
     // Convertir a JSON para pasarlo al cliente
     var colmenasJson = JsonSerializer.Serialize(colmenas.Select(c => new {
-        idStr = c.Identificador,
+        identificador = c.Identificador,
+        codigoEscaneo = c.CodigoEscaneo,
+        esPiloto = c.EsPiloto,
         estado = c.Estado,
         peso = c.PesoKg,
         temp = c.TemperaturaInterna,
@@ -165,8 +167,8 @@
             </button>
         </div>
 
-        <div class="col-span-4 md:col-span-12 bg-surface-container-low border border-outline-variant rounded-lg overflow-hidden p-2 md:p-4">
-            <div class="overflow-x-auto">
+        <div class="col-span-4 md:col-span-12 bg-surface-container-low border border-outline-variant rounded-lg p-4 md:p-6 responsive-table">
+            <div class="overflow-x-auto md:overflow-visible">
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="border-b border-surface-container-highest font-label-caps text-label-caps text-on-surface-variant">
@@ -201,12 +203,12 @@
 
 
     <!-- Delete Section -->
-    <section class="mt-20 mb-12 flex flex-col items-center gap-4">
+    <section class="mt-20 mb-12 flex flex-col items-center gap-4 w-full pt-8 border-t border-surface-container-highest">
         <button id="btnDeleteApiario" class="border border-error text-error px-6 py-2.5 rounded font-label-caps text-label-caps uppercase hover:bg-error/10 transition-colors flex items-center gap-2">
             <span class="material-symbols-outlined text-sm">delete</span>
             Eliminar Apiario
         </button>
-        <p class="font-body-sm text-body-sm text-on-surface-variant/70 text-center max-w-md mt-4">
+        <p class="font-body-sm text-body-sm text-on-surface-variant/70 text-center max-w-md">
             Eliminar el apiario también eliminará todas las colmenas asignadas.
         </p>
     </section>
@@ -227,7 +229,7 @@
             <button id="btnCancelDelete1" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2 rounded font-label-caps text-label-caps">
                 Cancelar
             </button>
-            <button id="btnProceedDelete" class="bg-error-container/30 border border-error text-error hover:bg-error/20 transition-colors px-6 py-2 rounded font-label-caps text-label-caps font-semibold">
+            <button id="btnProceedDelete" class="bg-error-container/30 border border-error text-error hover:bg-error/20 transition-colors px-6 py-2 rounded font-label-caps text-label-caps ">
                 Sí, deseo eliminarlo
             </button>
         </div>
@@ -252,7 +254,7 @@
             <form asp-action="Eliminar" method="post" id="deleteForm" class="m-0">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="id" value="@Model.Id" />
-                <button type="submit" class="bg-error text-on-error hover:bg-red-400 transition-colors px-6 py-2 rounded font-label-caps text-label-caps font-bold">
+                <button type="submit" class="bg-error text-on-error hover:bg-red-400 transition-colors px-6 py-2 rounded font-label-caps text-label-caps ">
                     Confirmar y Eliminar
                 </button>
             </form>
@@ -280,7 +282,7 @@
                 <button type="button" id="btnCancelEditarNota" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2.5 rounded font-label-caps text-label-caps">
                     Cancelar
                 </button>
-                <button type="submit" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps font-semibold">
+                <button type="submit" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps ">
                     Guardar Nota
                 </button>
             </div>
@@ -344,7 +346,7 @@
                 <button type="button" id="btnCancelRegistrarColmena" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2.5 rounded font-label-caps text-label-caps">
                     Cancelar
                 </button>
-                <button type="submit" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps font-semibold">
+                <button type="submit" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps ">
                     Guardar Colmena
                 </button>
             </div>
@@ -380,14 +382,21 @@
             currentItems.forEach(c => {
                 let statusHtml = '';
                 let bgClass = 'hover:bg-surface-container transition-colors';
+                let iconArrow = '';
+                let weightClass = '';
+                let tempClass = '';
                 
                 if(c.estado === 'Óptimo') {
                     statusHtml = `<div class="inline-flex items-center gap-1.5 px-2 py-1 border border-[#4CAF50] rounded bg-[#4CAF50]/10 text-[#4CAF50] font-label-caps text-label-caps"><span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>Óptimo</div>`;
                 } else if(c.estado === 'Alerta') {
                     statusHtml = `<div class="inline-flex items-center gap-1.5 px-2 py-1 border border-primary-container rounded bg-primary-container/10 text-primary-container font-label-caps text-label-caps"><span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">info</span>Alerta</div>`;
+                    tempClass = 'text-primary-container';
+                    iconArrow = '<span class="material-symbols-outlined text-[14px] align-middle">arrow_upward</span>';
                 } else if(c.estado === 'Crítico') {
                     statusHtml = `<div class="inline-flex items-center gap-1.5 px-2 py-1 border border-error rounded bg-error/10 text-error font-label-caps text-label-caps"><span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">warning</span>Crítico</div>`;
                     bgClass += ' bg-error-container/5';
+                    weightClass = 'text-error';
+                    iconArrow = '<span class="material-symbols-outlined text-[14px] align-middle">arrow_downward</span>';
                 } else {
                     statusHtml = `<div class="inline-flex items-center gap-1.5 px-2 py-1 border border-outline-variant rounded bg-surface-variant text-on-surface-variant font-label-caps text-label-caps"><span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">info</span>${c.estado}</div>`;
                 }
@@ -395,15 +404,23 @@
                 const tr = document.createElement('tr');
                 tr.className = 'border-b border-surface-container-highest ' + bgClass;
                 tr.innerHTML = `
-                    <td class="p-4 font-label-caps text-label-caps text-primary-container">${c.idStr}</td>
-                    <td class="p-4">${apiarioNombre}</td>
-                    <td class="p-4">${statusHtml}</td>
-                    <td class="p-4 ${c.estado === 'Crítico' ? 'text-error' : ''}">${c.peso} ${c.estado === 'Crítico' ? '<span class="material-symbols-outlined text-[14px] align-middle">arrow_downward</span>' : ''}</td>
-                    <td class="p-4">${c.temp}°C</td>
-                    <td class="p-4 text-right">
-                        <div class="flex items-center justify-end gap-2">
-                            <a href="/Colmenas/Detalles/${c.id}" class="text-on-surface-variant hover:text-primary-container transition-colors p-2 flex items-center gap-2 font-label-caps text-label-caps">
-                                Ver Detalles<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                    <td data-label="ID COLMENA" class="p-4 border-b border-surface-container-highest md:border-none font-label-caps text-label-caps text-primary-container">
+                        <div class="flex items-center gap-3">
+                            <div class="flex flex-col justify-center text-right md:text-left">
+                                <span>${c.identificador || 'S/N'}</span>
+                                <span class="text-[10px] text-on-surface-variant mt-0.5 leading-none">ID: ${c.codigoEscaneo}</span>
+                            </div>
+                            ${c.esPiloto ? '<div class="w-6 h-6 shrink-0 flex items-center justify-center border border-outline-variant bg-surface-container-high rounded-sm text-on-surface font-label-caps text-[12px]" title="Colmena Piloto">P</div>' : ''}
+                        </div>
+                    </td>
+                    <td data-label="APIARIO" class="p-4 border-b border-surface-container-highest md:border-none">${apiarioNombre}</td>
+                    <td data-label="ESTADO" class="p-4 border-b border-surface-container-highest md:border-none">${statusHtml}</td>
+                    <td data-label="PESO (KG)" class="p-4 border-b border-surface-container-highest md:border-none ${weightClass}">${c.peso} ${weightClass ? iconArrow : ''}</td>
+                    <td data-label="TEMP." class="p-4 border-b border-surface-container-highest md:border-none ${tempClass}">${c.esPiloto ? c.temp + '°C ' + (tempClass ? iconArrow : '') : '<span class="text-on-surface-variant/50">N/A</span>'}</td>
+                    <td data-label="ACCIÓN" class="p-4 md:border-none text-right">
+                        <div class="flex items-center justify-end gap-2 pr-2">
+                            <a href="/Colmenas/Detalles/${c.id}" class="text-on-surface-variant hover:text-primary-container transition-colors flex items-center justify-center" title="Ver Detalles">
+                                <span class="material-symbols-outlined text-[20px]">visibility</span>
                             </a>
                         </div>
                     </td>

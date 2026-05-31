@@ -5,6 +5,7 @@ using ObligatorioIntegrador2026.Data;
 using ObligatorioIntegrador2026.Models;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Net.Http.Json;
 
 namespace ObligatorioIntegrador2026.Controllers
 {
@@ -12,10 +13,14 @@ namespace ObligatorioIntegrador2026.Controllers
     public class ColmenasController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IConfiguration _configuration;
 
-        public ColmenasController(AppDbContext context)
+        public ColmenasController(AppDbContext context, IHttpClientFactory httpClientFactory, IConfiguration configuration)
         {
             _context = context;
+            _httpClientFactory = httpClientFactory;
+            _configuration = configuration;
         }
 
         public async Task<IActionResult> Index()
@@ -361,6 +366,93 @@ namespace ObligatorioIntegrador2026.Controllers
                 colmena.Estado = "Alerta";
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> RecognizeCode([FromBody] RecognizeCodeRequest request)
+        {
+            if (string.IsNullOrEmpty(request?.Base64Image))
+            {
+                return BadRequest("No image provided");
+            }
+
+            try
+            {
+                var apiKey = _configuration["Gemini:ApiKey"];
+                if (string.IsNullOrEmpty(apiKey))
+                {
+                    return StatusCode(500, "Gemini API key is not configured.");
+                }
+
+                var cleanBase64 = request.Base64Image;
+                if (cleanBase64.Contains(","))
+                {
+                    cleanBase64 = cleanBase64.Substring(cleanBase64.IndexOf(",") + 1);
+                }
+
+                var payload = new
+                {
+                    contents = new[]
+                    {
+                        new
+                        {
+                            parts = new object[]
+                            {
+                                new { text = "Extract only the 6 numerical digits written in this image. Do not include any other text or characters. If there are no digits, return empty." },
+                                new
+                                {
+                                    inline_data = new
+                                    {
+                                        mime_type = "image/jpeg",
+                                        data = cleanBase64
+                                    }
+                                }
+                            }
+                        }
+                    }
+                };
+
+                var client = _httpClientFactory.CreateClient();
+                var url = $"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={apiKey}";
+                
+                var response = await client.PostAsJsonAsync(url, payload);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorStr = await response.Content.ReadAsStringAsync();
+                    return StatusCode((int)response.StatusCode, $"Error from Gemini: {errorStr}");
+                }
+
+                var jsonResponse = await response.Content.ReadAsStringAsync();
+                var doc = JsonDocument.Parse(jsonResponse);
+                
+                string extractedText = "";
+                if (doc.RootElement.TryGetProperty("candidates", out var candidates) && candidates.GetArrayLength() > 0)
+                {
+                    var firstCandidate = candidates[0];
+                    if (firstCandidate.TryGetProperty("content", out var content) && 
+                        content.TryGetProperty("parts", out var parts) && parts.GetArrayLength() > 0)
+                    {
+                        var firstPart = parts[0];
+                        if (firstPart.TryGetProperty("text", out var textProp))
+                        {
+                            extractedText = textProp.GetString() ?? "";
+                        }
+                    }
+                }
+
+                var digits = new string(extractedText.Where(char.IsDigit).ToArray());
+                
+                return Ok(new { success = true, digits = digits });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+    }
+
+    public class RecognizeCodeRequest
+    {
+        public string Base64Image { get; set; }
     }
 
     public class TreatmentInputModel

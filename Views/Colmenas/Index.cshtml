@@ -18,8 +18,8 @@
                     <span class="material-symbols-outlined text-[18px]">compare_arrows</span>
                     Comparar Colmenas
                 </a>
-                <button class="flex items-center justify-center gap-2 border border-primary-container text-primary-container px-4 py-3 rounded hover:bg-surface-container-high transition-colors font-label-caps text-label-caps cursor-not-allowed opacity-50" disabled>
-                    <span class="material-symbols-outlined text-[16px]">qr_code_scanner</span>
+                <button id="btnScanCode" class="flex items-center justify-center gap-2 border border-primary-container text-primary-container px-4 py-3 rounded hover:bg-surface-container-high transition-colors font-label-caps text-label-caps">
+                    <span class="material-symbols-outlined text-[16px]">document_scanner</span>
                     Escanear Código ID
                 </button>
                 <button id="btnOpenRegistrar" class="flex items-center justify-center gap-2 bg-primary-container text-[#000000] px-6 py-3 rounded hover:bg-primary-fixed-dim transition-colors font-label-caps text-label-caps">
@@ -74,8 +74,8 @@
         </div>
 
         <!-- Data Table Container -->
-        <div class="col-span-4 md:col-span-12 bg-surface-container-low border border-outline-variant rounded-lg overflow-hidden p-2 md:p-4">
-            <div class="overflow-x-auto">
+        <div class="col-span-4 md:col-span-12 bg-surface-container-low border border-outline-variant rounded-lg p-4 md:p-6 responsive-table">
+            <div class="overflow-x-auto md:overflow-visible">
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="border-b border-surface-container-highest font-label-caps text-label-caps text-on-surface-variant">
@@ -161,11 +161,17 @@
                 <input type="checkbox" id="EsPiloto" name="EsPiloto" value="true" class="w-4 h-4 text-primary-container bg-background border-outline-variant rounded focus:ring-primary-container focus:ring-2" />
                 <label for="EsPiloto" class="font-body-md text-body-md text-on-surface">Convertir en Colmena Piloto</label>
             </div>
+            <div class="bg-primary-container/10 border border-primary-container rounded p-3 flex items-start gap-3 mt-4">
+                <span class="material-symbols-outlined text-primary-container text-[20px] shrink-0">info</span>
+                <p class="font-body-sm text-body-sm text-on-surface text-left">
+                    Al guardar la colmena se generará un <strong class="text-primary-container">código de 6 dígitos</strong>. Debes asegurarte de anotarlo a mano con marcador visible en la colmena física para poder usar el escáner.
+                </p>
+            </div>
             <div class="pt-4 border-t border-surface-container-highest flex justify-end gap-3 mt-6">
                 <button type="button" id="btnCancelRegistrar" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2.5 rounded font-label-caps text-label-caps">
                     Cancelar
                 </button>
-                <button type="submit" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps font-semibold">
+                <button type="submit" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps ">
                     Guardar Colmena
                 </button>
             </div>
@@ -191,11 +197,79 @@
             <form asp-action="Eliminar" method="post" id="deleteForm" class="m-0">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="id" id="deleteColmenaId" value="" />
-                <button type="submit" class="bg-error-container/30 border border-error text-error hover:bg-error/20 transition-colors px-6 py-2 rounded font-label-caps text-label-caps font-semibold">
+                <button type="submit" class="bg-error-container/30 border border-error text-error hover:bg-error/20 transition-colors px-6 py-2 rounded font-label-caps text-label-caps ">
                     Sí, eliminarla
                 </button>
             </form>
         </div>
+    </div>
+</div>
+
+<!-- Scanner Modal (Desktop - Manual Input) -->
+<div id="scannerModalDesktop" class="fixed inset-0 z-[60] flex modal-backdrop modal-hidden items-center justify-center bg-black/85 p-4">
+    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-md shadow-2xl p-6 text-center space-y-4 modal-container">
+        <div class="flex justify-between items-center border-b border-surface-container-highest pb-4 mb-4">
+            <h4 class="font-headline-lg text-lg font-bold text-on-surface">Ingresar Código ID</h4>
+            <button id="btnCloseScannerDesktop" class="text-on-surface-variant hover:text-primary-container transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <p class="font-body-md text-body-md text-on-surface-variant mb-4 text-left">
+            Ingrese el código numérico de 6 dígitos de la colmena física.
+        </p>
+        <input type="text" id="manualScanInput" maxlength="6" pattern="\d*" placeholder="000000" class="w-full bg-background border border-outline-variant px-4 py-3 rounded text-on-surface text-center font-display text-2xl tracking-widest focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+        <div id="manualScanError" class="text-error font-body-sm text-body-sm text-left hidden">Código no encontrado o inválido.</div>
+        <div class="pt-4 flex justify-end gap-3 mt-4">
+            <button type="button" id="btnSearchManualScan" class="w-full bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-3 rounded font-label-caps text-label-caps flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">search</span>
+                Buscar Colmena
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Scanner Modal (Mobile - Camera) -->
+<div id="scannerModalMobile" class="fixed inset-0 z-[60] flex modal-backdrop modal-hidden items-center justify-center bg-black p-0 m-0 w-full h-full">
+    <div class="w-full h-full relative flex flex-col modal-container">
+        <!-- Header Overlay -->
+        <div class="absolute top-0 left-0 w-full p-4 flex justify-between items-center z-20 bg-gradient-to-b from-black/80 to-transparent">
+            <h4 class="font-label-caps text-label-caps text-white font-bold">Escanear ID</h4>
+            <div class="flex gap-3">
+                <button id="btnSwitchCamera" class="hidden text-white hover:text-primary-container transition-colors bg-black/50 p-2 rounded-full backdrop-blur-sm flex" title="Cambiar Cámara">
+                    <span class="material-symbols-outlined">cameraswitch</span>
+                </button>
+                <button id="btnCloseScannerMobile" class="text-white hover:text-primary-container transition-colors bg-black/50 p-2 rounded-full backdrop-blur-sm flex">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Video Feed -->
+        <video id="scannerVideo" class="w-full h-full object-cover" autoplay playsinline></video>
+
+        <!-- Scanning Overlay Guides -->
+        <div class="absolute inset-0 z-10 pointer-events-none flex flex-col">
+            <div class="flex-grow bg-black/60"></div>
+            <div class="flex h-[120px] w-full">
+                <div class="w-1/6 bg-black/60"></div>
+                <div class="w-4/6 border-2 border-primary-container relative box-border flex items-center justify-center">
+                    <span class="absolute -top-6 text-white font-label-caps text-[10px] bg-primary-container/80 px-2 py-0.5 rounded-sm">Enfoque los 6 dígitos aquí</span>
+                </div>
+                <div class="w-1/6 bg-black/60"></div>
+            </div>
+            <div class="flex-grow bg-black/60"></div>
+        </div>
+
+        <!-- Feedback & Capture Button Overlay -->
+        <div class="absolute bottom-0 left-0 w-full p-6 z-20 bg-gradient-to-t from-black/90 via-black/70 to-transparent flex flex-col items-center gap-4 pb-10">
+            <div id="scanStatusMobile" class="font-body-md text-white text-center min-h-[24px]">Posiciona el código y presiona capturar</div>
+            <button type="button" id="btnCaptureScan" class="bg-primary-container text-on-primary w-16 h-16 rounded-full flex items-center justify-center shadow-lg border-4 border-white/20 hover:scale-105 transition-transform">
+                <span class="material-symbols-outlined text-[28px]">camera_alt</span>
+            </button>
+        </div>
+        
+        <!-- Hidden Canvas for OCR processing -->
+        <canvas id="scannerCanvas" class="hidden"></canvas>
     </div>
 </div>
 
@@ -273,20 +347,20 @@
                 const tr = document.createElement('tr');
                 tr.className = 'border-b border-surface-container-highest ' + bgClass;
                 tr.innerHTML = `
-                    <td class="p-4 font-label-caps text-label-caps text-primary-container">
+                    <td data-label="ID COLMENA" class="p-4 border-b border-surface-container-highest md:border-none font-label-caps text-label-caps text-primary-container">
                         <div class="flex items-center gap-3">
-                            <div class="flex flex-col justify-center">
+                            <div class="flex flex-col justify-center text-right md:text-left">
                                 <span>${c.identificador || 'S/N'}</span>
                                 <span class="text-[10px] text-on-surface-variant mt-0.5 leading-none">ID: ${c.codigoEscaneo}</span>
                             </div>
                             ${c.esPiloto ? '<div class="w-6 h-6 shrink-0 flex items-center justify-center border border-outline-variant bg-surface-container-high rounded-sm text-on-surface font-label-caps text-[12px]" title="Colmena Piloto">P</div>' : ''}
                         </div>
                     </td>
-                    <td class="p-4">${c.apiarioNombre || 'Desconocido'}</td>
-                    <td class="p-4">${statusHtml}</td>
-                    <td class="p-4 ${weightClass}">${c.peso} ${weightClass ? iconArrow : ''}</td>
-                    <td class="p-4 ${tempClass}">${c.esPiloto ? c.temp + '°C ' + (tempClass ? iconArrow : '') : '<span class="text-on-surface-variant/50">N/A</span>'}</td>
-                    <td class="p-4 text-right">
+                    <td data-label="APIARIO" class="p-4 border-b border-surface-container-highest md:border-none">${c.apiarioNombre || 'Desconocido'}</td>
+                    <td data-label="ESTADO" class="p-4 border-b border-surface-container-highest md:border-none">${statusHtml}</td>
+                    <td data-label="PESO (KG)" class="p-4 border-b border-surface-container-highest md:border-none ${weightClass}">${c.peso} ${weightClass ? iconArrow : ''}</td>
+                    <td data-label="TEMP." class="p-4 border-b border-surface-container-highest md:border-none ${tempClass}">${c.esPiloto ? c.temp + '°C ' + (tempClass ? iconArrow : '') : '<span class="text-on-surface-variant/50">N/A</span>'}</td>
+                    <td data-label="ACCIÓN" class="p-4 md:border-none text-right">
                         <div class="flex items-center justify-end gap-3 pr-2">
                             <a href="/Colmenas/Detalles/${c.id}" class="text-on-surface-variant hover:text-primary-container transition-colors flex items-center justify-center" title="Ver Detalles">
                                 <span class="material-symbols-outlined text-[20px]">visibility</span>
@@ -358,6 +432,184 @@
 
         document.getElementById('btnCancelDelete').addEventListener('click', () => {
             deleteModal.classList.add('modal-hidden');
+        });
+
+        // --- SCANNER LOGIC ---
+        const btnScanCode = document.getElementById('btnScanCode');
+        const modalDesktop = document.getElementById('scannerModalDesktop');
+        const modalMobile = document.getElementById('scannerModalMobile');
+        
+        btnScanCode.addEventListener('click', () => {
+            if(window.innerWidth < 768 || /Mobi|Android/i.test(navigator.userAgent)) {
+                openMobileScanner();
+            } else {
+                modalDesktop.classList.remove('modal-hidden');
+                setTimeout(() => document.getElementById('manualScanInput').focus(), 100);
+            }
+        });
+
+        document.getElementById('btnCloseScannerDesktop').addEventListener('click', () => {
+            modalDesktop.classList.add('modal-hidden');
+            document.getElementById('manualScanError').classList.add('hidden');
+            document.getElementById('manualScanInput').value = '';
+        });
+
+        document.getElementById('btnSearchManualScan').addEventListener('click', () => {
+            const inputVal = document.getElementById('manualScanInput').value;
+            if(inputVal.length === 6) {
+                const found = rawColmenas.find(c => c.codigoEscaneo === inputVal);
+                if(found) {
+                    window.location.href = `/Colmenas/Detalles/${found.id}`;
+                } else {
+                    document.getElementById('manualScanError').classList.remove('hidden');
+                }
+            } else {
+                document.getElementById('manualScanError').classList.remove('hidden');
+            }
+        });
+
+        // Tesseract Mobile Logic
+        let videoStream = null;
+        let videoDevices = [];
+        let currentDeviceIndex = 0;
+        const video = document.getElementById('scannerVideo');
+        const canvas = document.getElementById('scannerCanvas');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        const statusText = document.getElementById('scanStatusMobile');
+        const btnCapture = document.getElementById('btnCaptureScan');
+        const btnSwitchCamera = document.getElementById('btnSwitchCamera');
+
+        async function initCamera(deviceId = null) {
+            if(videoStream) {
+                videoStream.getTracks().forEach(track => track.stop());
+            }
+            
+            const constraints = {
+                video: {
+                    width: { ideal: 1920 },
+                    height: { ideal: 1080 },
+                    advanced: [{ focusMode: "continuous" }]
+                }
+            };
+            
+            if (deviceId) {
+                constraints.video.deviceId = { exact: deviceId };
+            } else {
+                constraints.video.facingMode = "environment";
+            }
+
+            try {
+                videoStream = await navigator.mediaDevices.getUserMedia(constraints);
+                video.srcObject = videoStream;
+                
+                // Enumerate devices after permission is granted to get labels
+                if (videoDevices.length === 0) {
+                    const devices = await navigator.mediaDevices.enumerateDevices();
+                    videoDevices = devices.filter(device => device.kind === 'videoinput');
+                    if (videoDevices.length > 1) {
+                        btnSwitchCamera.classList.remove('hidden');
+                    }
+                }
+                
+                statusText.textContent = "Posiciona el código y presiona capturar";
+                btnCapture.disabled = false;
+            } catch (err) {
+                statusText.textContent = "Error al acceder a la cámara";
+                console.error(err);
+            }
+        }
+
+        async function openMobileScanner() {
+            modalMobile.classList.remove('modal-hidden');
+            statusText.textContent = "Iniciando cámara...";
+            btnCapture.disabled = true;
+            await initCamera();
+        }
+
+        btnSwitchCamera.addEventListener('click', () => {
+            if (videoDevices.length > 1) {
+                currentDeviceIndex = (currentDeviceIndex + 1) % videoDevices.length;
+                const nextDevice = videoDevices[currentDeviceIndex];
+                statusText.textContent = "Cambiando cámara...";
+                btnCapture.disabled = true;
+                initCamera(nextDevice.deviceId);
+            }
+        });
+
+        document.getElementById('btnCloseScannerMobile').addEventListener('click', () => {
+            closeMobileScanner();
+        });
+
+        function closeMobileScanner() {
+            modalMobile.classList.add('modal-hidden');
+            if(videoStream) {
+                videoStream.getTracks().forEach(track => track.stop());
+                videoStream = null;
+            }
+        }
+
+        btnCapture.addEventListener('click', async () => {
+            if(!videoStream) return;
+            statusText.textContent = "Analizando imagen...";
+            btnCapture.disabled = true;
+            
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            const targetY = canvas.height * 0.3;
+            const targetH = canvas.height * 0.4;
+            const targetX = canvas.width * 0.1;
+            const targetW = canvas.width * 0.8;
+            
+            const imageData = ctx.getImageData(targetX, targetY, targetW, targetH);
+            const cropCanvas = document.createElement('canvas');
+            cropCanvas.width = targetW;
+            cropCanvas.height = targetH;
+            const cropCtx = cropCanvas.getContext('2d');
+            cropCtx.putImageData(imageData, 0, 0);
+
+            try {
+                const base64Data = cropCanvas.toDataURL('image/jpeg', 0.8);
+                
+                const response = await fetch('/Colmenas/RecognizeCode', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ base64Image: base64Data })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.statusText}`);
+                }
+
+                const result = await response.json();
+                
+                if (result.success && result.digits && result.digits.length >= 6) {
+                    const code = result.digits.substring(0, 6);
+                    const found = rawColmenas.find(c => c.codigoEscaneo === code);
+                    if(found) {
+                        statusText.innerHTML = `<span class="text-[#4CAF50] font-bold">¡Éxito! Redirigiendo a ID: ${code}</span>`;
+                        setTimeout(() => {
+                            window.location.href = `/Colmenas/Detalles/${found.id}`;
+                        }, 1000);
+                    } else {
+                        statusText.innerHTML = `<span class="text-error font-bold">Código ${code} no encontrado.</span>`;
+                        setTimeout(() => {
+                            statusText.textContent = "Intenta de nuevo.";
+                            btnCapture.disabled = false;
+                        }, 2000);
+                    }
+                } else {
+                    statusText.textContent = "No se detectaron 6 dígitos. Intenta de nuevo.";
+                    btnCapture.disabled = false;
+                }
+            } catch(e) {
+                statusText.textContent = "Error en análisis OCR.";
+                console.error(e);
+                btnCapture.disabled = false;
+            }
         });
     </script>
 }

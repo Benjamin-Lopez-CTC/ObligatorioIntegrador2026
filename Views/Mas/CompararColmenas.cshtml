@@ -132,11 +132,11 @@
     </div>
 </div>
 <!-- Detailed Comparison Table -->
-<div class="bg-surface-container-low border border-outline-variant rounded overflow-hidden mt-8 mb-12">
-    <div class="p-6 border-b border-outline-variant flex justify-between items-center">
+<div class="bg-surface-container-low border border-outline-variant rounded mt-8 mb-12 responsive-table p-4 md:p-0">
+    <div class="p-6 border-b border-outline-variant flex justify-between items-center md:rounded-t">
         <h3 class="font-headline-lg-mobile text-[20px] font-semibold text-on-surface">Métricas Detalladas</h3>
     </div>
-    <div class="overflow-x-auto">
+    <div class="overflow-x-auto md:overflow-visible">
         <table class="w-full text-left border-collapse">
             <thead>
                 <tr class="bg-surface-container border-b border-outline-variant font-label-caps text-label-caps text-on-surface-variant">
@@ -148,38 +148,38 @@
             </thead>
             <tbody class="font-body-sm text-on-surface">
                 <tr class="border-b border-outline-variant hover:bg-surface-container transition-colors">
-                    <td class="p-4">ID Colmena</td>
-                    <td class="p-4 border-l border-outline-variant font-label-caps text-primary-container">#HIVE-0042</td>
-                    <td class="p-4 border-l border-outline-variant font-label-caps text-on-surface-variant">#HIVE-0089</td>
-                    <td class="p-4 border-l border-outline-variant text-on-surface-variant">N/A</td>
+                    <td data-label="DATO / MÉTRICA" class="p-4 border-b border-surface-container-highest md:border-none">ID Colmena</td>
+                    <td data-label="COLMENA A" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant font-label-caps text-primary-container">#HIVE-0042</td>
+                    <td data-label="COLMENA B" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant font-label-caps text-on-surface-variant">#HIVE-0089</td>
+                    <td data-label="OBSERVACIÓN" class="p-4 md:border-none md:border-l md:border-outline-variant text-on-surface-variant">N/A</td>
                 </tr>
                 <tr class="border-b border-outline-variant hover:bg-surface-container transition-colors">
-                    <td class="p-4">Apiario de Origen</td>
-                    <td class="p-4 border-l border-outline-variant">Sector Norte Alpha</td>
-                    <td class="p-4 border-l border-outline-variant">Sector Norte Alpha</td>
-                    <td class="p-4 border-l border-outline-variant text-on-surface-variant">Iguales</td>
+                    <td data-label="DATO / MÉTRICA" class="p-4 border-b border-surface-container-highest md:border-none">Apiario de Origen</td>
+                    <td data-label="COLMENA A" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">Sector Norte Alpha</td>
+                    <td data-label="COLMENA B" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">Sector Norte Alpha</td>
+                    <td data-label="OBSERVACIÓN" class="p-4 md:border-none md:border-l md:border-outline-variant text-on-surface-variant">Iguales</td>
                 </tr>
                 <tr class="border-b border-outline-variant hover:bg-surface-container transition-colors">
-                    <td class="p-4">Estado</td>
-                    <td class="p-4 border-l border-outline-variant">
+                    <td data-label="DATO / MÉTRICA" class="p-4 border-b border-surface-container-highest md:border-none">Estado</td>
+                    <td data-label="COLMENA A" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">
                         <span class="inline-flex items-center gap-1 px-2 py-0.5 border border-primary-container rounded bg-primary-container/10 text-primary-container font-label-caps text-[10px]"><span class="material-symbols-outlined text-[12px]">check_circle</span>Óptimo</span>
                     </td>
-                    <td class="p-4 border-l border-outline-variant">
+                    <td data-label="COLMENA B" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">
                         <span class="inline-flex items-center gap-1 px-2 py-0.5 border border-error rounded bg-error/10 text-error font-label-caps text-[10px]"><span class="material-symbols-outlined text-[12px]">warning</span>Alerta</span>
                     </td>
-                    <td class="p-4 border-l border-outline-variant text-error">Revisión Alerta</td>
+                    <td data-label="OBSERVACIÓN" class="p-4 md:border-none md:border-l md:border-outline-variant text-error">Revisión Alerta</td>
                 </tr>
                 <tr class="border-b border-outline-variant hover:bg-surface-container transition-colors">
-                    <td class="p-4">Peso (kg)</td>
-                    <td class="p-4 border-l border-outline-variant">45.2</td>
-                    <td class="p-4 border-l border-outline-variant">42.8</td>
-                    <td class="p-4 border-l border-outline-variant text-on-surface-variant">-2.4 kg</td>
+                    <td data-label="DATO / MÉTRICA" class="p-4 border-b border-surface-container-highest md:border-none">Peso (kg)</td>
+                    <td data-label="COLMENA A" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">45.2</td>
+                    <td data-label="COLMENA B" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">42.8</td>
+                    <td data-label="OBSERVACIÓN" class="p-4 md:border-none md:border-l md:border-outline-variant text-on-surface-variant">-2.4 kg</td>
                 </tr>
                 <tr class="hover:bg-surface-container transition-colors">
-                    <td class="p-4">Temp. Int.</td>
-                    <td class="p-4 border-l border-outline-variant">34.5°C</td>
-                    <td class="p-4 border-l border-outline-variant">32.0°C</td>
-                    <td class="p-4 border-l border-outline-variant text-on-surface-variant">-2.5°C</td>
+                    <td data-label="DATO / MÉTRICA" class="p-4 border-b border-surface-container-highest md:border-none">Temp. Int.</td>
+                    <td data-label="COLMENA A" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">34.5°C</td>
+                    <td data-label="COLMENA B" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">32.0°C</td>
+                    <td data-label="OBSERVACIÓN" class="p-4 md:border-none md:border-l md:border-outline-variant text-on-surface-variant">-2.5°C</td>
                 </tr>
             </tbody>
         </table>

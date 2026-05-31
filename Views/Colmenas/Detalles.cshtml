@@ -26,7 +26,7 @@
 
     var notasSorted = Model.NotasTecnicas?.OrderByDescending(n => n.Fecha).ToList() ?? new List<ObligatorioIntegrador2026.Models.NotaTecnica>();
     var ultimaNotaObj = notasSorted.FirstOrDefault();
-    var notasRestantes = notasSorted.Skip(1).Take(3).ToList();
+    var notasRestantes = notasSorted.Skip(1).Take(2).ToList();
 
     string reinaLastSeen = ultimaNotaObj != null 
         ? $"Avistada hace {(int)(DateTime.Now - ultimaNotaObj.Fecha).TotalDays} días" 
@@ -41,8 +41,8 @@
                 <span class="material-symbols-outlined text-sm group-hover:-translate-x-1 transition-transform">arrow_back</span>
                 Volver a Colmenas
             </a>
-            <div class="flex items-center gap-4">
-                <h1 class="font-display text-display md:text-[40px] text-[32px] text-primary-container">
+            <div class="flex items-center flex-wrap gap-4">
+                <h1 class="font-display text-display md:text-[40px] text-[32px] text-primary-container break-words max-w-full">
                     @(string.IsNullOrEmpty(Model.Identificador) ? Model.CodigoEscaneo : Model.Identificador)
                 </h1>
                 @Html.Raw(statusHtml)
@@ -62,7 +62,7 @@
                 <span class="material-symbols-outlined text-[18px]">edit</span>
                 Editar Colmena
             </button>
-            <button id="btnOpenRegistrar" class="flex items-center gap-2 px-6 py-3 bg-primary-container text-[#000000] hover:bg-primary-fixed transition-colors rounded-sm font-label-caps text-label-caps font-bold shadow-[0_0_15px_rgba(255,217,0,0.2)] whitespace-nowrap">
+            <button id="btnOpenRegistrar" class="flex items-center gap-2 px-6 py-3 bg-primary-container text-[#000000] hover:bg-primary-fixed transition-colors rounded-sm font-label-caps text-label-caps shadow-[0_0_15px_rgba(255,217,0,0.2)] whitespace-nowrap">
                 <span class="material-symbols-outlined text-[18px]">add</span>
                 Registrar Nuevo Tratamiento
             </button>
@@ -329,9 +329,10 @@
             }
         </div>
     </div>
+</div>
 
-    <div class="flex justify-center mt-8 pt-8 border-t border-surface-container-highest">
-        <button onclick="openDeleteModal()" class="border border-error text-error font-label-caps text-label-caps px-6 py-3 rounded-lg flex items-center gap-2 hover:bg-error/10 transition-colors whitespace-nowrap">
+    <div class="w-full flex justify-center mt-8 pt-8 border-t border-surface-container-highest">
+        <button onclick="openDeleteModal()" class="mx-auto w-fit border border-error text-error font-label-caps text-label-caps px-6 py-3 rounded-lg flex items-center gap-2 hover:bg-error/10 transition-colors whitespace-nowrap">
             <span class="material-symbols-outlined text-[18px]">delete</span>
             Eliminar Colmena
         </button>
@@ -356,7 +357,7 @@
             <form asp-action="Eliminar" asp-controller="Colmenas" method="post" class="m-0">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="id" value="@Model.Id" />
-                <button type="submit" class="bg-error-container/30 border border-error text-error hover:bg-error/20 transition-colors px-6 py-2 rounded font-label-caps text-label-caps font-semibold">
+                <button type="submit" class="bg-error-container/30 border border-error text-error hover:bg-error/20 transition-colors px-6 py-2 rounded font-label-caps text-label-caps ">
                     Sí, eliminarla
                 </button>
             </form>
@@ -404,7 +405,7 @@
                 <button type="button" id="btnCancelNote" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2.5 rounded font-label-caps text-label-caps">
                     Cancelar
                 </button>
-                <button type="submit" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps font-semibold">
+                <button type="submit" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps ">
                     Guardar Nota
                 </button>
             </div>
@@ -463,7 +464,7 @@
                 <button type="button" id="btnCancelEdit" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2.5 rounded font-label-caps text-label-caps">
                     Cancelar
                 </button>
-                <button type="submit" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps font-semibold">
+                <button type="submit" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps ">
                     Guardar Cambios
                 </button>
             </div>
@@ -531,7 +532,7 @@
                 <button type="button" id="btnCancelRegistrar" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2.5 rounded-sm font-label-caps text-label-caps">
                     Cancelar
                 </button>
-                <button type="submit" class="bg-primary-container text-on-primary-fixed hover:bg-primary-fixed transition-colors px-6 py-2.5 rounded-sm font-label-caps text-label-caps font-semibold">
+                <button type="submit" class="bg-primary-container text-on-primary-fixed hover:bg-primary-fixed transition-colors px-6 py-2.5 rounded-sm font-label-caps text-label-caps ">
                     Confirmar Registro
                 </button>
             </div>
@@ -585,7 +586,7 @@
             }
         </div>
         <div class="pt-4 pb-4 px-6 border-t border-surface-container-highest flex justify-end shrink-0">
-            <button type="button" id="btnCancelAllNotes" class="bg-surface-container-high border border-outline text-on-surface hover:bg-surface-container-highest transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps font-semibold">
+            <button type="button" id="btnCancelAllNotes" class="bg-surface-container-high border border-outline text-on-surface hover:bg-surface-container-highest transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps ">
                 Cerrar Historial
             </button>
         </div>

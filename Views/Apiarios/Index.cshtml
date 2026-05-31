@@ -59,7 +59,7 @@
                         </div>
                         <div class="flex items-center gap-2 text-on-surface-variant">
                             <span class="material-symbols-outlined text-[16px]">hive</span>
-                            <span class="font-body-md text-body-md">@colmenasCount Colmenas</span>
+                            <span class="font-body-md text-body-md">@colmenasCount @(colmenasCount == 1 ? "Colmena" : "Colmenas")</span>
                         </div>
                         <div class="flex items-center gap-2 text-on-surface-variant">
                             <span class="material-symbols-outlined text-[16px]">calendar_today</span>
@@ -120,7 +120,7 @@
                 <button type="button" id="btnCancelRegistrar" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2.5 rounded font-label-caps text-label-caps">
                     Cancelar
                 </button>
-                <button type="submit" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps font-semibold">
+                <button type="submit" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps ">
                     Registrar Apiario
                 </button>
             </div>

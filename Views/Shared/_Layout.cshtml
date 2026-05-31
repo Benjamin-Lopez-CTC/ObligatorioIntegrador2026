@@ -152,6 +152,49 @@
             background-color: #1E1E1E;
             color: #e3e2e2;
         }
+        /* Estilos para convertir tabla en tarjetas en móvil */
+        @@media (max-width: 767px) {
+            .responsive-table table, .responsive-table thead, .responsive-table tbody, .responsive-table th, .responsive-table td, .responsive-table tr {
+                display: block;
+            }
+            .responsive-table thead tr {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+            .responsive-table tr {
+                border: 1px solid theme('colors.outline-variant');
+                border-radius: 0.5rem;
+                margin-bottom: 1rem;
+                background-color: theme('colors.surface-container.DEFAULT');
+                padding: 1rem;
+            }
+            .responsive-table td {
+                border: none !important;
+                padding: 0.5rem 0 !important;
+                position: relative;
+                padding-left: 50% !important;
+                text-align: right;
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+                min-height: 2.5rem;
+            }
+            .responsive-table td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 0;
+                width: 45%;
+                padding-right: 10px;
+                white-space: nowrap;
+                text-align: left;
+                font-size: 0.65rem;
+                font-weight: 700;
+                letter-spacing: 0.05em;
+                color: theme('colors.on-surface-variant');
+                text-transform: uppercase;
+            }
+        }
         /* Custom animations for modals */
         .modal-backdrop {
             transition: opacity 0.25s ease-out;
@@ -234,12 +277,75 @@
                         <span class="material-symbols-outlined">logout</span>
                     </button>
                 </form>
-                <button class="md:hidden text-on-surface-variant hover:text-primary-container transition-colors">
+                <button id="btnOpenMobileMenu" class="md:hidden text-on-surface-variant hover:text-primary-container transition-colors p-2">
                     <span class="material-symbols-outlined">menu</span>
                 </button>
             </div>
         </div>
     </header>
+
+    <!-- Mobile Navigation Menu -->
+    <div id="mobileMenu" class="fixed inset-0 z-50 bg-surface/95 backdrop-blur-sm flex flex-col md:hidden transform translate-x-full transition-transform duration-300">
+        <div class="flex items-center justify-between p-4 border-b border-surface-container-highest">
+            <a asp-controller="Home" asp-action="Index" class="font-headline-lg-mobile text-headline-lg-mobile font-bold text-primary-container tracking-tight flex items-center">
+                <img src="~/Logo.png" alt="Logo" class="w-8 h-8 mr-2 object-contain align-middle" />Zánganos S.A.
+            </a>
+            <button id="btnCloseMobileMenu" class="text-on-surface-variant hover:text-primary-container transition-colors p-2">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <nav class="flex flex-col gap-2 p-4 flex-grow overflow-y-auto">
+            <!-- Same links as desktop but vertical -->
+            <a asp-controller="Home" asp-action="Index" class="@GetNavClass("Home") py-4">
+                <span class="material-symbols-outlined text-[20px]" style="@GetIconStyle("Home")">dashboard</span> Dashboard
+            </a>
+            <a asp-controller="Apiarios" asp-action="Index" class="@GetNavClass("Apiarios") py-4">
+                <span class="material-symbols-outlined text-[20px]" style="@GetIconStyle("Apiarios")">location_on</span> Apiarios
+            </a>
+            <a asp-controller="Colmenas" asp-action="Index" class="@GetNavClass("Colmenas") py-4">
+                <span class="material-symbols-outlined text-[20px]" style="@GetIconStyle("Colmenas")">hive</span> Colmenas
+            </a>
+            <a asp-controller="Informes" asp-action="Index" class="@GetNavClass("Informes") py-4">
+                <span class="material-symbols-outlined text-[20px]" style="@GetIconStyle("Informes")">assessment</span> Informes
+            </a>
+            <div class="mt-4 pt-4 border-t border-surface-container-highest">
+                <p class="font-label-caps text-label-caps text-on-surface-variant mb-2">MÁS OPCIONES</p>
+                <a asp-controller="Mas" asp-action="Movimientos" class="@GetDropdownItemClass("Mas", "Movimientos") py-3">
+                    <span class="material-symbols-outlined text-[18px]">local_shipping</span> Movimientos
+                </a>
+                <a asp-controller="Mas" asp-action="Finanzacion" class="@GetDropdownItemClass("Mas", "Finanzacion") py-3">
+                    <span class="material-symbols-outlined text-[18px]">payments</span> Cálculo de Costos
+                </a>
+                <a asp-controller="Mas" asp-action="Inventario" class="@GetDropdownItemClass("Mas", "Inventario") py-3">
+                    <span class="material-symbols-outlined text-[18px]">inventory</span> Inventario
+                </a>
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-controller="Admin" asp-action="RegistroLogins" class="@GetDropdownItemClass("Admin", "RegistroLogins") py-3">
+                        <span class="material-symbols-outlined text-[18px]">login</span> Registro Logins
+                    </a>
+                }
+            </div>
+        </nav>
+        <div class="p-4 border-t border-surface-container-highest">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center overflow-hidden">
+                    <span class="material-symbols-outlined text-on-surface-variant text-[24px]">person</span>
+                </div>
+                <div class="text-left">
+                    <p class="font-label-caps text-label-caps text-on-surface">@User.Claims.FirstOrDefault(c => c.Type == "FullName")?.Value</p>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant text-[10px]">
+                        @(User.IsInRole("Admin") ? "Administrador" : "Apicultor")
+                    </p>
+                </div>
+            </div>
+            <form asp-controller="Account" asp-action="Logout" method="post" class="w-full">
+                <button type="submit" class="w-full border border-error text-error hover:bg-error/10 transition-colors px-4 py-3 rounded flex items-center justify-center gap-2 font-label-caps text-label-caps" title="Cerrar sesión">
+                    <span class="material-symbols-outlined">logout</span> Cerrar Sesión
+                </button>
+            </form>
+        </div>
+    </div>
 
     <main class="flex-grow">
         @RenderBody()
@@ -320,6 +426,20 @@
             });
         </script>
     }
+    <script>
+        const btnOpenMenu = document.getElementById('btnOpenMobileMenu');
+        const btnCloseMenu = document.getElementById('btnCloseMobileMenu');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        if(btnOpenMenu && btnCloseMenu && mobileMenu) {
+            btnOpenMenu.addEventListener('click', () => {
+                mobileMenu.classList.remove('translate-x-full');
+            });
+            btnCloseMenu.addEventListener('click', () => {
+                mobileMenu.classList.add('translate-x-full');
+            });
+        }
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

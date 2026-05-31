@@ -60,7 +60,7 @@
 
     <!-- Selection Control -->
     <div class="bg-surface-container-low border border-outline-variant rounded p-6 mt-8">
-        <div class="flex flex-col md:flex-row gap-6 items-center">
+        <div class="flex flex-col md:flex-row gap-6 items-end">
             <!-- Selector A -->
             <div class="flex-1 w-full relative">
                 <label for="selectApiarioA" class="block font-label-caps text-label-caps text-on-surface-variant mb-2">APIARIO A</label>
@@ -73,8 +73,8 @@
             </div>
 
             <!-- Swap Button -->
-            <button type="button" id="btnSwap" class="flex items-center justify-center h-12 w-12 rounded-full border border-outline-variant bg-surface-container-high my-2 md:my-0 mt-6 md:mt-8 shrink-0 hover:bg-surface-container-highest hover:border-primary-container transition-all group focus:outline-none focus:ring-2 focus:ring-primary-container" title="Intercambiar selecciones">
-                <span class="material-symbols-outlined text-primary-container group-hover:rotate-180 transition-transform duration-300">swap_horiz</span>
+            <button type="button" id="btnSwap" class="flex items-center justify-center h-12 w-12 rounded-full border border-outline-variant bg-surface-container-high shrink-0 hover:bg-surface-container-highest hover:border-primary-container transition-all group focus:outline-none focus:ring-2 focus:ring-primary-container self-center md:self-end md:mb-0 mb-2" title="Intercambiar selecciones">
+                <span class="material-symbols-outlined text-primary-container group-hover:-rotate-180 transition-transform duration-300">sync</span>
             </button>
 
             <!-- Selector B -->
@@ -178,11 +178,11 @@
     </div>
 
     <!-- Detailed Comparison Table -->
-    <div class="bg-surface-container-low border border-outline-variant rounded overflow-hidden mt-8 mb-12">
-        <div class="p-6 border-b border-outline-variant bg-surface-container-high">
+    <div class="bg-surface-container-low border border-outline-variant rounded mt-8 mb-12 responsive-table p-4 md:p-0">
+        <div class="p-6 border-b border-outline-variant bg-surface-container-high md:rounded-t">
             <h3 class="font-headline-lg-mobile text-[20px] font-semibold text-on-surface">Tabla de Comparación Detallada</h3>
         </div>
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto md:overflow-visible">
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-surface-container border-b border-outline-variant font-label-caps text-label-caps text-on-surface-variant">
@@ -194,58 +194,58 @@
                 </thead>
                 <tbody class="font-body-sm text-on-surface">
                     <tr class="border-b border-outline-variant hover:bg-surface-container transition-colors">
-                        <td class="p-4 flex items-center gap-2"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">event</span> Última inspección</td>
-                        <td id="tdInspeccionA" class="p-4 border-l border-outline-variant">-</td>
-                        <td id="tdInspeccionB" class="p-4 border-l border-outline-variant">-</td>
-                        <td id="tdInspeccionDiff" class="p-4 border-l border-outline-variant text-on-surface-variant">-</td>
+                        <td data-label="MÉTRICA" class="p-4 flex items-center gap-2 border-b border-surface-container-highest md:border-none"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">event</span> Última inspección</td>
+                        <td data-label="APIARIO A" id="tdInspeccionA" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">-</td>
+                        <td data-label="APIARIO B" id="tdInspeccionB" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">-</td>
+                        <td data-label="DIFERENCIA" id="tdInspeccionDiff" class="p-4 md:border-none md:border-l md:border-outline-variant text-on-surface-variant">-</td>
                     </tr>
                     <tr class="border-b border-outline-variant hover:bg-surface-container transition-colors">
-                        <td class="p-4 flex items-center gap-2"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">calendar_today</span> Fecha de creación</td>
-                        <td id="tdCreacionA" class="p-4 border-l border-outline-variant">-</td>
-                        <td id="tdCreacionB" class="p-4 border-l border-outline-variant">-</td>
-                        <td id="tdCreacionDiff" class="p-4 border-l border-outline-variant text-on-surface-variant">-</td>
+                        <td data-label="MÉTRICA" class="p-4 flex items-center gap-2 border-b border-surface-container-highest md:border-none"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">calendar_today</span> Fecha de creación</td>
+                        <td data-label="APIARIO A" id="tdCreacionA" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">-</td>
+                        <td data-label="APIARIO B" id="tdCreacionB" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">-</td>
+                        <td data-label="DIFERENCIA" id="tdCreacionDiff" class="p-4 md:border-none md:border-l md:border-outline-variant text-on-surface-variant">-</td>
                     </tr>
                     <tr class="border-b border-outline-variant hover:bg-surface-container transition-colors">
-                        <td class="p-4 flex items-center gap-2"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">edit_note</span> Última edición de nota de estado</td>
-                        <td id="tdNotaEdicionA" class="p-4 border-l border-outline-variant">-</td>
-                        <td id="tdNotaEdicionB" class="p-4 border-l border-outline-variant">-</td>
-                        <td id="tdNotaEdicionDiff" class="p-4 border-l border-outline-variant text-on-surface-variant">-</td>
+                        <td data-label="MÉTRICA" class="p-4 flex items-center gap-2 border-b border-surface-container-highest md:border-none"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">edit_note</span> Últ. edición de nota</td>
+                        <td data-label="APIARIO A" id="tdNotaEdicionA" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">-</td>
+                        <td data-label="APIARIO B" id="tdNotaEdicionB" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">-</td>
+                        <td data-label="DIFERENCIA" id="tdNotaEdicionDiff" class="p-4 md:border-none md:border-l md:border-outline-variant text-on-surface-variant">-</td>
                     </tr>
                     <tr class="border-b border-outline-variant hover:bg-surface-container transition-colors">
-                        <td class="p-4 flex items-center gap-2"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">location_on</span> Ubicación</td>
-                        <td id="tdUbicacionA" class="p-4 border-l border-outline-variant">-</td>
-                        <td id="tdUbicacionB" class="p-4 border-l border-outline-variant">-</td>
-                        <td id="tdUbicacionDiff" class="p-4 border-l border-outline-variant text-on-surface-variant">-</td>
+                        <td data-label="MÉTRICA" class="p-4 flex items-center gap-2 border-b border-surface-container-highest md:border-none"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">location_on</span> Ubicación</td>
+                        <td data-label="APIARIO A" id="tdUbicacionA" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">-</td>
+                        <td data-label="APIARIO B" id="tdUbicacionB" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">-</td>
+                        <td data-label="DIFERENCIA" id="tdUbicacionDiff" class="p-4 md:border-none md:border-l md:border-outline-variant text-on-surface-variant">-</td>
                     </tr>
                     <tr class="border-b border-outline-variant hover:bg-surface-container transition-colors">
-                        <td class="p-4 flex items-center gap-2"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">thermostat</span> Temperatura</td>
-                        <td id="tdTempA" class="p-4 border-l border-outline-variant">-</td>
-                        <td id="tdTempB" class="p-4 border-l border-outline-variant">-</td>
-                        <td id="tdTempDiff" class="p-4 border-l border-outline-variant text-on-surface-variant">-</td>
+                        <td data-label="MÉTRICA" class="p-4 flex items-center gap-2 border-b border-surface-container-highest md:border-none"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">thermostat</span> Temperatura</td>
+                        <td data-label="APIARIO A" id="tdTempA" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">-</td>
+                        <td data-label="APIARIO B" id="tdTempB" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">-</td>
+                        <td data-label="DIFERENCIA" id="tdTempDiff" class="p-4 md:border-none md:border-l md:border-outline-variant text-on-surface-variant">-</td>
                     </tr>
                     <tr class="border-b border-outline-variant hover:bg-surface-container transition-colors">
-                        <td class="p-4 flex items-center gap-2"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">humidity_percentage</span> Humedad</td>
-                        <td id="tdHumA" class="p-4 border-l border-outline-variant">-</td>
-                        <td id="tdHumB" class="p-4 border-l border-outline-variant">-</td>
-                        <td id="tdHumDiff" class="p-4 border-l border-outline-variant text-on-surface-variant">-</td>
+                        <td data-label="MÉTRICA" class="p-4 flex items-center gap-2 border-b border-surface-container-highest md:border-none"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">humidity_percentage</span> Humedad</td>
+                        <td data-label="APIARIO A" id="tdHumA" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">-</td>
+                        <td data-label="APIARIO B" id="tdHumB" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">-</td>
+                        <td data-label="DIFERENCIA" id="tdHumDiff" class="p-4 md:border-none md:border-l md:border-outline-variant text-on-surface-variant">-</td>
                     </tr>
                     <tr class="border-b border-outline-variant hover:bg-surface-container transition-colors text-[#4CAF50]">
-                        <td class="p-4 flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">check_circle</span> Cantidad de colmenas en estado Óptimo</td>
-                        <td id="tdOptimoA" class="p-4 border-l border-outline-variant">-</td>
-                        <td id="tdOptimoB" class="p-4 border-l border-outline-variant">-</td>
-                        <td id="tdOptimoDiff" class="p-4 border-l border-outline-variant text-on-surface-variant">-</td>
+                        <td data-label="MÉTRICA" class="p-4 flex items-center gap-2 border-b border-surface-container-highest md:border-none"><span class="material-symbols-outlined text-[18px]">check_circle</span> Colmenas Óptimo</td>
+                        <td data-label="APIARIO A" id="tdOptimoA" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">-</td>
+                        <td data-label="APIARIO B" id="tdOptimoB" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">-</td>
+                        <td data-label="DIFERENCIA" id="tdOptimoDiff" class="p-4 md:border-none md:border-l md:border-outline-variant text-on-surface-variant">-</td>
                     </tr>
                     <tr class="border-b border-outline-variant hover:bg-surface-container transition-colors text-primary-container">
-                        <td class="p-4 flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">info</span> Cantidad de colmenas en estado Alerta</td>
-                        <td id="tdAlertaA" class="p-4 border-l border-outline-variant">-</td>
-                        <td id="tdAlertaB" class="p-4 border-l border-outline-variant">-</td>
-                        <td id="tdAlertaDiff" class="p-4 border-l border-outline-variant text-on-surface-variant">-</td>
+                        <td data-label="MÉTRICA" class="p-4 flex items-center gap-2 border-b border-surface-container-highest md:border-none"><span class="material-symbols-outlined text-[18px]">info</span> Colmenas Alerta</td>
+                        <td data-label="APIARIO A" id="tdAlertaA" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">-</td>
+                        <td data-label="APIARIO B" id="tdAlertaB" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">-</td>
+                        <td data-label="DIFERENCIA" id="tdAlertaDiff" class="p-4 md:border-none md:border-l md:border-outline-variant text-on-surface-variant">-</td>
                     </tr>
                     <tr class="hover:bg-surface-container transition-colors text-error">
-                        <td class="p-4 flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">warning</span> Cantidad de colmenas en estado Crítico</td>
-                        <td id="tdCriticoA" class="p-4 border-l border-outline-variant">-</td>
-                        <td id="tdCriticoB" class="p-4 border-l border-outline-variant">-</td>
-                        <td id="tdCriticoDiff" class="p-4 border-l border-outline-variant text-on-surface-variant">-</td>
+                        <td data-label="MÉTRICA" class="p-4 flex items-center gap-2 border-b border-surface-container-highest md:border-none"><span class="material-symbols-outlined text-[18px]">warning</span> Colmenas Crítico</td>
+                        <td data-label="APIARIO A" id="tdCriticoA" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">-</td>
+                        <td data-label="APIARIO B" id="tdCriticoB" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">-</td>
+                        <td data-label="DIFERENCIA" id="tdCriticoDiff" class="p-4 md:border-none md:border-l md:border-outline-variant text-on-surface-variant">-</td>
                     </tr>
                 </tbody>
             </table>
