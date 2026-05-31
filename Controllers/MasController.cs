@@ -23,9 +23,12 @@ namespace ObligatorioIntegrador2026.Controllers
             return View();
         }
 
-        public IActionResult CompararApiarios()
+        public async Task<IActionResult> CompararApiarios()
         {
-            return View();
+            var apiarios = await _context.Apiarios
+                .Include(a => a.Colmenas)
+                .ToListAsync();
+            return View(apiarios);
         }
 
         public IActionResult CompararColmenas()
@@ -171,6 +174,16 @@ namespace ObligatorioIntegrador2026.Controllers
                 ModelState.AddModelError("MediumThreshold", "El umbral medio debe ser mayor que el umbral bajo.");
             }
 
+            if (model.UnitPrice < 0)
+            {
+                ModelState.AddModelError("UnitPrice", "El precio unitario no puede ser negativo.");
+            }
+
+            if (string.IsNullOrWhiteSpace(model.Currency) || (model.Currency != "UYU" && model.Currency != "USD"))
+            {
+                ModelState.AddModelError("Currency", "La moneda seleccionada no es válida.");
+            }
+
             if (!ModelState.IsValid)
             {
                 var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
@@ -234,6 +247,16 @@ namespace ObligatorioIntegrador2026.Controllers
                 ModelState.AddModelError("MediumThreshold", "El umbral medio debe ser mayor que el umbral bajo.");
             }
 
+            if (model.UnitPrice < 0)
+            {
+                ModelState.AddModelError("UnitPrice", "El precio unitario no puede ser negativo.");
+            }
+
+            if (string.IsNullOrWhiteSpace(model.Currency) || (model.Currency != "UYU" && model.Currency != "USD"))
+            {
+                ModelState.AddModelError("Currency", "La moneda seleccionada no es válida.");
+            }
+
             if (!ModelState.IsValid)
             {
                 var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
@@ -246,6 +269,8 @@ namespace ObligatorioIntegrador2026.Controllers
             item.Category = model.Category;
             item.LowThreshold = model.LowThreshold;
             item.MediumThreshold = model.MediumThreshold;
+            item.UnitPrice = model.UnitPrice;
+            item.Currency = model.Currency;
 
             _context.Equipments.Update(item);
             await _context.SaveChangesAsync();

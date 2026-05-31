@@ -70,6 +70,10 @@
                         <dt class="font-label-caps text-label-caps text-on-surface-variant uppercase">Fecha de Creación</dt>
                         <dd class="text-on-surface mt-1">@Model.FechaCreacion.ToString("dd MMMM, yyyy")</dd>
                     </div>
+                    <div>
+                        <dt class="font-label-caps text-label-caps text-on-surface-variant uppercase">Última Inspección</dt>
+                        <dd class="text-on-surface mt-1">@(Model.UltimaInspeccion?.ToString("dd MMMM, yyyy") ?? "N/A")</dd>
+                    </div>
                 </dl>
             </div>
                 <div class="mt-8 pt-4 border-t border-surface-container-highest">

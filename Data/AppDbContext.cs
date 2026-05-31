@@ -31,20 +31,20 @@ namespace ObligatorioIntegrador2026.Data
 
             // Seed inicial de equipamiento
             modelBuilder.Entity<Equipment>().HasData(
-                new Equipment { Id = 1, Name = "Ahumador Inoxidable", Type = "Ahumador estándar 10x25cm", Stock = 12, Category = "Herramienta", LowThreshold = 5, MediumThreshold = 15, DisplayOrder = 1 },
-                new Equipment { Id = 2, Name = "Palanca de Manejo", Type = "Pinza y palanca universal", Stock = 24, Category = "Herramienta", LowThreshold = 10, MediumThreshold = 20, DisplayOrder = 2 },
-                new Equipment { Id = 3, Name = "Ácido Oxálico (Glicerina)", Type = "Tratamiento Varroa", Stock = 50, Category = "Medicamento", LowThreshold = 15, MediumThreshold = 40, DisplayOrder = 3 },
-                new Equipment { Id = 4, Name = "Amitraz (Tiras)", Type = "Tratamiento Varroa", Stock = 15, Category = "Medicamento", LowThreshold = 10, MediumThreshold = 25, DisplayOrder = 4 },
-                new Equipment { Id = 5, Name = "Alzas Melarias (Media)", Type = "Madera", Stock = 120, Category = "Material", LowThreshold = 30, MediumThreshold = 80, DisplayOrder = 5 },
-                new Equipment { Id = 6, Name = "Marcos Alambrados", Type = "Madera/Alambre", Stock = 450, Category = "Material", LowThreshold = 100, MediumThreshold = 200, DisplayOrder = 6 },
-                new Equipment { Id = 7, Name = "Cera Estampada", Type = "Cera Orgánica", Stock = 5, Category = "Material", LowThreshold = 10, MediumThreshold = 25, DisplayOrder = 7 }
+                new Equipment { Id = 1, Name = "Ahumador Inoxidable", Type = "Ahumador estándar 10x25cm", Stock = 12, Category = "Herramienta", LowThreshold = 5, MediumThreshold = 15, DisplayOrder = 1, UnitPrice = 45.0, Currency = "USD" },
+                new Equipment { Id = 2, Name = "Palanca de Manejo", Type = "Pinza y palanca universal", Stock = 24, Category = "Herramienta", LowThreshold = 10, MediumThreshold = 20, DisplayOrder = 2, UnitPrice = 12.0, Currency = "USD" },
+                new Equipment { Id = 3, Name = "Ácido Oxálico (Glicerina)", Type = "Tratamiento Varroa", Stock = 50, Category = "Medicamento", LowThreshold = 15, MediumThreshold = 40, DisplayOrder = 3, UnitPrice = 25.0, Currency = "USD" },
+                new Equipment { Id = 4, Name = "Amitraz (Tiras)", Type = "Tratamiento Varroa", Stock = 15, Category = "Medicamento", LowThreshold = 10, MediumThreshold = 25, DisplayOrder = 4, UnitPrice = 30.0, Currency = "USD" },
+                new Equipment { Id = 5, Name = "Alzas Melarias (Media)", Type = "Madera", Stock = 120, Category = "Material", LowThreshold = 30, MediumThreshold = 80, DisplayOrder = 5, UnitPrice = 250.0, Currency = "UYU" },
+                new Equipment { Id = 6, Name = "Marcos Alambrados", Type = "Madera/Alambre", Stock = 450, Category = "Material", LowThreshold = 100, MediumThreshold = 200, DisplayOrder = 6, UnitPrice = 80.0, Currency = "UYU" },
+                new Equipment { Id = 7, Name = "Cera Estampada", Type = "Cera Orgánica", Stock = 5, Category = "Material", LowThreshold = 10, MediumThreshold = 25, DisplayOrder = 7, UnitPrice = 120.0, Currency = "UYU" }
             );
 
             // Seed inicial de Apiarios
             modelBuilder.Entity<Apiario>().HasData(
-                new Apiario { Id = 1, Nombre = "Apiario Norte", StringIdentificador = "001", UbicacionTexto = "Valle Central", UbicacionCoordenadas = "34°05'12.1\"S 70°45'22.4\"W", FechaCreacion = new DateTime(2023, 10, 12), UltimaInspeccion = new DateTime(2026, 10, 12), Responsable = "Ing. Martín Valenzuela", NotasEstado = "Zona con alta floración esperada para el próximo mes. Preparar alzas melarias adicionales. Monitoreo preventivo de Varroa recomendado.", HumedadInterna = 58 },
-                new Apiario { Id = 2, Nombre = "Apiario Sur", StringIdentificador = "002", UbicacionTexto = "Colinas Bajas", UbicacionCoordenadas = "34°08'10.2\"S 70°42'15.4\"W", FechaCreacion = new DateTime(2024, 02, 05), UltimaInspeccion = new DateTime(2026, 10, 05), Responsable = "Ing. Martín Valenzuela", NotasEstado = "Revisar posibles daños por viento en el sector este.", HumedadInterna = 45 },
-                new Apiario { Id = 3, Nombre = "Apiario Este", StringIdentificador = "003", UbicacionTexto = "Bosque Nativo", UbicacionCoordenadas = "34°10'05.1\"S 70°40'00.0\"W", FechaCreacion = new DateTime(2025, 01, 15), UltimaInspeccion = new DateTime(2026, 10, 15), Responsable = "Benjamin Lopez", NotasEstado = "Producción crítica, requiere revisión urgente de reinas.", HumedadInterna = 62 }
+                new Apiario { Id = 1, Nombre = "Apiario Norte", StringIdentificador = "001", UbicacionTexto = "Valle Central", UbicacionCoordenadas = "34°05'12.1\"S 70°45'22.4\"W", FechaCreacion = new DateTime(2023, 10, 12), UltimaInspeccion = new DateTime(2026, 05, 12), Responsable = "Ing. Martín Valenzuela", NotasEstado = "Zona con alta floración esperada para el próximo mes. Preparar alzas melarias adicionales. Monitoreo preventivo de Varroa recomendado.", HumedadInterna = 58 },
+                new Apiario { Id = 2, Nombre = "Apiario Sur", StringIdentificador = "002", UbicacionTexto = "Colinas Bajas", UbicacionCoordenadas = "34°08'10.2\"S 70°42'15.4\"W", FechaCreacion = new DateTime(2024, 02, 05), UltimaInspeccion = new DateTime(2026, 05, 05), Responsable = "Ing. Martín Valenzuela", NotasEstado = "Revisar posibles daños por viento en el sector este.", HumedadInterna = 45 },
+                new Apiario { Id = 3, Nombre = "Apiario Este", StringIdentificador = "003", UbicacionTexto = "Bosque Nativo", UbicacionCoordenadas = "34°10'05.1\"S 70°40'00.0\"W", FechaCreacion = new DateTime(2025, 01, 15), UltimaInspeccion = new DateTime(2026, 05, 15), Responsable = "Benjamin Lopez", NotasEstado = "Producción crítica, requiere revisión urgente de reinas.", HumedadInterna = 62 }
             );
 
             // Seed inicial de Colmenas

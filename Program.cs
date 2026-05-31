@@ -78,6 +78,32 @@ using (var scope = app.Services.CreateScope())
             Console.WriteLine(ex.StackTrace);
         }
     }
+
+    // Fix existing future inspection dates if any
+    try
+    {
+        var futureApiarios = context.Apiarios.Where(a => a.UltimaInspeccion > DateTime.Now).ToList();
+        if (futureApiarios.Any())
+        {
+            Console.WriteLine($"[DB SETUP] Encontrados {futureApiarios.Count} apiarios con fecha de inspección futura. Corrigiendo...");
+            foreach (var apiario in futureApiarios)
+            {
+                if (apiario.UltimaInspeccion.HasValue)
+                {
+                    var oldDate = apiario.UltimaInspeccion.Value;
+                    // Cambiar el mes de octubre (10) a mayo (5)
+                    apiario.UltimaInspeccion = new DateTime(2026, 5, Math.Min(oldDate.Day, 31), oldDate.Hour, oldDate.Minute, oldDate.Second);
+                    Console.WriteLine($"[DB SETUP] Apiario {apiario.Id} ({apiario.Nombre}): {oldDate:yyyy-MM-dd} -> {apiario.UltimaInspeccion.Value:yyyy-MM-dd}");
+                }
+            }
+            context.SaveChanges();
+            Console.WriteLine("[DB SETUP] Corrección de fechas completada con éxito.");
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"[DB SETUP] Error al corregir fechas de inspección futuras: {ex.Message}");
+    }
 }
 
 // Configure the HTTP request pipeline.

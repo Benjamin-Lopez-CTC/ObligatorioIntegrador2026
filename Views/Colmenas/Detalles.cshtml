@@ -62,6 +62,10 @@
                 <span class="material-symbols-outlined text-[18px]">edit</span>
                 Editar Colmena
             </button>
+            <button id="btnOpenRegistrar" class="flex items-center gap-2 px-6 py-3 bg-primary-container text-[#000000] hover:bg-primary-fixed transition-colors rounded-sm font-label-caps text-label-caps font-bold shadow-[0_0_15px_rgba(255,217,0,0.2)] whitespace-nowrap">
+                <span class="material-symbols-outlined text-[18px]">add</span>
+                Registrar Nuevo Tratamiento
+            </button>
             <button id="btnOpenNote" class="bg-primary-container text-[#000000] font-label-caps text-label-caps px-6 py-3 rounded-sm flex items-center gap-2 hover:bg-primary-fixed-dim transition-colors whitespace-nowrap">
                 <span class="material-symbols-outlined text-[18px]">add</span>
                 Añadir Nota Técnica
@@ -467,6 +471,74 @@
     </div>
 </div>
 
+<!-- Registrar Tratamiento Modal -->
+<div id="registrarModal" class="fixed inset-0 z-50 flex modal-backdrop modal-hidden items-center justify-center bg-black/85 p-4">
+    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-2xl shadow-2xl overflow-hidden modal-container">
+        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between">
+            <h4 class="font-headline-lg text-lg font-bold text-on-surface flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary-container">vaccines</span>
+                Registrar Nuevo Tratamiento
+            </h4>
+            <button id="btnCancelRegistrarIcon" class="text-on-surface-variant hover:text-primary-container transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <form id="registrarForm" class="p-6 space-y-4">
+            <input type="hidden" id="colmenaIdInput" value="@Model.Id" />
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="tituloTratamiento" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Título *</label>
+                    <input type="text" id="tituloTratamiento" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded-sm text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" placeholder="Ej: Control de Varroa Otoñal" />
+                </div>
+                <div>
+                    <label for="tipoTratamiento" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Tipo *</label>
+                    <select id="tipoTratamiento" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded-sm text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
+                        <option value="" disabled selected>Seleccione tipo...</option>
+                        <option value="Mantenimiento">Mantenimiento</option>
+                        <option value="Medicinal">Medicinal</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label for="fechaTratamiento" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Fecha de Registro</label>
+                <input type="text" id="fechaTratamiento" readonly class="w-full bg-surface-container-high border border-outline-variant px-4 py-2.5 rounded-sm text-on-surface outline-none cursor-default" />
+            </div>
+
+            <div>
+                <label for="notaTratamiento" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Notas</label>
+                <textarea id="notaTratamiento" rows="3" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded-sm text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" placeholder="Escriba notas libres sobre el tratamiento..."></textarea>
+            </div>
+
+            <div>
+                <div class="flex justify-between items-center mb-2 border-b border-surface-container-highest pb-2">
+                    <span class="font-label-caps text-label-caps text-on-surface-variant">Equipamientos Utilizados</span>
+                </div>
+                
+                <div id="equipamientosRowsContainer" class="space-y-3">
+                    <!-- Dynamic rows will go here -->
+                </div>
+                
+                <button type="button" id="btnAddEquipmentRow" class="mt-3 flex items-center gap-1 text-primary-container hover:text-primary-fixed transition-colors font-label-caps text-label-caps">
+                    <span class="material-symbols-outlined text-[18px]">add</span>
+                    + Agregar equipamiento
+                </button>
+            </div>
+
+            <div class="pt-4 border-t border-surface-container-highest flex justify-end gap-3 mt-6">
+                <button type="button" id="btnCancelRegistrar" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2.5 rounded-sm font-label-caps text-label-caps">
+                    Cancelar
+                </button>
+                <button type="submit" class="bg-primary-container text-on-primary-fixed hover:bg-primary-fixed transition-colors px-6 py-2.5 rounded-sm font-label-caps text-label-caps font-semibold">
+                    Confirmar Registro
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <!-- All Notes Modal -->
 <div id="allNotesModal" class="fixed inset-0 z-50 flex modal-backdrop modal-hidden items-center justify-center bg-black/85 p-4">
     <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-4xl shadow-2xl flex flex-col max-h-[85vh] modal-container">
@@ -554,5 +626,303 @@
         document.getElementById('btnCancelDelete').addEventListener('click', () => {
             deleteModal.classList.add('modal-hidden');
         });
+
+        // Registrar Tratamiento Logic
+        const colmenaId = @Model.Id;
+        let availableEquipments = @Html.Raw(ViewBag.EquipmentsJson);
+        let rowCounter = 0;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const btnOpenRegistrar = document.getElementById('btnOpenRegistrar');
+            const registrarModal = document.getElementById('registrarModal');
+            
+            if (btnOpenRegistrar) {
+                btnOpenRegistrar.addEventListener('click', () => {
+                    // Reset form first
+                    document.getElementById('registrarForm').reset();
+                    createInitialRow();
+                    
+                    // Preset current local date-time
+                    const now = new Date();
+                    const formatted = now.toLocaleDateString('es-ES', {
+                        day: '2-digit', month: '2-digit', year: 'numeric'
+                    }) + ' ' + now.toLocaleTimeString('es-ES', {
+                        hour: '2-digit', minute: '2-digit'
+                    });
+                    document.getElementById('fechaTratamiento').value = formatted;
+                    
+                    // Show modal
+                    registrarModal.classList.remove('modal-hidden');
+                });
+            }
+
+            // Close actions for Registrar
+            document.getElementById('btnCancelRegistrar').addEventListener('click', () => {
+                registrarModal.classList.add('modal-hidden');
+            });
+            document.getElementById('btnCancelRegistrarIcon').addEventListener('click', () => {
+                registrarModal.classList.add('modal-hidden');
+            });
+
+            // Add equipment row button
+            document.getElementById('btnAddEquipmentRow').addEventListener('click', () => {
+                addEquipmentRow();
+            });
+
+            // Save new treatment via AJAX
+            const registrarForm = document.getElementById('registrarForm');
+            registrarForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const titulo = document.getElementById('tituloTratamiento').value;
+                const tipo = document.getElementById('tipoTratamiento').value;
+                const nota = document.getElementById('notaTratamiento').value;
+                
+                if (!titulo) {
+                    showToast('El título del tratamiento es obligatorio.', 'error');
+                    return;
+                }
+
+                if (!tipo) {
+                    showToast('El tipo de tratamiento es obligatorio.', 'error');
+                    return;
+                }
+                
+                const rows = document.querySelectorAll('.equipment-row');
+                const equipamientos = [];
+                const selectedIds = new Set();
+                
+                for (let i = 0; i < rows.length; i++) {
+                    const select = rows[i].querySelector('.equipment-select');
+                    const qtyInput = rows[i].querySelector('.equipment-qty');
+                    
+                    const eqId = select.value;
+                    const qtyVal = qtyInput.value;
+                    
+                    // Partially completed checks
+                    if ((eqId && !qtyVal) || (!eqId && qtyVal)) {
+                        showToast('Si completa una fila de equipamiento, tanto el equipamiento como la cantidad son obligatorios.', 'error');
+                        return;
+                    }
+                    
+                    if (eqId && qtyVal) {
+                        const qty = parseInt(qtyVal);
+                        const selectedOption = select.options[select.selectedIndex];
+                        const stock = parseInt(selectedOption.dataset.stock || '0');
+                        
+                        if (qty <= 0) {
+                            showToast('La cantidad debe ser mayor a cero.', 'error');
+                            return;
+                        }
+                        if (stock === 0) {
+                            showToast(`El equipamiento '${selectedOption.text}' no tiene stock disponible (0u).`, 'error');
+                            return;
+                        }
+                        if (qty > stock) {
+                            showToast(`La cantidad ingresada (${qty}u) supera el stock disponible (${stock}u) para ${selectedOption.text}.`, 'error');
+                            return;
+                        }
+                        
+                        if (selectedIds.has(eqId)) {
+                            showToast('No puede seleccionar el mismo equipamiento más de una vez.', 'error');
+                            return;
+                        }
+                        selectedIds.add(eqId);
+                        
+                        equipamientos.push({
+                            equipmentId: parseInt(eqId),
+                            cantidad: qty
+                        });
+                    }
+                }
+                
+                try {
+                    const response = await fetch('/Colmenas/RegistrarTratamiento', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            colmenaId: colmenaId,
+                            titulo: titulo,
+                            tipo: tipo,
+                            nota: nota,
+                            equipamientos: equipamientos
+                        })
+                    });
+                    
+                    const res = await response.json();
+                    if (res.success) {
+                        showToast(res.message, 'success');
+                        
+                        // Close modal
+                        document.getElementById('registrarModal').classList.add('modal-hidden');
+                        
+                        // Reload page to reflect changes
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1500);
+                    } else {
+                        showToast(res.errors ? res.errors.join('<br>') : 'Error al registrar el tratamiento.', 'error');
+                    }
+                } catch (err) {
+                    showToast('Error de red al intentar registrar el tratamiento.', 'error');
+                    console.error(err);
+                }
+            });
+        });
+
+        // Create the default (first) equipment row inside the form
+        function createInitialRow() {
+            const container = document.getElementById('equipamientosRowsContainer');
+            container.innerHTML = '';
+            rowCounter = 1;
+
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'flex items-center gap-3 equipment-row';
+
+            // Select Dropdown
+            const select = document.createElement('select');
+            select.className = 'w-2/3 bg-background border border-outline-variant px-3 py-2 rounded-sm text-on-surface text-sm focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors equipment-select';
+
+            const defaultOpt = document.createElement('option');
+            defaultOpt.value = '';
+            defaultOpt.textContent = 'Seleccione equipamiento...';
+            select.appendChild(defaultOpt);
+
+            availableEquipments.forEach(eq => {
+                const opt = document.createElement('option');
+                opt.value = eq.id;
+                opt.textContent = `${eq.name} (${eq.stock}u)`;
+                opt.dataset.stock = eq.stock;
+                select.appendChild(opt);
+            });
+
+            // Quantity Input
+            const qtyInput = document.createElement('input');
+            qtyInput.type = 'number';
+            qtyInput.min = '1';
+            qtyInput.placeholder = 'Cant.';
+            qtyInput.className = 'w-1/3 bg-background border border-outline-variant px-3 py-2 rounded-sm text-on-surface text-sm focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors equipment-qty';
+
+            // Align space
+            const alignSpacer = document.createElement('div');
+            alignSpacer.className = 'w-8 h-8 flex-shrink-0';
+
+            rowDiv.appendChild(select);
+            rowDiv.appendChild(qtyInput);
+            rowDiv.appendChild(alignSpacer);
+
+            container.appendChild(rowDiv);
+
+            // Quantity limits dynamic bindings
+            select.addEventListener('change', () => {
+                const selectedOption = select.options[select.selectedIndex];
+                const stock = parseInt(selectedOption.dataset.stock || '0');
+                qtyInput.max = stock;
+                if (stock === 0) {
+                    qtyInput.value = '';
+                    qtyInput.placeholder = 'Sin stock';
+                    qtyInput.disabled = true;
+                } else {
+                    qtyInput.placeholder = 'Cant.';
+                    qtyInput.disabled = false;
+                }
+                updateAvailableOptions();
+            });
+        }
+
+        // Add additional dynamic equipment rows
+        function addEquipmentRow() {
+            rowCounter++;
+            const rowId = `eq-row-${rowCounter}`;
+            
+            const container = document.getElementById('equipamientosRowsContainer');
+            const rowDiv = document.createElement('div');
+            rowDiv.id = rowId;
+            rowDiv.className = 'flex items-center gap-3 equipment-row';
+
+            // Select Dropdown
+            const select = document.createElement('select');
+            select.className = 'w-2/3 bg-background border border-outline-variant px-3 py-2 rounded-sm text-on-surface text-sm focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors equipment-select';
+            select.required = true;
+
+            const defaultOpt = document.createElement('option');
+            defaultOpt.value = '';
+            defaultOpt.textContent = 'Seleccione equipamiento...';
+            select.appendChild(defaultOpt);
+
+            availableEquipments.forEach(eq => {
+                const opt = document.createElement('option');
+                opt.value = eq.id;
+                opt.textContent = `${eq.name} (${eq.stock}u)`;
+                opt.dataset.stock = eq.stock;
+                select.appendChild(opt);
+            });
+
+            // Quantity Input
+            const qtyInput = document.createElement('input');
+            qtyInput.type = 'number';
+            qtyInput.min = '1';
+            qtyInput.placeholder = 'Cant.';
+            qtyInput.className = 'w-1/3 bg-background border border-outline-variant px-3 py-2 rounded-sm text-on-surface text-sm focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors equipment-qty';
+            qtyInput.required = true;
+
+            // Remove Button
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'text-on-surface-variant hover:text-error transition-colors p-1 flex items-center justify-center flex-shrink-0';
+            removeBtn.innerHTML = '<span class="material-symbols-outlined text-[20px]">delete</span>';
+            removeBtn.title = 'Quitar';
+            
+            removeBtn.addEventListener('click', () => {
+                rowDiv.remove();
+                updateAvailableOptions();
+            });
+
+            rowDiv.appendChild(select);
+            rowDiv.appendChild(qtyInput);
+            rowDiv.appendChild(removeBtn);
+
+            container.appendChild(rowDiv);
+
+            // Quantity limits dynamic bindings
+            select.addEventListener('change', () => {
+                const selectedOption = select.options[select.selectedIndex];
+                const stock = parseInt(selectedOption.dataset.stock || '0');
+                qtyInput.max = stock;
+                if (stock === 0) {
+                    qtyInput.value = '';
+                    qtyInput.placeholder = 'Sin stock';
+                    qtyInput.disabled = true;
+                } else {
+                    qtyInput.placeholder = 'Cant.';
+                    qtyInput.disabled = false;
+                }
+                updateAvailableOptions();
+            });
+
+            updateAvailableOptions();
+        }
+
+        // Dynamically disable selected options across other selects to prevent duplicates
+        function updateAvailableOptions() {
+            const selectedValues = Array.from(document.querySelectorAll('.equipment-select'))
+                .map(sel => sel.value)
+                .filter(val => val !== '');
+                
+            document.querySelectorAll('.equipment-select').forEach(currentSelect => {
+                const currentValue = currentSelect.value;
+                currentSelect.querySelectorAll('option').forEach(option => {
+                    if (option.value !== '') {
+                        if (selectedValues.includes(option.value) && option.value !== currentValue) {
+                            option.disabled = true;
+                        } else {
+                            option.disabled = false;
+                        }
+                    }
+                });
+            });
+        }
     </script>
 }

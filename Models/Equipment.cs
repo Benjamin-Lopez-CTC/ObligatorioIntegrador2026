@@ -33,6 +33,14 @@ namespace ObligatorioIntegrador2026.Models
 
         public int DisplayOrder { get; set; }
 
+        [Required(ErrorMessage = "El precio unitario es obligatorio.")]
+        [Range(0.0, double.MaxValue, ErrorMessage = "El precio no puede ser negativo.")]
+        public double UnitPrice { get; set; }
+
+        [Required(ErrorMessage = "La moneda es obligatoria.")]
+        [StringLength(10)]
+        public string Currency { get; set; } = "UYU"; // UYU or USD
+
         public string Status
         {
             get

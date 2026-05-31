@@ -15,6 +15,8 @@ namespace ObligatorioIntegrador2026.Models
         public string UbicacionCoordenadas { get; set; } // Ejemplo: "34°05'12.1\"S 70°45'22.4\"W"
         
         public DateTime FechaCreacion { get; set; }
+        
+        [NotFutureDate(ErrorMessage = "La fecha de la última inspección no puede ser posterior a la fecha actual.")]
         public DateTime? UltimaInspeccion { get; set; }
         
         public string Responsable { get; set; }

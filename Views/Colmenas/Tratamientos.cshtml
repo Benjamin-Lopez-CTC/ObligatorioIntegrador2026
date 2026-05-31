@@ -90,48 +90,47 @@
             <span class="material-symbols-outlined text-primary-container">filter_alt</span>
             Filtros de Tratamientos
         </h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-            <!-- Date range desde/hasta -->
-            <div class="flex flex-col gap-1.5 col-span-1 sm:col-span-2">
+        <div class="flex flex-col gap-4">
+            <!-- Fila superior: únicamente el filtro de rango de fechas -->
+            <div class="flex flex-col gap-1.5 w-full">
                 <span class="font-label-caps text-label-caps text-on-surface-variant">Rango de Fechas</span>
-                <div class="flex gap-2">
+                <div class="flex gap-4">
                     <input type="date" id="filterDesde" class="w-full bg-background border border-outline-variant px-3 py-2 rounded-sm text-on-surface text-sm focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
                     <input type="date" id="filterHasta" class="w-full bg-background border border-outline-variant px-3 py-2 rounded-sm text-on-surface text-sm focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
                 </div>
             </div>
-            <!-- Type filter -->
-            <div class="flex flex-col gap-1.5">
-                <span class="font-label-caps text-label-caps text-on-surface-variant">Por Tipo</span>
-                <select id="filterTipo" class="w-full bg-background border border-outline-variant px-3 py-2 rounded-sm text-on-surface text-sm focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
-                    <option value="all">Todos</option>
-                    <option value="Mantenimiento">Mantenimiento</option>
-                    <option value="Medicinal">Medicinal</option>
-                    <option value="Otro">Otro</option>
-                </select>
+            
+            <!-- Fila inferior: filtro por antigüedad (ya existente), filtro por tipo y filtro por equipamientos, todos en la misma fila -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Antigüedad -->
+                <div class="flex flex-col gap-1.5">
+                    <span class="font-label-caps text-label-caps text-on-surface-variant">Antigüedad</span>
+                    <select id="filterOrden" class="w-full bg-background border border-outline-variant px-3 py-2 rounded-sm text-on-surface text-sm focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
+                        <option value="newest">Tratamiento más nuevo</option>
+                        <option value="oldest">Tratamiento más antiguo</option>
+                    </select>
+                </div>
+                <!-- Por Tipo -->
+                <div class="flex flex-col gap-1.5">
+                    <span class="font-label-caps text-label-caps text-on-surface-variant">Por Tipo</span>
+                    <select id="filterTipo" class="w-full bg-background border border-outline-variant px-3 py-2 rounded-sm text-on-surface text-sm focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
+                        <option value="all">Todos</option>
+                        <option value="Mantenimiento">Mantenimiento</option>
+                        <option value="Medicinal">Medicinal</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                </div>
+                <!-- Por Equipamiento -->
+                <div class="flex flex-col gap-1.5">
+                    <span class="font-label-caps text-label-caps text-on-surface-variant">Por Equipamiento</span>
+                    <select id="filterCantEquip" class="w-full bg-background border border-outline-variant px-3 py-2 rounded-sm text-on-surface text-sm focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
+                        <option value="all">Todos</option>
+                        <option value="0">Sin equipamientos</option>
+                        <option value="1">Con 1 equipamiento</option>
+                        <option value="2+">Con 2 o más</option>
+                    </select>
+                </div>
             </div>
-            <!-- Quantity of equipments -->
-            <div class="flex flex-col gap-1.5">
-                <span class="font-label-caps text-label-caps text-on-surface-variant">Por Equipamiento</span>
-                <select id="filterCantEquip" class="w-full bg-background border border-outline-variant px-3 py-2 rounded-sm text-on-surface text-sm focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
-                    <option value="all">Todos</option>
-                    <option value="0">Sin equipamientos</option>
-                    <option value="1">Con 1 equipamiento</option>
-                    <option value="2+">Con 2 o más</option>
-                </select>
-            </div>
-            <!-- Antigüedad (más nuevo / más antiguo) -->
-            <div class="flex flex-col gap-1.5 md:col-span-2 lg:col-span-1">
-                <span class="font-label-caps text-label-caps text-on-surface-variant">Antigüedad</span>
-                <select id="filterOrden" class="w-full bg-background border border-outline-variant px-3 py-2 rounded-sm text-on-surface text-sm focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
-                    <option value="newest">Tratamiento más nuevo</option>
-                    <option value="oldest">Tratamiento más antiguo</option>
-                </select>
-            </div>
-        </div>
-        <div class="flex justify-end gap-2 mt-4 pt-4 border-t border-surface-container-highest">
-            <button id="btnClearFilters" class="px-4 py-2 border border-outline text-on-surface hover:bg-surface-container-high transition-colors font-label-caps text-label-caps rounded-sm">
-                Limpiar Filtros
-            </button>
         </div>
     </section>
 
@@ -319,15 +318,6 @@
             document.getElementById('filterTipo').addEventListener('change', renderTreatments);
             document.getElementById('filterCantEquip').addEventListener('change', renderTreatments);
             document.getElementById('filterOrden').addEventListener('change', renderTreatments);
-
-            document.getElementById('btnClearFilters').addEventListener('click', () => {
-                document.getElementById('filterDesde').value = '';
-                document.getElementById('filterHasta').value = '';
-                document.getElementById('filterTipo').value = 'all';
-                document.getElementById('filterCantEquip').value = 'all';
-                document.getElementById('filterOrden').value = 'newest';
-                renderTreatments();
-            });
         });
 
         // Load treatments from server via AJAX
@@ -405,8 +395,10 @@
 
             if (filtered.length === 0) {
                 container.innerHTML = `
-                    <div class="text-center py-10 bg-[#252525] border border-outline-variant rounded-lg font-body-sm text-on-surface-variant">
-                        No hay tratamientos registrados para esta colmena que coincidan con los filtros aplicados.
+                    <div class="flex flex-col items-center justify-center py-12 text-center bg-[#252525] border border-outline-variant rounded-lg w-full">
+                        <span class="material-symbols-outlined text-outline text-5xl mb-4 text-[#989077]">inventory_2</span>
+                        <p class="font-body-md text-body-md text-on-surface mb-2 font-medium">No se encontraron tratamientos</p>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant max-w-sm">Prueba ajustando los filtros o registra un nuevo tratamiento para comenzar.</p>
                     </div>
                 `;
                 return;
@@ -431,7 +423,12 @@
                 // Equipments summary
                 let eqSummary = 'Sin equipamiento utilizado';
                 if (t.equipamientos && t.equipamientos.length > 0) {
-                    eqSummary = t.equipamientos.map(eq => `${eq.name} (${eq.cantidad}u)`).join(', ');
+                    const visible = t.equipamientos.slice(0, 3).map(eq => `${eq.name} (${eq.cantidad}u)`).join(', ');
+                    if (t.equipamientos.length > 3) {
+                        eqSummary = `${visible} y ${t.equipamientos.length - 3} más`;
+                    } else {
+                        eqSummary = visible;
+                    }
                 }
 
                 const itemDiv = document.createElement('div');

@@ -114,6 +114,14 @@ namespace ObligatorioIntegrador2026.Controllers
                 .Take(2)
                 .ToListAsync();
 
+            var equipments = await _context.Equipments.OrderBy(e => e.DisplayOrder).ToListAsync();
+            var options = new System.Text.Json.JsonSerializerOptions
+            {
+                PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase,
+                ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
+            };
+            ViewBag.EquipmentsJson = System.Text.Json.JsonSerializer.Serialize(equipments, options);
+
             return View(colmena);
         }
 
@@ -135,6 +143,14 @@ namespace ObligatorioIntegrador2026.Controllers
             colmena.ComportamientoAbejas = comportamiento;
 
             ActualizarEstadoAutomatico(colmena);
+
+            var apiario = await _context.Apiarios.FindAsync(colmena.ApiarioId);
+            if (apiario != null)
+            {
+                apiario.UltimaInspeccion = DateTime.Now;
+                _context.Apiarios.Update(apiario);
+            }
+
             await _context.SaveChangesAsync();
             
             TempData["SuccessMessage"] = "Colmena actualizada exitosamente.";
@@ -167,6 +183,14 @@ namespace ObligatorioIntegrador2026.Controllers
             colmena.NotasTecnicas.Add(nuevaNota);
 
             ActualizarEstadoAutomatico(colmena);
+
+            var apiario = await _context.Apiarios.FindAsync(colmena.ApiarioId);
+            if (apiario != null)
+            {
+                apiario.UltimaInspeccion = DateTime.Now;
+                _context.Apiarios.Update(apiario);
+            }
+
             await _context.SaveChangesAsync();
 
             TempData["SuccessMessage"] = "Nota técnica agregada correctamente.";
@@ -292,6 +316,18 @@ namespace ObligatorioIntegrador2026.Controllers
             }
 
             _context.Treatments.Add(treatment);
+
+            var colmena = await _context.Colmenas.FindAsync(model.ColmenaId);
+            if (colmena != null)
+            {
+                var apiario = await _context.Apiarios.FindAsync(colmena.ApiarioId);
+                if (apiario != null)
+                {
+                    apiario.UltimaInspeccion = DateTime.Now;
+                    _context.Apiarios.Update(apiario);
+                }
+            }
+
             await _context.SaveChangesAsync();
 
             return Json(new { success = true, message = "Tratamiento registrado exitosamente." });
