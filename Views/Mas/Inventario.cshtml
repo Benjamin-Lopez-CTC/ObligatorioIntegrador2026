@@ -44,7 +44,7 @@
                 Gestión de herramientas, insumos médicos y materiales de trabajo para operaciones apícolas con monitoreo inteligente de stock y umbrales.
             </p>
         </div>
-        <button onclick="openCreateModal()" class="bg-primary-container text-on-primary-container hover:bg-primary-fixed transition-colors px-6 py-3 rounded font-label-caps text-label-caps flex items-center justify-center gap-2 whitespace-nowrap shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-container">
+        <button onclick="openCreateModal()" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-3 rounded font-label-caps text-label-caps flex items-center justify-center gap-2 whitespace-nowrap shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-container">
             <span class="material-symbols-outlined text-[18px]">add</span>
             Registrar Nuevo Equipo
         </button>
@@ -101,39 +101,41 @@
 
         <div class="border-t border-outline-variant/30 mt-4 pt-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <!-- Lower Row Option 1: Separate Sorting Selectors -->
-            <div class="flex flex-wrap items-center gap-6" id="extra-filters-container">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 w-full md:w-auto" id="extra-filters-container">
                 <!-- Alphabetical Sort Selector -->
-                <div class="flex items-center gap-3" id="name-sort-container">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 w-full sm:w-auto" id="name-sort-container">
                     <label for="filter-sort-name" class="font-label-caps text-label-caps text-on-surface-variant shrink-0">Ordenar Alfabéticamente:</label>
-                    <select id="filter-sort-name" class="bg-background border border-outline-variant px-3 py-1.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors text-sm">
+                    <select id="filter-sort-name" class="w-full sm:w-auto sm:min-w-[150px] pr-8 bg-background border border-outline-variant px-3 py-1.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors text-sm">
                         <option value="none">Por defecto</option>
-                        <option value="nameAsc">Nombre: A - Z</option>
-                        <option value="nameDesc">Nombre: Z - A</option>
+                        <option value="nameAsc">A - Z</option>
+                        <option value="nameDesc">Z - A</option>
                     </select>
                 </div>
                 
                 <!-- Stock Sort Selector -->
-                <div class="flex items-center gap-3" id="stock-sort-container">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 w-full sm:w-auto" id="stock-sort-container">
                     <label for="filter-sort-stock" class="font-label-caps text-label-caps text-on-surface-variant shrink-0">Ordenar por Stock:</label>
-                    <select id="filter-sort-stock" class="bg-background border border-outline-variant px-3 py-1.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors text-sm">
+                    <select id="filter-sort-stock" class="w-full sm:w-auto sm:min-w-[150px] pr-8 bg-background border border-outline-variant px-3 py-1.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors text-sm">
                         <option value="none">Por defecto</option>
-                        <option value="stockAsc">Stock: Menor a Mayor</option>
-                        <option value="stockDesc">Stock: Mayor a Menor</option>
+                        <option value="stockAsc">Menor a Mayor</option>
+                        <option value="stockDesc">Mayor a Menor</option>
                     </select>
                 </div>
             </div>
 
             <!-- Lower Row Option 2: Custom Reordering Mode Toggle Switch -->
             <div class="flex items-center gap-4 bg-surface-container-high/40 border border-outline-variant/60 px-4 py-2 rounded">
-                <div class="flex items-center gap-2 select-none">
-                    <span class="material-symbols-outlined text-primary-container text-[20px]" id="reorder-icon">drag_indicator</span>
+                <div class="flex items-center gap-2">
+                    <span id="reorder-icon" class="material-symbols-outlined text-on-surface-variant text-[18px]">drag_indicator</span>
                     <span class="font-label-caps text-label-caps text-on-surface font-semibold text-xs">Reordenación Personalizada</span>
                 </div>
-                <label class="relative inline-flex items-center cursor-pointer select-none">
-                    <input type="checkbox" id="toggle-custom-reorder" class="sr-only peer" />
-                    <div class="w-10 h-5 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-secondary after:border-secondary after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-container peer-checked:after:bg-background peer-checked:after:border-primary-container"></div>
+                <!-- Toggle Switch -->
+                <label for="toggle-custom-reorder" class="flex items-center cursor-pointer select-none">
+                    <div class="relative">
+                        <input type="checkbox" id="toggle-custom-reorder" class="sr-only peer">
+                        <div class="w-10 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-secondary after:border-secondary after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container peer-checked:after:bg-background peer-checked:after:border-primary-container"></div>
+                    </div>
                 </label>
-                <span id="reorder-status" class="text-xs text-on-surface-variant font-medium select-none w-16 text-center">Desactivado</span>
             </div>
         </div>
         
@@ -146,12 +148,12 @@
 
     <!-- Inventory List Section -->
     <div class="bg-surface-container-low border border-outline-variant rounded p-6">
-        <div class="flex items-center justify-between mb-6 pb-4 border-b border-surface-container-highest">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-surface-container-highest">
             <h3 class="font-headline-lg text-headline-lg text-on-surface flex items-center gap-2">
                 <span class="material-symbols-outlined text-primary-container icon-fill">inventory</span>
                 Equipos e Insumos de Inventario
             </h3>
-            <span id="items-count" class="font-label-caps text-label-caps bg-surface-container px-3 py-1.5 rounded border border-outline-variant text-on-surface-variant">
+            <span id="items-count" class="font-label-caps text-label-caps bg-surface-container px-3 py-1.5 rounded border border-outline-variant text-on-surface-variant w-fit">
                 Cargando...
             </span>
         </div>
@@ -194,16 +196,16 @@
 
 <!-- 1. Form Modal (Create & Edit) -->
 <div id="form-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop bg-black/75 modal-hidden p-4">
-    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-xl modal-container shadow-2xl overflow-hidden">
+    <div class="bg-surface-container border border-outline-variant rounded w-full max-w-xl modal-container shadow-2xl flex flex-col max-h-[75vh] md:max-h-[85vh]">
         <!-- Header -->
-        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between">
+        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between shrink-0">
             <h4 id="form-modal-title" class="font-headline-lg text-lg font-bold text-on-surface">Registrar Nuevo Equipo</h4>
             <button onclick="closeFormModal()" class="text-on-surface-variant hover:text-primary-container transition-colors">
                 <span class="material-symbols-outlined">close</span>
             </button>
         </div>
         <!-- Form Content -->
-        <form id="equipment-form" onsubmit="handleFormSubmit(event)" class="p-6 space-y-4">
+        <form id="equipment-form" onsubmit="handleFormSubmit(event)" class="p-6 space-y-4 overflow-y-auto grow custom-scrollbar">
             <input type="hidden" id="form-id" />
             
             <!-- Error Banner -->
@@ -278,11 +280,11 @@
             </div>
 
             <!-- Actions -->
-            <div class="pt-4 border-t border-surface-container-highest flex justify-end gap-3">
-                <button type="button" onclick="closeFormModal()" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2.5 rounded font-label-caps text-label-caps">
+            <div class="pt-4 border-t border-surface-container-highest flex flex-col sm:flex-row justify-end gap-3">
+                <button type="button" onclick="closeFormModal()" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex">
                     Cancelar
                 </button>
-                <button type="submit" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps ">
+                <button type="submit" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex">
                     Guardar Equipo
                 </button>
             </div>
@@ -292,9 +294,9 @@
 
 <!-- 2. Detail Modal (Read Only) -->
 <div id="detail-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop bg-black/75 modal-hidden p-4">
-    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-lg modal-container shadow-2xl overflow-hidden">
+    <div class="bg-surface-container border border-outline-variant rounded w-full max-w-lg modal-container shadow-2xl flex flex-col max-h-[75vh] md:max-h-[85vh]">
         <!-- Header -->
-        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between">
+        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between shrink-0">
             <h4 class="font-headline-lg text-lg font-bold text-on-surface flex items-center gap-2">
                 <span class="material-symbols-outlined text-primary-container">info</span> Detalle de Equipamiento
             </h4>
@@ -303,7 +305,7 @@
             </button>
         </div>
         <!-- Content -->
-        <div class="p-6 space-y-6">
+        <div class="p-6 space-y-6 overflow-y-auto grow custom-scrollbar">
             <div class="flex items-start justify-between">
                 <div>
                     <h3 id="detail-name" class="font-headline-lg text-headline-lg text-on-surface tracking-tight mb-1">Nombre Equipo</h3>
@@ -352,15 +354,15 @@
             </div>
 
             <!-- Footer Actions -->
-            <div class="pt-4 border-t border-surface-container-highest flex justify-between items-center">
-                <button id="detail-delete-btn" class="bg-error-container/20 border border-error/50 text-error hover:bg-error-container/40 hover:text-white transition-colors px-4 py-2 rounded font-label-caps text-label-caps flex items-center gap-1.5">
+            <div class="pt-4 border-t border-surface-container-highest flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0">
+                <button id="detail-delete-btn" class="bg-error-container/20 border border-error/50 text-error hover:bg-error-container/40 hover:text-white transition-colors px-4 py-2 rounded font-label-caps text-label-caps flex items-center justify-center gap-1.5 w-full sm:w-auto">
                     <span class="material-symbols-outlined text-[16px]">delete</span> Eliminar
                 </button>
-                <div class="flex gap-2">
-                    <button onclick="closeDetailModal()" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-4 py-2 rounded font-label-caps text-label-caps">
+                <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                    <button onclick="closeDetailModal()" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-4 py-2 rounded font-label-caps text-label-caps w-full sm:w-auto">
                         Cerrar
                     </button>
-                    <button id="detail-edit-btn" class="bg-primary-container text-on-primary-container hover:bg-primary-fixed hover:text-on-primary transition-colors px-5 py-2 rounded font-label-caps text-label-caps flex items-center gap-1.5">
+                    <button id="detail-edit-btn" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-5 py-2 rounded font-label-caps text-label-caps flex items-center justify-center gap-1.5 w-full sm:w-auto">
                         <span class="material-symbols-outlined text-[16px]">edit</span> Editar
                     </button>
                 </div>
@@ -369,46 +371,87 @@
     </div>
 </div>
 
-<!-- 3. Edit Confirmation Modal -->
-<div id="confirm-edit-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
-    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-md modal-container shadow-2xl p-6 text-center space-y-4">
-        <span class="material-symbols-outlined text-primary-container text-5xl">warning</span>
-        <h4 class="font-headline-lg text-lg font-bold text-on-surface">Confirmar Modificación</h4>
-        <p class="font-body-md text-body-md text-on-surface-variant">
-            ¿Está seguro de realizar los cambios en <span id="confirm-edit-item-name" class="text-primary-container font-semibold">"Ahumador Inoxidable"</span>?
-        </p>
-        <p class="text-xs text-on-surface-variant/60">
-            Los datos anteriores serán sobrescritos y el estado del stock se recalculará según los nuevos umbrales.
-        </p>
-        <div class="pt-4 flex justify-center gap-3">
-            <button onclick="closeConfirmEditModal()" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2 rounded font-label-caps text-label-caps">
-                No, Cancelar
+<!-- 3. Confirm Delete Modal -->
+<div id="delete-modal" class="fixed inset-0 z-[60] flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
+    <div class="bg-surface-container border border-outline-variant rounded w-full max-w-md modal-container shadow-2xl flex flex-col max-h-[75vh] md:max-h-[85vh]">
+        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between shrink-0">
+            <h4 class="font-headline-lg text-lg font-bold text-error flex items-center gap-2">
+                <span class="material-symbols-outlined text-[20px]">warning</span> Eliminar Ítem
+            </h4>
+            <button onclick="closeDeleteModal()" class="text-on-surface-variant hover:text-primary-container transition-colors">
+                <span class="material-symbols-outlined">close</span>
             </button>
-            <button id="confirm-edit-yes-btn" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2 rounded font-label-caps text-label-caps ">
-                Sí, Guardar Cambios
-            </button>
+        </div>
+        <div class="p-6 overflow-y-auto grow custom-scrollbar space-y-4 text-center">
+            <div class="w-16 h-16 bg-error-container/20 rounded mx-auto flex items-center justify-center mb-2">
+                <span class="material-symbols-outlined text-error text-[32px]">delete_forever</span>
+            </div>
+            <p class="font-body-md text-on-surface-variant">¿Estás seguro que deseas eliminar permanentemente el equipo <strong id="delete-item-name" class="text-on-surface"></strong>?</p>
+            <p class="font-body-sm text-error/80">Esta acción no se puede deshacer.</p>
+            <div class="pt-4 border-t border-surface-container-highest flex flex-col sm:flex-row justify-center gap-3 mt-4">
+                <button onclick="closeDeleteModal()" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto">Cancelar</button>
+                <button onclick="confirmDelete()" class="bg-error text-on-error hover:bg-[#b3261e] transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto">Eliminar</button>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- 4. Delete Confirmation Modal 1 -->
-<div id="confirm-delete-1-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
-    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-md modal-container shadow-2xl p-6 text-center space-y-4">
-        <span class="material-symbols-outlined text-error text-5xl">delete_forever</span>
-        <h4 class="font-headline-lg text-lg font-bold text-on-surface">¿Eliminar Equipamiento?</h4>
-        <p class="font-body-md text-body-md text-on-surface-variant">
-            ¿Está seguro de que desea eliminar el equipamiento <span id="confirm-delete-1-item-name" class="text-error font-semibold">"Ahumador Inoxidable"</span>?
-        </p>
-        <p class="text-sm text-error/80 font-medium">
-            Esta acción no se puede deshacer y el ítem será borrado del inventario.
-        </p>
-        <div class="pt-4 flex justify-center gap-3">
-            <button onclick="closeConfirmDelete1Modal()" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2 rounded font-label-caps text-label-caps">
-                Cancelar
+<!-- 4. Edit Confirmation Modal -->
+<div id="confirm-edit-modal" class="fixed inset-0 z-[60] flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
+    <div class="bg-surface-container border border-outline-variant rounded w-full max-w-md modal-container shadow-2xl flex flex-col max-h-[75vh] md:max-h-[85vh]">
+        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between shrink-0">
+            <h4 class="font-headline-lg text-lg font-bold text-on-surface flex items-center gap-2">
+                <span class="material-symbols-outlined text-[20px] text-primary-container">warning</span> Confirmar Modificación
+            </h4>
+            <button onclick="closeConfirmEditModal()" class="text-on-surface-variant hover:text-primary-container transition-colors">
+                <span class="material-symbols-outlined">close</span>
             </button>
-            <button id="confirm-delete-1-yes-btn" class="bg-error-container/30 border border-error text-error hover:bg-error/20 transition-colors px-6 py-2 rounded font-label-caps text-label-caps ">
-                Sí, deseo eliminarlo
+        </div>
+        <div class="p-6 overflow-y-auto grow custom-scrollbar space-y-4 text-center">
+            <p class="font-body-md text-body-md text-on-surface-variant">
+                ¿Está seguro de realizar los cambios en <span id="confirm-edit-item-name" class="text-primary-container font-semibold">"Ahumador Inoxidable"</span>?
+            </p>
+            <p class="text-xs text-on-surface-variant/60">
+                Los datos anteriores serán sobrescritos y el estado del stock se recalculará según los nuevos umbrales.
+            </p>
+            <div class="pt-4 border-t border-surface-container-highest flex flex-col sm:flex-row justify-center gap-3 mt-4">
+                <button onclick="closeConfirmEditModal()" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto">
+                    No, Cancelar
+                </button>
+                <button id="confirm-edit-yes-btn" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto">
+                    Sí, Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 5. Delete Confirmation Modal 1 -->
+<div id="confirm-delete-1-modal" class="fixed inset-0 z-[60] flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
+    <div class="bg-surface-container border border-outline-variant rounded w-full max-w-md modal-container shadow-2xl flex flex-col max-h-[75vh] md:max-h-[85vh]">
+        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between shrink-0">
+            <h4 class="font-headline-lg text-lg font-bold text-error flex items-center gap-2">
+                <span class="material-symbols-outlined text-[20px]">delete_forever</span> ¿Eliminar Equipamiento?
+            </h4>
+            <button onclick="closeConfirmDelete1Modal()" class="text-on-surface-variant hover:text-primary-container transition-colors">
+                <span class="material-symbols-outlined">close</span>
             </button>
+        </div>
+        <div class="p-6 overflow-y-auto grow custom-scrollbar space-y-4 text-center">
+            <p class="font-body-md text-body-md text-on-surface-variant">
+                ¿Está seguro de que desea eliminar el equipamiento <span id="confirm-delete-1-item-name" class="text-error font-semibold">"Ahumador Inoxidable"</span>?
+            </p>
+            <p class="text-sm text-error/80 font-medium">
+                Esta acción no se puede deshacer y el ítem será borrado del inventario.
+            </p>
+            <div class="pt-4 border-t border-surface-container-highest flex flex-col sm:flex-row justify-center gap-3 mt-4">
+                <button onclick="closeConfirmDelete1Modal()" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto">
+                    Cancelar
+                </button>
+                <button id="confirm-delete-1-yes-btn" class="bg-error-container/30 border border-error text-error hover:bg-error/20 transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto">
+                    Eliminar
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -416,23 +459,31 @@
 
 
 <!-- 6. Duplicate Conflict Warning Modal -->
-<div id="confirm-conflict-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
-    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-md modal-container shadow-2xl p-6 text-center space-y-4">
-        <span class="material-symbols-outlined text-amber-500 text-5xl">warning</span>
-        <h4 class="font-headline-lg text-lg font-bold text-on-surface">Advertencia de Duplicado</h4>
-        <p class="font-body-md text-body-md text-on-surface-variant">
-            Se ha detectado un conflicto: ya existe un equipamiento registrado con el Nombre/Descripción: <span id="conflict-item-name" class="text-primary-container font-semibold">"Ahumador Inoxidable"</span>.
-        </p>
-        <p class="text-sm text-on-surface-variant">
-            ¿Está seguro de que desea continuar y guardar de todas formas?
-        </p>
-        <div class="pt-4 flex justify-center gap-3">
-            <button onclick="closeConflictModal()" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2 rounded font-label-caps text-label-caps">
-                No, Corregir
+<div id="confirm-conflict-modal" class="fixed inset-0 z-[70] flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
+    <div class="bg-surface-container border border-outline-variant rounded w-full max-w-md modal-container shadow-2xl flex flex-col max-h-[75vh] md:max-h-[85vh]">
+        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between shrink-0">
+            <h4 class="font-headline-lg text-lg font-bold text-on-surface flex items-center gap-2">
+                <span class="material-symbols-outlined text-[20px] text-amber-500">warning</span> Advertencia de Duplicado
+            </h4>
+            <button onclick="closeConflictModal()" class="text-on-surface-variant hover:text-primary-container transition-colors">
+                <span class="material-symbols-outlined">close</span>
             </button>
-            <button id="conflict-yes-btn" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2 rounded font-label-caps text-label-caps ">
-                Sí, Guardar de todas formas
-            </button>
+        </div>
+        <div class="p-6 overflow-y-auto grow custom-scrollbar space-y-4 text-center">
+            <p class="font-body-md text-body-md text-on-surface-variant">
+                Se ha detectado un conflicto: ya existe un equipamiento registrado con el Nombre/Descripción: <span id="conflict-item-name" class="text-primary-container font-semibold">"Ahumador Inoxidable"</span>.
+            </p>
+            <p class="text-sm text-on-surface-variant">
+                ¿Está seguro de que desea continuar y guardar de todas formas?
+            </p>
+            <div class="pt-4 border-t border-surface-container-highest flex flex-col sm:flex-row justify-center gap-3 mt-4">
+                <button onclick="closeConflictModal()" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto">
+                    No, Corregir
+                </button>
+                <button id="conflict-yes-btn" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto">
+                    Sí, Guardar
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -470,7 +521,6 @@
     const filterSortName = document.getElementById("filter-sort-name");
     const filterSortStock = document.getElementById("filter-sort-stock");
     const toggleCustomReorder = document.getElementById("toggle-custom-reorder");
-    const reorderStatus = document.getElementById("reorder-status");
     const reorderIcon = document.getElementById("reorder-icon");
     const dragHint = document.getElementById("drag-hint");
     
@@ -577,13 +627,11 @@
 
         toggleCustomReorder.addEventListener("change", function() {
             customReorderActive = this.checked;
-            reorderStatus.innerText = customReorderActive ? "Activado" : "Desactivado";
 
             if (customReorderActive) {
                 // Style switch active state and hint
-                reorderStatus.classList.remove("text-on-surface-variant");
-                reorderStatus.classList.add("text-primary-container", "font-bold");
-                reorderIcon.classList.add("animate-pulse");
+                reorderIcon.classList.remove("text-on-surface-variant");
+                reorderIcon.classList.add("text-primary-container", "animate-pulse");
                 dragHint.classList.remove("hidden");
 
                 // Hide standard filters and extra filters container
@@ -591,9 +639,8 @@
                 extraFiltersContainer.classList.add("hidden");
             } else {
                 // Style switch inactive state and hide hint
-                reorderStatus.classList.add("text-on-surface-variant");
-                reorderStatus.classList.remove("text-primary-container", "font-bold");
-                reorderIcon.classList.remove("animate-pulse");
+                reorderIcon.classList.add("text-on-surface-variant");
+                reorderIcon.classList.remove("text-primary-container", "animate-pulse");
                 dragHint.classList.add("hidden");
 
                 // Show standard filters and extra filters container
@@ -818,7 +865,7 @@
 
             card.innerHTML = `
                 <div class="absolute top-0 left-0 w-1.5 h-full bg-outline-variant group-hover:bg-primary-container transition-colors"></div>
-                <div class="flex justify-between items-start mb-2 pl-3">
+                <div class="flex flex-col sm:flex-row justify-between items-start mb-2 pl-3 gap-2">
                     <div class="flex items-start gap-1">
                         ${customReorderActive ? `<span class="material-symbols-outlined text-[18px] text-on-surface-variant/40 hover:text-primary-container cursor-grab select-none mr-1 mt-0.5">drag_indicator</span>` : ''}
                         <div>
@@ -831,7 +878,7 @@
                             </span>
                         </div>
                     </div>
-                    <div class="flex flex-col items-end gap-1.5">
+                    <div class="flex sm:flex-col items-start sm:items-end gap-1.5 mt-1 sm:mt-0">
                         <span class="font-label-caps text-[10px] bg-background border border-outline-variant text-on-surface px-2 py-0.5 rounded">
                             Stock: <strong class="${item.stock === 0 ? 'text-error' : 'text-primary-container'}">${item.stock} u</strong>
                         </span>

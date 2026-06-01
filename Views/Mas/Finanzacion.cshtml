@@ -29,11 +29,11 @@
     <!-- Header Section -->
     <header class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-surface-variant pb-8 mt-4">
         <div class="flex flex-col gap-2">
-            <div class="flex items-center gap-3">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
                 <h1 class="font-display text-display text-on-background">Cálculo de Costos y Ganancias</h1>
                 @if (hasActive)
                 {
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-primary-container/10 border border-primary-container/30 text-primary-container rounded-full font-label-caps text-[10px] uppercase font-bold tracking-wider animate-pulse">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-primary-container/10 border border-primary-container/30 text-primary-container rounded font-label-caps text-[10px] uppercase font-bold tracking-wider animate-pulse">
                         <span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span> Análisis Activo
                     </span>
                 }
@@ -45,9 +45,9 @@
 
         @if (hasActive)
         {
-            <div class="flex flex-wrap items-center gap-3">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full sm:w-auto mt-4 md:mt-0">
                 <span class="font-body-sm text-on-surface-variant">Iniciado el @(active?.FechaInicio.ToString("dd/MM/yyyy HH:mm"))</span>
-                <button onclick="openFinalizarModal()" class="bg-error-container/20 border border-error/50 text-error hover:bg-error/35 transition-colors px-5 py-2.5 rounded font-label-caps text-label-caps flex items-center gap-2">
+                <button onclick="openFinalizarModal()" class="bg-error-container/20 border border-error/50 text-error hover:bg-error/35 transition-colors px-5 py-2.5 rounded font-label-caps text-label-caps flex items-center justify-center gap-2 w-full sm:w-auto">
                     <span class="material-symbols-outlined text-[18px]">check_circle</span>
                     Finalizar Análisis
                 </button>
@@ -55,7 +55,7 @@
         }
         else
         {
-            <button onclick="iniciarAnalisis()" class="bg-primary-container text-on-primary font-label-caps text-label-caps px-6 py-3 rounded hover:bg-primary-fixed transition-colors flex items-center gap-2 shrink-0">
+            <button onclick="iniciarAnalisis()" class="bg-primary-container text-on-primary font-label-caps text-label-caps px-6 py-3 rounded hover:bg-primary-fixed transition-colors flex items-center justify-center gap-2 w-full sm:w-auto mt-4 md:mt-0">
                 <span class="material-symbols-outlined text-[18px]">play_arrow</span>
                 Empezar Análisis
             </button>
@@ -65,7 +65,7 @@
     <!-- Financial Summary Cards -->
     <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
         <!-- Investment Card -->
-        <div class="bg-surface-container border border-outline-variant rounded-lg p-6 flex flex-col gap-4 relative overflow-hidden group">
+        <div class="bg-surface-container border border-outline-variant rounded p-6 flex flex-col gap-4 relative overflow-hidden group">
             <div class="absolute top-0 right-0 w-32 h-32 bg-error/5 rounded-full -mr-10 -mt-10 blur-xl group-hover:bg-error/10 transition-all duration-500"></div>
             <div class="flex justify-between items-center z-10">
                 <span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">Inversión Total</span>
@@ -84,7 +84,7 @@
         </div>
 
         <!-- Gross Profit Card -->
-        <div class="bg-surface-container border border-outline-variant rounded-lg p-6 flex flex-col gap-4 relative overflow-hidden group">
+        <div class="bg-surface-container border border-outline-variant rounded p-6 flex flex-col gap-4 relative overflow-hidden group">
             <div class="absolute top-0 right-0 w-32 h-32 bg-primary-container/5 rounded-full -mr-10 -mt-10 blur-xl group-hover:bg-primary-container/10 transition-all duration-500"></div>
             <div class="flex justify-between items-center z-10">
                 <span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">Ganancia Bruta</span>
@@ -105,7 +105,7 @@
         <!-- Net Balance Card -->
         @if (balanceNeto >= 0)
         {
-            <div class="bg-surface-container border border-primary-container rounded-lg p-6 flex flex-col gap-4 relative overflow-hidden group shadow-[0_0_15px_rgba(255,217,0,0.1)]">
+            <div class="bg-surface-container border border-primary-container rounded p-6 flex flex-col gap-4 relative overflow-hidden group shadow-[0_0_15px_rgba(255,217,0,0.1)]">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-primary-container/10 rounded-full -mr-10 -mt-10 blur-xl group-hover:bg-primary-container/20 transition-all duration-500"></div>
                 <div class="flex justify-between items-center z-10">
                     <span class="font-label-caps text-label-caps text-primary-container font-bold uppercase tracking-widest">Balance Neto (Profit)</span>
@@ -120,7 +120,7 @@
         }
         else
         {
-            <div class="bg-surface-container border border-error rounded-lg p-6 flex flex-col gap-4 relative overflow-hidden group shadow-[0_0_15px_rgba(255,180,171,0.1)]">
+            <div class="bg-surface-container border border-error rounded p-6 flex flex-col gap-4 relative overflow-hidden group shadow-[0_0_15px_rgba(255,180,171,0.1)]">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-error/10 rounded-full -mr-10 -mt-10 blur-xl group-hover:bg-error/20 transition-all duration-500"></div>
                 <div class="flex justify-between items-center z-10">
                     <span class="font-label-caps text-label-caps text-error font-bold uppercase tracking-widest">Balance Neto (Pérdida)</span>
@@ -155,7 +155,7 @@
                 <div class="flex flex-col gap-4 max-h-[500px] overflow-y-auto pr-1">
                     @if (active?.Inversiones == null || !active.Inversiones.Any())
                     {
-                        <div class="bg-surface-container-low border border-outline-variant border-dashed rounded-lg p-8 text-center">
+                        <div class="bg-surface-container-low border border-outline-variant border-dashed rounded p-8 text-center">
                             <p class="text-on-surface-variant font-body-sm">No hay registros de inversiones en este análisis.</p>
                         </div>
                     }
@@ -163,7 +163,7 @@
                     {
                         @foreach (var inv in active.Inversiones)
                         {
-                            <div class="bg-surface-container border border-outline-variant rounded-lg p-4 flex justify-between items-center hover:border-primary-container/50 transition-colors">
+                            <div class="bg-surface-container border border-outline-variant rounded p-4 flex justify-between items-center hover:border-primary-container/50 transition-colors">
                                 <div class="flex items-center gap-4">
                                     <div class="w-10 h-10 rounded bg-surface-container-high border border-outline-variant flex items-center justify-center text-on-surface-variant">
                                         <span class="material-symbols-outlined">payments</span>
@@ -204,7 +204,7 @@
                 <div class="flex flex-col gap-4 max-h-[500px] overflow-y-auto pr-1">
                     @if (active?.Ganancias == null || !active.Ganancias.Any())
                     {
-                        <div class="bg-surface-container-low border border-outline-variant border-dashed rounded-lg p-8 text-center">
+                        <div class="bg-surface-container-low border border-outline-variant border-dashed rounded p-8 text-center">
                             <p class="text-on-surface-variant font-body-sm">No hay registros de ganancias en este análisis.</p>
                         </div>
                     }
@@ -212,7 +212,7 @@
                     {
                         @foreach (var gan in active.Ganancias)
                         {
-                            <div class="bg-surface-container border border-outline-variant rounded-lg p-4 flex justify-between items-center hover:border-primary-container transition-colors">
+                            <div class="bg-surface-container border border-outline-variant rounded p-4 flex justify-between items-center hover:border-primary-container transition-colors">
                                 <div class="flex items-center gap-4">
                                     <div class="w-10 h-10 rounded bg-surface-container-high border border-primary-container/20 flex items-center justify-center text-primary-container">
                                         <span class="material-symbols-outlined">point_of_sale</span>
@@ -243,13 +243,13 @@
     else
     {
         <!-- Empty active analysis workspace prompt -->
-        <section class="mt-8 bg-surface-container border border-outline-variant rounded-lg p-8 flex flex-col items-center text-center gap-4 shadow-xl max-w-4xl mx-auto">
+        <section class="mt-8 bg-surface-container border border-outline-variant rounded p-8 flex flex-col items-center text-center gap-4 shadow-xl max-w-4xl mx-auto">
             <span class="material-symbols-outlined text-[60px] text-primary-container animate-bounce mt-4">payments</span>
             <h3 class="font-headline-lg text-on-surface">Comenzar Nuevo Análisis Financiero</h3>
             <p class="font-body-md text-on-surface-variant max-w-lg">
                 Para registrar y llevar el control detallado de las inversiones realizadas y ganancias obtenidas en la temporada apícola actual, inicie un nuevo análisis ahora.
             </p>
-            <button onclick="iniciarAnalisis()" class="bg-primary-container text-on-primary font-label-caps text-label-caps px-8 py-3 rounded-lg hover:bg-primary-fixed hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2 mb-4">
+            <button onclick="iniciarAnalisis()" class="bg-primary-container text-on-primary font-label-caps text-label-caps px-8 py-3 rounded hover:bg-primary-fixed hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2 mb-4">
                 <span class="material-symbols-outlined text-[18px]">play_arrow</span>
                 Empezar Análisis Financiero
             </button>
@@ -268,7 +268,7 @@
         }
         else
         {
-            <div class="bg-surface-container border border-surface-variant rounded-lg overflow-hidden shadow-md">
+            <div class="bg-surface-container border border-surface-variant rounded overflow-hidden shadow-md">
                 <div class="overflow-x-auto responsive-table">
                     <table class="w-full text-left border-collapse">
                         <thead>
@@ -328,16 +328,15 @@
 
 <!-- 1. Registrar Inversion Modal -->
 <div id="modalInversion" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop bg-black/80 modal-hidden p-4">
-    <div class="bg-surface border border-outline-variant rounded-lg w-full max-w-md modal-container shadow-2xl flex flex-col">
-        <div class="flex justify-between items-center p-6 border-b border-surface-variant">
-            <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Registrar Inversión</h2>
-            <button onclick="closeInversionModal()" class="text-on-surface-variant hover:text-on-surface rounded-full p-1">
+    <div class="bg-surface-container border border-outline-variant rounded w-full max-w-md modal-container shadow-2xl flex flex-col max-h-[75vh] md:max-h-[85vh]">
+        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between shrink-0">
+            <h4 class="font-headline-lg text-lg font-bold text-on-surface">Registrar Inversión</h4>
+            <button type="button" onclick="closeInversionModal()" class="text-on-surface-variant hover:text-primary-container transition-colors p-1">
                 <span class="material-symbols-outlined">close</span>
             </button>
         </div>
-        <div class="p-6 overflow-y-auto space-y-4">
-            <div id="errorBannerInversion" class="hidden bg-error-container/20 border border-error/50 text-error text-sm rounded p-3 space-y-1"></div>
-            
+        <div class="p-6 overflow-y-auto grow custom-scrollbar">
+            <div id="errorBannerInversion" class="hidden bg-error-container/20 border border-error/50 text-error text-sm rounded p-3 space-y-1 mb-4"></div>
             <form id="formInversion" class="flex flex-col gap-4">
                 <div class="flex flex-col gap-2">
                     <label class="font-label-caps text-label-caps text-on-surface">Concepto / Título</label>
@@ -353,31 +352,30 @@
                     <label class="font-label-caps text-label-caps text-on-surface">Monto / Precio ($)</label>
                     <input type="number" step="0.01" min="0.01" id="invPrecio" class="bg-surface-container-high border border-outline-variant text-on-surface font-body-md rounded p-3 focus:outline-none focus:border-primary-container w-full" placeholder="0.00" required />
                 </div>
+                <div class="pt-4 border-t border-surface-container-highest flex flex-col sm:flex-row justify-end gap-3 mt-4">
+                    <button type="button" onclick="closeInversionModal()" class="border border-outline text-on-surface hover:bg-surface-container-high px-5 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex transition-colors">
+                        Cancelar
+                    </button>
+                    <button type="button" onclick="submitInversion()" id="btnSubmitInversion" class="bg-primary-container text-on-primary hover:bg-primary-fixed px-6 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex transition-colors">
+                        Registrar
+                    </button>
+                </div>
             </form>
-        </div>
-        <div class="p-6 border-t border-surface-variant flex justify-end gap-4 bg-surface-container-low">
-            <button onclick="closeInversionModal()" class="font-label-caps text-label-caps text-on-surface px-5 py-2.5 rounded hover:bg-surface-variant transition-colors border border-outline-variant">
-                Cancelar
-            </button>
-            <button onclick="submitInversion()" id="btnSubmitInversion" class="bg-primary-container text-on-primary font-label-caps text-label-caps px-5 py-2.5 rounded hover:bg-primary-fixed transition-colors">
-                Registrar
-            </button>
         </div>
     </div>
 </div>
 
 <!-- 2. Registrar Ganancia Modal -->
 <div id="modalGanancia" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop bg-black/80 modal-hidden p-4">
-    <div class="bg-surface border border-outline-variant rounded-lg w-full max-w-md modal-container shadow-2xl flex flex-col">
-        <div class="flex justify-between items-center p-6 border-b border-surface-variant">
-            <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Registrar Ganancia</h2>
-            <button onclick="closeGananciaModal()" class="text-on-surface-variant hover:text-on-surface rounded-full p-1">
+    <div class="bg-surface-container border border-outline-variant rounded w-full max-w-md modal-container shadow-2xl flex flex-col max-h-[75vh] md:max-h-[85vh]">
+        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between shrink-0">
+            <h4 class="font-headline-lg text-lg font-bold text-on-surface">Registrar Ganancia</h4>
+            <button type="button" onclick="closeGananciaModal()" class="text-on-surface-variant hover:text-primary-container transition-colors p-1">
                 <span class="material-symbols-outlined">close</span>
             </button>
         </div>
-        <div class="p-6 overflow-y-auto space-y-4">
-            <div id="errorBannerGanancia" class="hidden bg-error-container/20 border border-error/50 text-error text-sm rounded p-3 space-y-1"></div>
-            
+        <div class="p-6 overflow-y-auto grow custom-scrollbar">
+            <div id="errorBannerGanancia" class="hidden bg-error-container/20 border border-error/50 text-error text-sm rounded p-3 space-y-1 mb-4"></div>
             <form id="formGanancia" class="flex flex-col gap-4">
                 <div class="flex flex-col gap-2">
                     <label class="font-label-caps text-label-caps text-on-surface">Concepto / Título</label>
@@ -393,57 +391,65 @@
                     <label class="font-label-caps text-label-caps text-on-surface">Monto / Ganancia ($)</label>
                     <input type="number" step="0.01" min="0.01" id="ganMonto" class="bg-surface-container-high border border-outline-variant text-on-surface font-body-md rounded p-3 focus:outline-none focus:border-primary-container w-full" placeholder="0.00" required />
                 </div>
+                <div class="pt-4 border-t border-surface-container-highest flex flex-col sm:flex-row justify-end gap-3 mt-4">
+                    <button type="button" onclick="closeGananciaModal()" class="border border-outline text-on-surface hover:bg-surface-container-high px-5 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex transition-colors">
+                        Cancelar
+                    </button>
+                    <button type="button" onclick="submitGanancia()" id="btnSubmitGanancia" class="bg-primary-container text-on-primary hover:bg-primary-fixed px-6 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex transition-colors">
+                        Registrar
+                    </button>
+                </div>
             </form>
-        </div>
-        <div class="p-6 border-t border-surface-variant flex justify-end gap-4 bg-surface-container-low">
-            <button onclick="closeGananciaModal()" class="font-label-caps text-label-caps text-on-surface px-5 py-2.5 rounded hover:bg-surface-variant transition-colors border border-outline-variant">
-                Cancelar
-            </button>
-            <button onclick="submitGanancia()" id="btnSubmitGanancia" class="bg-primary-container text-on-primary font-label-caps text-label-caps px-5 py-2.5 rounded hover:bg-primary-fixed transition-colors">
-                Registrar
-            </button>
         </div>
     </div>
 </div>
 
 <!-- 3. Finalizar Analisis Confirmation Modal -->
-<div id="modalFinalizar" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
-    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-md modal-container shadow-2xl p-6 text-center space-y-4">
-        <span class="material-symbols-outlined text-primary-container text-5xl">check_circle</span>
-        <h4 class="font-headline-lg text-lg font-bold text-on-surface">¿Finalizar Análisis Financiero?</h4>
-        <p class="font-body-md text-body-md text-on-surface-variant">
-            Se registrará la fecha y hora actuales como la finalización del análisis actual. Una vez finalizado, no se podrán realizar más cambios en este período.
-        </p>
-        <p class="text-sm text-primary-container/85 font-medium">
-            Seleccione si desea abrir otro análisis inmediatamente o si lo hará más adelante.
-        </p>
-        <div class="pt-4 flex flex-col sm:flex-row justify-center gap-3">
-            <button onclick="closeFinalizarModal()" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-4 py-2 rounded font-label-caps text-label-caps order-3 sm:order-1">
-                Cancelar
+<div id="modalFinalizar" class="fixed inset-0 z-[60] flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
+    <div class="bg-surface-container border border-outline-variant rounded w-full max-w-md modal-container shadow-2xl flex flex-col max-h-[75vh] md:max-h-[85vh]">
+        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between shrink-0">
+            <h4 class="font-headline-lg text-lg font-bold text-on-surface flex items-center gap-2">
+                <span class="material-symbols-outlined text-[20px] text-primary-container">check_circle</span> Finalizar Análisis
+            </h4>
+            <button onclick="closeFinalizarModal()" class="text-on-surface-variant hover:text-primary-container transition-colors p-1">
+                <span class="material-symbols-outlined">close</span>
             </button>
-            <button onclick="finalizarAnalisis(false)" id="btnFinalizarSolo" class="border border-primary-container text-primary-container hover:bg-primary-container/10 transition-colors px-4 py-2 rounded font-label-caps text-label-caps order-2">
-                Solo Finalizar
-            </button>
-            <button onclick="finalizarAnalisis(true)" id="btnFinalizarYCrear" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-4 py-2 rounded font-label-caps text-label-caps order-1">
-                Finalizar y Crear Nuevo
-            </button>
+        </div>
+        <div class="p-6 overflow-y-auto grow custom-scrollbar space-y-4 text-center">
+            <p class="font-body-md text-body-md text-on-surface-variant">
+                Se registrará la fecha y hora actuales como la finalización del análisis actual. Una vez finalizado, no se podrán realizar más cambios en este período.
+            </p>
+            <p class="text-sm text-primary-container/85 font-medium">
+                Seleccione si desea abrir otro análisis inmediatamente o si lo hará más adelante.
+            </p>
+            <div class="pt-4 border-t border-surface-container-highest flex flex-col sm:flex-row justify-center gap-3 mt-4">
+                <button type="button" onclick="closeFinalizarModal()" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-4 py-2.5 rounded font-label-caps text-label-caps order-3 sm:order-1 w-full sm:w-auto text-center justify-center flex">
+                    Cancelar
+                </button>
+                <button type="button" onclick="finalizarAnalisis(false)" id="btnFinalizarSolo" class="border border-primary-container text-primary-container hover:bg-primary-container/10 transition-colors px-4 py-2.5 rounded font-label-caps text-label-caps order-2 w-full sm:w-auto text-center justify-center flex">
+                    Solo Finalizar
+                </button>
+                <button type="button" onclick="finalizarAnalisis(true)" id="btnFinalizarYCrear" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-4 py-2.5 rounded font-label-caps text-label-caps order-1 w-full sm:w-auto text-center justify-center flex">
+                    Finalizar y Crear
+                </button>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- 4. Ver Detalles Modal -->
-<div id="modalDetalles" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
-    <div class="bg-surface border border-outline-variant rounded-lg w-full max-w-3xl modal-container shadow-2xl flex flex-col max-h-[90vh]">
-        <div class="flex justify-between items-center p-6 border-b border-surface-variant">
+<div id="modalDetalles" class="fixed inset-0 z-[60] flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
+    <div class="bg-surface-container border border-outline-variant rounded w-full max-w-3xl modal-container shadow-2xl flex flex-col max-h-[75vh] md:max-h-[85vh]">
+        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between shrink-0">
             <div>
-                <h2 id="detallesTitle" class="font-headline-lg-mobile md:font-headline-lg text-on-surface">Detalles del Análisis</h2>
+                <h4 id="detallesTitle" class="font-headline-lg text-lg font-bold text-on-surface">Detalles del Análisis</h4>
                 <p id="detallesSub" class="text-sm text-on-surface-variant font-body-sm"></p>
             </div>
-            <button onclick="closeDetallesModal()" class="text-on-surface-variant hover:text-on-surface rounded-full p-1">
+            <button type="button" onclick="closeDetallesModal()" class="text-on-surface-variant hover:text-primary-container transition-colors p-1">
                 <span class="material-symbols-outlined">close</span>
             </button>
         </div>
-        <div class="p-6 overflow-y-auto space-y-6">
+        <div class="p-6 overflow-y-auto grow custom-scrollbar space-y-6">
             <!-- Totals Grid in Details -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="bg-surface-container border border-outline-variant p-4 rounded flex flex-col gap-1">
@@ -486,77 +492,101 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="p-6 border-t border-surface-variant flex justify-end bg-surface-container-low">
-            <button onclick="closeDetallesModal()" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps">
-                Cerrar
-            </button>
+            <div class="pt-4 border-t border-surface-container-highest flex flex-col sm:flex-row justify-end mt-4">
+                <button type="button" onclick="closeDetallesModal()" class="border border-outline text-on-surface hover:bg-surface-container-high px-5 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex transition-colors">
+                    Cerrar
+                </button>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- 5. Delete Confirmation Modal -->
-<div id="modalEliminar" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
-    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-md modal-container shadow-2xl p-6 text-center space-y-4">
-        <span class="material-symbols-outlined text-error text-5xl">delete_forever</span>
-        <h4 class="font-headline-lg text-lg font-bold text-on-surface">¿Eliminar Análisis?</h4>
-        <p class="font-body-md text-body-md text-on-surface-variant">
-            ¿Está seguro de que desea eliminar el análisis <span id="eliminarItemName" class="text-error font-semibold"></span> del historial?
-        </p>
-        <p class="text-sm text-error/80 font-medium">
-            Esta acción es irreversible. Se eliminarán permanentemente todas las inversiones y ganancias asociadas a este análisis de la base de datos.
-        </p>
-        <div class="pt-4 flex justify-center gap-3">
-            <button onclick="closeEliminarModal()" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2 rounded font-label-caps text-label-caps">
-                Cancelar
+<div id="modalEliminar" class="fixed inset-0 z-[60] flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
+    <div class="bg-surface-container border border-outline-variant rounded w-full max-w-md modal-container shadow-2xl flex flex-col max-h-[75vh] md:max-h-[85vh]">
+        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between shrink-0">
+            <h4 class="font-headline-lg text-lg font-bold text-error flex items-center gap-2">
+                <span class="material-symbols-outlined text-[20px]">delete_forever</span> ¿Eliminar Análisis?
+            </h4>
+            <button type="button" onclick="closeEliminarModal()" class="text-on-surface-variant hover:text-primary-container transition-colors p-1">
+                <span class="material-symbols-outlined">close</span>
             </button>
-            <button onclick="executeEliminar()" id="btnConfirmEliminar" class="bg-error-container/30 border border-error text-error hover:bg-error/20 transition-colors px-6 py-2 rounded font-label-caps text-label-caps ">
-                Sí, deseo eliminarlo
-            </button>
+        </div>
+        <div class="p-6 overflow-y-auto grow custom-scrollbar space-y-4 text-center">
+            <p class="font-body-md text-body-md text-on-surface-variant">
+                ¿Está seguro de que desea eliminar el análisis <span id="eliminarItemName" class="text-error font-semibold"></span> del historial?
+            </p>
+            <p class="text-sm text-error/80 font-medium">
+                Esta acción es irreversible. Se eliminarán permanentemente todas las inversiones y ganancias asociadas a este análisis de la base de datos.
+            </p>
+            <div class="pt-4 border-t border-surface-container-highest flex flex-col sm:flex-row justify-center gap-3 mt-4">
+                <button type="button" onclick="closeEliminarModal()" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex">
+                    Cancelar
+                </button>
+                <button type="button" onclick="executeEliminar()" id="btnConfirmEliminar" class="bg-error-container/30 border border-error text-error hover:bg-error/20 transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex">
+                    Sí, deseo eliminarlo
+                </button>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- 6. Delete Investment Confirmation Modal -->
-<div id="modalEliminarInversion" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
-    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-md modal-container shadow-2xl p-6 text-center space-y-4">
-        <span class="material-symbols-outlined text-error text-5xl">delete_forever</span>
-        <h4 class="font-headline-lg text-lg font-bold text-on-surface">¿Eliminar Inversión?</h4>
-        <p class="font-body-md text-body-md text-on-surface-variant">
-            ¿Está seguro de que desea eliminar la inversión <span id="eliminarInversionItemName" class="text-error font-semibold"></span> del análisis activo?
-        </p>
-        <p class="text-sm text-error/80 font-medium">
-            Esta acción es irreversible y afectará el balance neto de la temporada actual.
-        </p>
-        <div class="pt-4 flex justify-center gap-3">
-            <button onclick="closeEliminarInversionModal()" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2 rounded font-label-caps text-label-caps">
-                Cancelar
+<div id="modalEliminarInversion" class="fixed inset-0 z-[60] flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
+    <div class="bg-surface-container border border-outline-variant rounded w-full max-w-md modal-container shadow-2xl flex flex-col max-h-[75vh] md:max-h-[85vh]">
+        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between shrink-0">
+            <h4 class="font-headline-lg text-lg font-bold text-error flex items-center gap-2">
+                <span class="material-symbols-outlined text-[20px]">delete_forever</span> ¿Eliminar Inversión?
+            </h4>
+            <button type="button" onclick="closeEliminarInversionModal()" class="text-on-surface-variant hover:text-primary-container transition-colors p-1">
+                <span class="material-symbols-outlined">close</span>
             </button>
-            <button onclick="executeEliminarInversion()" id="btnConfirmEliminarInversion" class="bg-error-container/30 border border-error text-error hover:bg-error/20 transition-colors px-6 py-2 rounded font-label-caps text-label-caps ">
-                Sí, deseo eliminarlo
-            </button>
+        </div>
+        <div class="p-6 overflow-y-auto grow custom-scrollbar space-y-4 text-center">
+            <p class="font-body-md text-body-md text-on-surface-variant">
+                ¿Está seguro de que desea eliminar la inversión <span id="eliminarInversionItemName" class="text-error font-semibold"></span> del análisis activo?
+            </p>
+            <p class="text-sm text-error/80 font-medium">
+                Esta acción es irreversible y afectará el balance neto de la temporada actual.
+            </p>
+            <div class="pt-4 border-t border-surface-container-highest flex flex-col sm:flex-row justify-center gap-3 mt-4">
+                <button type="button" onclick="closeEliminarInversionModal()" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex">
+                    Cancelar
+                </button>
+                <button type="button" onclick="executeEliminarInversion()" id="btnConfirmEliminarInversion" class="bg-error-container/30 border border-error text-error hover:bg-error/20 transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex">
+                    Sí, deseo eliminarlo
+                </button>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- 7. Delete Earning Confirmation Modal -->
-<div id="modalEliminarGanancia" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
-    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-md modal-container shadow-2xl p-6 text-center space-y-4">
-        <span class="material-symbols-outlined text-error text-5xl">delete_forever</span>
-        <h4 class="font-headline-lg text-lg font-bold text-on-surface">¿Eliminar Ganancia?</h4>
-        <p class="font-body-md text-body-md text-on-surface-variant">
-            ¿Está seguro de que desea eliminar la ganancia <span id="eliminarGananciaItemName" class="text-error font-semibold"></span> del análisis activo?
-        </p>
-        <p class="text-sm text-error/80 font-medium">
-            Esta acción es irreversible y afectará el balance neto de la temporada actual.
-        </p>
-        <div class="pt-4 flex justify-center gap-3">
-            <button onclick="closeEliminarGananciaModal()" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2 rounded font-label-caps text-label-caps">
-                Cancelar
+<div id="modalEliminarGanancia" class="fixed inset-0 z-[60] flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
+    <div class="bg-surface-container border border-outline-variant rounded w-full max-w-md modal-container shadow-2xl flex flex-col max-h-[75vh] md:max-h-[85vh]">
+        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between shrink-0">
+            <h4 class="font-headline-lg text-lg font-bold text-error flex items-center gap-2">
+                <span class="material-symbols-outlined text-[20px]">delete_forever</span> ¿Eliminar Ganancia?
+            </h4>
+            <button type="button" onclick="closeEliminarGananciaModal()" class="text-on-surface-variant hover:text-primary-container transition-colors p-1">
+                <span class="material-symbols-outlined">close</span>
             </button>
-            <button onclick="executeEliminarGanancia()" id="btnConfirmEliminarGanancia" class="bg-error-container/30 border border-error text-error hover:bg-error/20 transition-colors px-6 py-2 rounded font-label-caps text-label-caps ">
-                Sí, deseo eliminarlo
-            </button>
+        </div>
+        <div class="p-6 overflow-y-auto grow custom-scrollbar space-y-4 text-center">
+            <p class="font-body-md text-body-md text-on-surface-variant">
+                ¿Está seguro de que desea eliminar la ganancia <span id="eliminarGananciaItemName" class="text-error font-semibold"></span> del análisis activo?
+            </p>
+            <p class="text-sm text-error/80 font-medium">
+                Esta acción es irreversible y afectará el balance neto de la temporada actual.
+            </p>
+            <div class="pt-4 border-t border-surface-container-highest flex flex-col sm:flex-row justify-center gap-3 mt-4">
+                <button type="button" onclick="closeEliminarGananciaModal()" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex">
+                    Cancelar
+                </button>
+                <button type="button" onclick="executeEliminarGanancia()" id="btnConfirmEliminarGanancia" class="bg-error-container/30 border border-error text-error hover:bg-error/20 transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex">
+                    Sí, deseo eliminarlo
+                </button>
+            </div>
         </div>
     </div>
 </div>

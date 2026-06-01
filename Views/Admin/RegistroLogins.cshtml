@@ -42,8 +42,8 @@
     </form>
 
     <!-- Data Table -->
-    <section class="overflow-x-auto bg-surface-container border border-outline-variant rounded">
-        <table class="w-full text-left border-collapse min-w-[800px]">
+    <section class="overflow-x-auto md:overflow-visible bg-surface-container border border-outline-variant rounded responsive-table">
+        <table class="w-full text-left border-collapse min-w-full md:min-w-[800px]">
             <thead>
                 <tr class="bg-surface-container-high border-b border-outline-variant">
                     <th class="py-4 px-6 font-label-caps text-label-caps text-on-surface-variant font-normal">FECHA Y HORA</th>
@@ -60,12 +60,12 @@
                     foreach (var record in Model)
                     {
                         <tr class="border-b border-outline-variant hover:bg-surface-container-high transition-colors">
-                            <td class="py-4 px-6 font-label-caps text-label-caps text-on-surface-variant">@record.AttemptDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
-                            <td class="py-4 px-6 font-medium">@record.Username</td>
-                            <td class="py-4 px-6 font-label-caps text-label-caps">@record.IpAddress</td>
-                            <td class="py-4 px-6">@record.DeviceBrowser</td>
-                            <td class="py-4 px-6 text-on-surface-variant">@record.Location</td>
-                            <td class="py-4 px-6 text-right">
+                            <td data-label="FECHA Y HORA" class="py-4 px-6 font-label-caps text-label-caps text-on-surface-variant">@record.AttemptDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                            <td data-label="USUARIO" class="py-4 px-6 font-medium">@record.Username</td>
+                            <td data-label="DIRECCIÓN IP" class="py-4 px-6 font-label-caps text-label-caps">@record.IpAddress</td>
+                            <td data-label="DISPOSITIVO" class="py-4 px-6">@record.DeviceBrowser</td>
+                            <td data-label="UBICACIÓN" class="py-4 px-6 text-on-surface-variant">@record.Location</td>
+                            <td data-label="ESTADO" class="py-4 px-6 text-right">
                                 @if (record.IsSuccess)
                                 {
                                     <span class="inline-block px-3 py-1 bg-primary-container text-on-primary font-label-caps text-[10px] font-bold rounded">EXITOSO</span>

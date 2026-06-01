@@ -52,7 +52,7 @@
     <!-- Bento Grid Layout for Details & Metrics -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-12">
         <!-- General Info Card (Spans 4 cols on Desktop) -->
-        <div class="lg:col-span-4 bg-surface-container-low border border-outline-variant rounded-lg p-gutter flex flex-col justify-between relative overflow-hidden group hover:border-primary-container transition-colors">
+        <div class="lg:col-span-4 bg-surface-container-low border border-outline-variant rounded p-gutter flex flex-col justify-between relative overflow-hidden group hover:border-primary-container transition-colors">
             <div class="absolute top-0 left-0 w-1 h-full bg-outline-variant group-hover:bg-primary-container transition-colors"></div>
             <div class="pl-2 relative z-10 flex-grow flex flex-col justify-between">
                 <div>
@@ -114,7 +114,7 @@
         <!-- Metrics Cards Sub-Grid (Spans 8 cols on Desktop) -->
         <div class="lg:col-span-8 grid grid-cols-1 md:grid-cols-3 gap-6">
             <!-- Metric 1 -->
-            <div class="bg-surface-container-low border border-outline-variant rounded-lg p-gutter flex flex-col justify-between relative overflow-hidden group hover:border-primary-container transition-colors">
+            <div class="bg-surface-container-low border border-outline-variant rounded p-gutter flex flex-col justify-between relative overflow-hidden group hover:border-primary-container transition-colors">
                 <div class="absolute top-0 left-0 w-1 h-full bg-outline-variant group-hover:bg-primary-container transition-colors"></div>
                 <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                     <span class="material-symbols-outlined text-6xl text-primary-container">thermostat</span>
@@ -133,7 +133,7 @@
             </div>
 
             <!-- Metric 2 -->
-            <div class="bg-surface-container-low border border-outline-variant rounded-lg p-gutter flex flex-col justify-between relative overflow-hidden group hover:border-primary-container transition-colors">
+            <div class="bg-surface-container-low border border-outline-variant rounded p-gutter flex flex-col justify-between relative overflow-hidden group hover:border-primary-container transition-colors">
                 <div class="absolute top-0 left-0 w-1 h-full bg-outline-variant group-hover:bg-primary-container transition-colors"></div>
                 <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                     <span class="material-symbols-outlined text-6xl text-primary-container">humidity_percentage</span>
@@ -152,7 +152,7 @@
             </div>
 
             <!-- Metric 3 -->
-            <div class="bg-surface-container-low border border-outline-variant rounded-lg p-gutter flex flex-col justify-between relative overflow-hidden group hover:border-primary-container transition-colors">
+            <div class="bg-surface-container-low border border-outline-variant rounded p-gutter flex flex-col justify-between relative overflow-hidden group hover:border-primary-container transition-colors">
                 <div class="absolute top-0 left-0 w-1 h-full bg-outline-variant group-hover:bg-primary-container transition-colors"></div>
                 <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                     <span class="material-symbols-outlined text-6xl text-primary-container">inventory_2</span>
@@ -179,13 +179,13 @@
                 <span class="material-symbols-outlined text-primary-container">grid_view</span>
                 Listado de Colmenas
             </h2>
-            <button id="btnOpenRegistrarColmena" class="bg-primary-container text-[#000000] px-4 py-2 rounded font-label-caps text-label-caps uppercase hover:bg-primary-fixed-dim transition-colors flex items-center gap-2">
+            <button id="btnOpenRegistrarColmena" class="bg-primary-container text-on-primary px-4 py-2 rounded font-label-caps text-label-caps uppercase hover:bg-primary-fixed-dim transition-colors flex items-center gap-2">
                 <span class="material-symbols-outlined text-sm">add</span>
                 Agregar Colmena
             </button>
         </div>
 
-        <div class="col-span-4 md:col-span-12 bg-surface-container-low border border-outline-variant rounded-lg p-4 md:p-6 responsive-table">
+        <div class="col-span-4 md:col-span-12 bg-surface-container-low border border-outline-variant rounded p-4 md:p-6 responsive-table">
             <div class="overflow-x-auto md:overflow-visible">
                 <table class="w-full text-left border-collapse">
                     <thead>
@@ -233,206 +233,228 @@
 </main>
 
 <!-- Delete Modal 1 -->
-<div id="deleteModal1" class="fixed inset-0 z-50 flex modal-backdrop modal-hidden items-center justify-center bg-black/85 p-4">
-    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-md shadow-2xl p-6 text-center space-y-4 modal-container">
-        <span class="material-symbols-outlined text-error text-5xl">delete_forever</span>
-        <h4 class="font-headline-lg text-lg font-bold text-on-surface">¿Eliminar Apiario?</h4>
-        <p class="font-body-md text-body-md text-on-surface-variant">
-            ¿Está seguro de que desea eliminar el apiario <span class="text-error font-semibold">"@Model.Nombre"</span>?
-        </p>
-        <p class="text-sm text-error/80 font-medium">
-            Esta acción eliminará todas las colmenas asignadas.
-        </p>
-        <div class="pt-4 flex justify-center gap-3">
-            <button id="btnCancelDelete1" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2 rounded font-label-caps text-label-caps">
-                Cancelar
+<div id="deleteModal1" class="fixed inset-0 z-[60] flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
+    <div class="bg-surface-container border border-outline-variant rounded w-full max-w-md modal-container shadow-2xl flex flex-col max-h-[75vh] md:max-h-[85vh]">
+        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between shrink-0">
+            <h4 class="font-headline-lg text-lg font-bold text-error flex items-center gap-2">
+                <span class="material-symbols-outlined text-[20px]">delete_forever</span> ¿Eliminar Apiario?
+            </h4>
+            <button type="button" id="btnCancelDelete1Icon" class="text-on-surface-variant hover:text-primary-container transition-colors p-1">
+                <span class="material-symbols-outlined">close</span>
             </button>
-            <button id="btnProceedDelete" class="bg-error-container/30 border border-error text-error hover:bg-error/20 transition-colors px-6 py-2 rounded font-label-caps text-label-caps ">
-                Sí, deseo eliminarlo
-            </button>
+        </div>
+        <div class="p-6 overflow-y-auto grow custom-scrollbar space-y-4 text-center">
+            <p class="font-body-md text-body-md text-on-surface-variant">
+                ¿Está seguro de que desea eliminar el apiario <span class="text-error font-semibold">"@Model.Nombre"</span>?
+            </p>
+            <p class="text-sm text-error/80 font-medium">
+                Esta acción eliminará todas las colmenas asignadas.
+            </p>
+            <div class="pt-4 border-t border-surface-container-highest flex flex-col sm:flex-row justify-center gap-3 mt-4">
+                <button type="button" id="btnCancelDelete1" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex">
+                    Cancelar
+                </button>
+                <button type="button" id="btnProceedDelete" class="bg-error-container/30 border border-error text-error hover:bg-error/20 transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex">
+                    Sí, deseo eliminarlo
+                </button>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- Delete Confirmation Modal 2 -->
-<div id="deleteModal2" class="fixed inset-0 z-50 flex modal-backdrop modal-hidden items-center justify-center bg-black/90 p-4">
-    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-md shadow-2xl p-6 text-center space-y-4 modal-container">
-        <span class="material-symbols-outlined text-error text-5xl animate-pulse">report</span>
-        <h4 class="font-headline-lg text-lg font-bold text-error uppercase tracking-wider">Confirmación Adicional</h4>
-        <p class="font-body-md text-body-md text-on-surface">
-            Por favor, confirme una vez más: ¿realmente desea eliminar permanentemente el apiario <span class="text-primary-container font-semibold">"@Model.Nombre"</span> y todas sus colmenas asociadas?
-        </p>
-        <p class="text-xs text-on-surface-variant/80">
-            Esta es la confirmación definitiva. Presiona continuar para ejecutar la eliminación.
-        </p>
-        <div class="pt-4 flex justify-center gap-3">
-            <button id="btnCancelDelete2" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2 rounded font-label-caps text-label-caps">
-                Cancelar
+<div id="deleteModal2" class="fixed inset-0 z-[60] flex items-center justify-center modal-backdrop bg-black/90 modal-hidden p-4">
+    <div class="bg-surface-container border border-outline-variant rounded w-full max-w-md modal-container shadow-2xl flex flex-col max-h-[75vh] md:max-h-[85vh]">
+        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between shrink-0">
+            <h4 class="font-headline-lg text-lg font-bold text-error uppercase tracking-wider flex items-center gap-2">
+                <span class="material-symbols-outlined text-[20px] animate-pulse">report</span> Confirmación Adicional
+            </h4>
+            <button type="button" id="btnCancelDelete2Icon" class="text-on-surface-variant hover:text-primary-container transition-colors p-1">
+                <span class="material-symbols-outlined">close</span>
             </button>
-            <form asp-action="Eliminar" method="post" id="deleteForm" class="m-0">
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="id" value="@Model.Id" />
-                <button type="submit" class="bg-error text-on-error hover:bg-red-400 transition-colors px-6 py-2 rounded font-label-caps text-label-caps ">
-                    Confirmar y Eliminar
+        </div>
+        <div class="p-6 overflow-y-auto grow custom-scrollbar space-y-4 text-center">
+            <p class="font-body-md text-body-md text-on-surface">
+                Por favor, confirme una vez más: ¿realmente desea eliminar permanentemente el apiario <span class="text-primary-container font-semibold">"@Model.Nombre"</span> y todas sus colmenas asociadas?
+            </p>
+            <p class="text-xs text-on-surface-variant/80">
+                Esta es la confirmación definitiva. Presiona continuar para ejecutar la eliminación.
+            </p>
+            <div class="pt-4 border-t border-surface-container-highest flex flex-col sm:flex-row justify-center gap-3 mt-4">
+                <button type="button" id="btnCancelDelete2" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex">
+                    Cancelar
                 </button>
-            </form>
+                <form asp-action="Eliminar" method="post" id="deleteForm" class="m-0 w-full sm:w-auto flex">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <button type="submit" class="bg-error text-on-error hover:bg-red-400 transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps w-full text-center justify-center flex">
+                        Confirmar y Eliminar
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- Edit Note Modal -->
-<div id="editarNotaModal" class="fixed inset-0 bg-black/60 modal-backdrop flex modal-hidden items-center justify-center z-50 p-4">
-    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-md shadow-2xl overflow-hidden modal-container">
-        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between">
+<div id="editarNotaModal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
+    <div class="bg-surface-container border border-outline-variant rounded w-full max-w-md modal-container shadow-2xl flex flex-col max-h-[75vh] md:max-h-[85vh]">
+        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between shrink-0">
             <h4 class="font-headline-lg text-lg font-bold text-on-surface">Editar Notas de Estado</h4>
-            <button id="btnCancelEditarNotaIcon" class="text-on-surface-variant hover:text-primary-container transition-colors">
+            <button type="button" id="btnCancelEditarNotaIcon" class="text-on-surface-variant hover:text-primary-container transition-colors p-1">
                 <span class="material-symbols-outlined">close</span>
             </button>
         </div>
-        <form asp-action="EditarNota" method="post" class="p-6 space-y-4">
-            @Html.AntiForgeryToken()
-            <input type="hidden" name="id" value="@Model.Id" />
-            <div>
-                <label for="NotasEstado" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Notas de Estado</label>
-                <textarea id="NotasEstado" name="NotasEstado" rows="4" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors resize-none">@Model.NotasEstado</textarea>
-            </div>
-            <div class="pt-4 border-t border-surface-container-highest flex justify-end gap-3">
-                <button type="button" id="btnCancelEditarNota" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2.5 rounded font-label-caps text-label-caps">
-                    Cancelar
-                </button>
-                <button type="submit" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps ">
-                    Guardar Nota
-                </button>
-            </div>
-        </form>
+        <div class="p-6 overflow-y-auto grow custom-scrollbar">
+            <form asp-action="EditarNota" method="post" class="space-y-4">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Id" />
+                <div>
+                    <label for="NotasEstado" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Notas de Estado</label>
+                    <textarea id="NotasEstado" name="NotasEstado" rows="4" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors resize-none">@Model.NotasEstado</textarea>
+                </div>
+                <div class="pt-4 border-t border-surface-container-highest flex flex-col sm:flex-row justify-end gap-3 mt-4">
+                    <button type="button" id="btnCancelEditarNota" class="border border-outline text-on-surface hover:bg-surface-container-high px-5 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex transition-colors">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="bg-primary-container text-on-primary hover:bg-primary-fixed px-6 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex transition-colors">
+                        Guardar Nota
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
 <!-- Edit Apiario Modal -->
-<div id="editarApiarioModal" class="fixed inset-0 bg-black/60 modal-backdrop flex modal-hidden items-center justify-center z-50 p-4">
-    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-md shadow-2xl overflow-hidden modal-container">
-        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between">
+<div id="editarApiarioModal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
+    <div class="bg-surface-container border border-outline-variant rounded w-full max-w-md modal-container shadow-2xl flex flex-col max-h-[75vh] md:max-h-[85vh]">
+        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between shrink-0">
             <h4 class="font-headline-lg text-lg font-bold text-on-surface">Editar Detalles del Apiario</h4>
-            <button id="btnCancelEditarApiarioIcon" class="text-on-surface-variant hover:text-primary-container transition-colors">
+            <button type="button" id="btnCancelEditarApiarioIcon" class="text-on-surface-variant hover:text-primary-container transition-colors p-1">
                 <span class="material-symbols-outlined">close</span>
             </button>
         </div>
-        <form asp-action="EditarApiario" method="post" class="p-6 space-y-4">
-            @Html.AntiForgeryToken()
-            <input type="hidden" name="id" value="@Model.Id" />
-            <div>
-                <label for="Nombre" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Nombre *</label>
-                <input type="text" id="Nombre" name="Nombre" value="@Model.Nombre" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
-            </div>
-            <div>
-                <label for="StringIdentificador" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Identificador</label>
-                <input type="text" id="StringIdentificador" name="StringIdentificador" value="@Model.StringIdentificador" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
-            </div>
-            <div>
-                <label for="UbicacionTexto" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Ubicación Texto *</label>
-                <input type="text" id="UbicacionTexto" name="UbicacionTexto" value="@Model.UbicacionTexto" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
-            </div>
-            <div>
-                <label for="Departamento" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Departamento</label>
-                <input type="text" id="Departamento" name="Departamento" value="@Model.Departamento" placeholder="Ej. Flores" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
-            </div>
-            <div class="grid grid-cols-2 gap-4">
+        <div class="p-6 overflow-y-auto grow custom-scrollbar">
+            <form asp-action="EditarApiario" method="post" class="space-y-4">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Id" />
                 <div>
-                    <label for="SeccionPolicial" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Sección Policial</label>
-                    <input type="text" id="SeccionPolicial" name="SeccionPolicial" value="@Model.SeccionPolicial" placeholder="Ej. 6" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                    <label for="Nombre" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Nombre *</label>
+                    <input type="text" id="Nombre" name="Nombre" value="@Model.Nombre" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
                 </div>
                 <div>
-                    <label for="Paraje" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Paraje</label>
-                    <input type="text" id="Paraje" name="Paraje" value="@Model.Paraje" placeholder="Ej. Talar" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                    <label for="StringIdentificador" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Identificador</label>
+                    <input type="text" id="StringIdentificador" name="StringIdentificador" value="@Model.StringIdentificador" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
                 </div>
-            </div>
-            <div>
-                <label for="UbicacionCoordenadas" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Coordenadas (Lat, Lng)</label>
-                <input type="text" id="UbicacionCoordenadas" name="UbicacionCoordenadas" value="@Model.UbicacionCoordenadas" placeholder="Ej. 34°05'12.1&quot;S 70°45'22.4&quot;W" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
-            </div>
-            <div class="pt-4 border-t border-surface-container-highest flex justify-end gap-3">
-                <button type="button" id="btnCancelEditarApiario" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2.5 rounded font-label-caps text-label-caps">
-                    Cancelar
-                </button>
-                <button type="submit" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps">
-                    Guardar Cambios
-                </button>
-            </div>
-        </form>
+                <div>
+                    <label for="UbicacionTexto" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Ubicación Texto *</label>
+                    <input type="text" id="UbicacionTexto" name="UbicacionTexto" value="@Model.UbicacionTexto" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                </div>
+                <div>
+                    <label for="Departamento" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Departamento</label>
+                    <input type="text" id="Departamento" name="Departamento" value="@Model.Departamento" placeholder="Ej. Flores" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="SeccionPolicial" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Sección Policial</label>
+                        <input type="text" id="SeccionPolicial" name="SeccionPolicial" value="@Model.SeccionPolicial" placeholder="Ej. 6" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                    </div>
+                    <div>
+                        <label for="Paraje" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Paraje</label>
+                        <input type="text" id="Paraje" name="Paraje" value="@Model.Paraje" placeholder="Ej. Talar" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                    </div>
+                </div>
+                <div>
+                    <label for="UbicacionCoordenadas" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Coordenadas (Lat, Lng)</label>
+                    <input type="text" id="UbicacionCoordenadas" name="UbicacionCoordenadas" value="@Model.UbicacionCoordenadas" placeholder="Ej. 34°05'12.1&quot;S 70°45'22.4&quot;W" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                </div>
+                <div class="pt-4 border-t border-surface-container-highest flex flex-col sm:flex-row justify-end gap-3 mt-4">
+                    <button type="button" id="btnCancelEditarApiario" class="border border-outline text-on-surface hover:bg-surface-container-high px-5 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex transition-colors">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="bg-primary-container text-on-primary hover:bg-primary-fixed px-6 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex transition-colors">
+                        Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
 @section Scripts {
     <!-- Registrar Colmena Modal -->
-<div id="registrarColmenaModal" class="fixed inset-0 bg-black/60 modal-backdrop flex modal-hidden items-center justify-center z-50 p-4">
-    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-md shadow-2xl overflow-hidden modal-container">
-        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between">
+<div id="registrarColmenaModal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
+    <div class="bg-surface-container border border-outline-variant rounded w-full max-w-md modal-container shadow-2xl flex flex-col max-h-[75vh] md:max-h-[85vh]">
+        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between shrink-0">
             <h4 class="font-headline-lg text-lg font-bold text-on-surface">Registrar Nueva Colmena</h4>
-            <button id="btnCancelRegistrarColmenaIcon" class="text-on-surface-variant hover:text-primary-container transition-colors">
+            <button type="button" id="btnCancelRegistrarColmenaIcon" class="text-on-surface-variant hover:text-primary-container transition-colors p-1">
                 <span class="material-symbols-outlined">close</span>
             </button>
         </div>
-        <form asp-action="RegistrarNueva" asp-controller="Colmenas" method="post" class="p-6 space-y-4">
-            @Html.AntiForgeryToken()
-            <input type="hidden" name="returnUrl" value="/Apiarios/Detalles/@Model.Id" />
-            
-            <div>
-                <label for="Identificador" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Identificador (Opcional)</label>
-                <input type="text" id="Identificador" name="Identificador" placeholder="#HIVE-0123" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
-            </div>
-            <div>
-                <label for="ApiarioDummy" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Apiario</label>
-                <input type="text" id="ApiarioDummy" value="@Model.Nombre" disabled class="w-full bg-surface-variant border border-outline-variant px-4 py-2.5 rounded text-on-surface-variant outline-none cursor-not-allowed" />
-                <input type="hidden" name="ApiarioId" value="@Model.Id" />
-            </div>
-            <div>
-                <label for="CantidadAbejas" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Cantidad de Abejas (Aprox.)</label>
-                <input type="number" id="CantidadAbejas" name="CantidadAbejas" placeholder="40000" required min="0" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
-            </div>
-            <div>
-                <label for="UbicacionIntraApiario" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Ubicación (Ej: Fila 1, Pos 3)</label>
-                <input type="text" id="UbicacionIntraApiario" name="UbicacionIntraApiario" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
-            </div>
-            <div class="grid grid-cols-2 gap-4">
+        <div class="p-6 overflow-y-auto grow custom-scrollbar">
+            <form asp-action="RegistrarNueva" asp-controller="Colmenas" method="post" class="space-y-4">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="returnUrl" value="/Apiarios/Detalles/@Model.Id" />
+                
                 <div>
-                    <label for="EstadoReina" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Estado Reina</label>
-                    <select id="EstadoReina" name="EstadoReina" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
-                        <option value="Presente" selected>Presente</option>
-                        <option value="Ausente">Ausente</option>
-                    </select>
+                    <label for="Identificador" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Identificador (Opcional)</label>
+                    <input type="text" id="Identificador" name="Identificador" placeholder="#HIVE-0123" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
                 </div>
                 <div>
-                    <label for="ComportamientoAbejas" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Comportamiento</label>
-                    <select id="ComportamientoAbejas" name="ComportamientoAbejas" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
-                        <option value="Dócil">Dócil</option>
-                        <option value="Defensivo">Defensivo</option>
-                        <option value="Agresivo">Agresivo</option>
-                    </select>
+                    <label for="ApiarioDummy" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Apiario</label>
+                    <input type="text" id="ApiarioDummy" value="@Model.Nombre" disabled class="w-full bg-surface-variant border border-outline-variant px-4 py-2.5 rounded text-on-surface-variant outline-none cursor-not-allowed" />
+                    <input type="hidden" name="ApiarioId" value="@Model.Id" />
                 </div>
-            </div>
-            <div class="flex items-center gap-2 mt-4">
-                <input type="checkbox" id="EsPiloto" name="EsPiloto" value="true" class="w-4 h-4 text-primary-container bg-background border-outline-variant rounded focus:ring-primary-container focus:ring-2" />
-                <label for="EsPiloto" class="font-body-md text-body-md text-on-surface">Convertir en Colmena Piloto</label>
-            </div>
-            <div class="flex items-center gap-2 mt-2">
-                <input type="checkbox" id="EsNucleo" name="EsNucleo" value="true" class="w-4 h-4 text-primary-container bg-background border-outline-variant rounded focus:ring-primary-container focus:ring-2" />
-                <label for="EsNucleo" class="font-body-md text-body-md text-on-surface">¿Es un Núcleo?</label>
-            </div>
-            <div class="bg-primary-container/10 border border-primary-container rounded p-3 flex items-start gap-3 mt-4">
-                <span class="material-symbols-outlined text-primary-container text-[20px] shrink-0">info</span>
-                <p class="font-body-sm text-body-sm text-on-surface text-left">
-                    Al guardar la colmena se generará un <strong class="text-primary-container">código de 6 dígitos</strong>. Debes asegurarte de anotarlo a mano con marcador visible en la colmena física para poder usar el escáner.
-                </p>
-            </div>
-            <div class="pt-4 border-t border-surface-container-highest flex justify-end gap-3 mt-6">
-                <button type="button" id="btnCancelRegistrarColmena" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2.5 rounded font-label-caps text-label-caps">
-                    Cancelar
-                </button>
-                <button type="submit" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps ">
-                    Guardar Colmena
-                </button>
-            </div>
-        </form>
+                <div>
+                    <label for="CantidadAbejas" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Cantidad de Abejas (Aprox.)</label>
+                    <input type="number" id="CantidadAbejas" name="CantidadAbejas" placeholder="40000" required min="0" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                </div>
+                <div>
+                    <label for="UbicacionIntraApiario" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Ubicación (Ej: Fila 1, Pos 3)</label>
+                    <input type="text" id="UbicacionIntraApiario" name="UbicacionIntraApiario" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="EstadoReina" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Estado Reina</label>
+                        <select id="EstadoReina" name="EstadoReina" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
+                            <option value="Presente" selected>Presente</option>
+                            <option value="Ausente">Ausente</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="ComportamientoAbejas" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Comportamiento</label>
+                        <select id="ComportamientoAbejas" name="ComportamientoAbejas" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
+                            <option value="Dócil">Dócil</option>
+                            <option value="Defensivo">Defensivo</option>
+                            <option value="Agresivo">Agresivo</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 mt-4">
+                    <input type="checkbox" id="EsPiloto" name="EsPiloto" value="true" class="w-4 h-4 text-primary-container bg-background border-outline-variant rounded focus:ring-primary-container focus:ring-2" />
+                    <label for="EsPiloto" class="font-body-md text-body-md text-on-surface">Convertir en Colmena Piloto</label>
+                </div>
+                <div class="flex items-center gap-2 mt-2">
+                    <input type="checkbox" id="EsNucleo" name="EsNucleo" value="true" class="w-4 h-4 text-primary-container bg-background border-outline-variant rounded focus:ring-primary-container focus:ring-2" />
+                    <label for="EsNucleo" class="font-body-md text-body-md text-on-surface">¿Es un Núcleo?</label>
+                </div>
+                <div class="bg-primary-container/10 border border-primary-container rounded p-3 flex items-start gap-3 mt-4">
+                    <span class="material-symbols-outlined text-primary-container text-[20px] shrink-0">info</span>
+                    <p class="font-body-sm text-body-sm text-on-surface text-left">
+                        Al guardar la colmena se generará un <strong class="text-primary-container">código de 6 dígitos</strong>. Debes asegurarte de anotarlo a mano con marcador visible en la colmena física para poder usar el escáner.
+                    </p>
+                </div>
+                <div class="pt-4 border-t border-surface-container-highest flex flex-col sm:flex-row justify-end gap-3 mt-6">
+                    <button type="button" id="btnCancelRegistrarColmena" class="border border-outline text-on-surface hover:bg-surface-container-high px-5 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex transition-colors">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="bg-primary-container text-on-primary hover:bg-primary-fixed px-6 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex transition-colors">
+                        Guardar Colmena
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -492,7 +514,7 @@
                                 <span>${c.identificador || 'S/N'}</span>
                                 <span class="text-[10px] text-on-surface-variant mt-0.5 leading-none">ID: ${c.codigoEscaneo}</span>
                             </div>
-                            ${c.esPiloto ? '<div class="w-6 h-6 shrink-0 flex items-center justify-center border border-outline-variant bg-surface-container-high rounded-sm text-on-surface font-label-caps text-[12px]" title="Colmena Piloto">P</div>' : ''}
+                            ${c.esPiloto ? '<div class="w-6 h-6 shrink-0 flex items-center justify-center border border-outline-variant bg-surface-container-high rounded text-on-surface font-label-caps text-[12px]" title="Colmena Piloto">P</div>' : ''}
                         </div>
                     </td>
                     <td data-label="APIARIO" class="p-4 border-b border-surface-container-highest md:border-none">${apiarioNombre}</td>

@@ -52,7 +52,7 @@
 
                     var barColor = isOverdue ? "bg-error" : "bg-primary-container";
 
-                    <article class="bg-surface-container border @(isOverdue ? "border-error" : "border-surface-variant") rounded-lg p-6 flex flex-col gap-6 relative overflow-hidden group hover:border-outline transition-colors">
+                    <article class="bg-surface-container border @(isOverdue ? "border-error" : "border-surface-variant") rounded p-6 flex flex-col gap-6 relative overflow-hidden group hover:border-outline transition-colors">
                         @if(isOverdue)
                         {
                             <div class="absolute top-0 left-0 w-full h-1 bg-error"></div>
@@ -71,7 +71,7 @@
                                 <button onclick="toggleDropdown('dropdown-@mov.Id')" class="text-on-surface-variant hover:text-primary-container transition-colors p-1 rounded-full outline-none">
                                     <span class="material-symbols-outlined">more_vert</span>
                                 </button>
-                                <div id="dropdown-@mov.Id" class="hidden absolute right-0 mt-2 w-56 bg-surface-container-high border border-outline-variant rounded-lg shadow-xl z-10 py-1 overflow-hidden">
+                                <div id="dropdown-@mov.Id" class="hidden absolute right-0 mt-2 w-56 bg-surface-container-high border border-outline-variant rounded shadow-xl z-10 py-1 overflow-hidden">
                                     <button onclick="openEditDateModal(@mov.Id, '@mov.FechaRegreso.ToString("yyyy-MM-dd")')" class="w-full text-left px-4 py-3 font-body-sm text-on-surface hover:bg-surface-variant flex items-center gap-2">
                                         <span class="material-symbols-outlined text-[18px]">edit_calendar</span> Editar fecha límite
                                     </button>
@@ -92,7 +92,7 @@
                             </div>
                         </div>
 
-                        <div class="flex items-center gap-4 bg-surface-container-highest p-4 rounded-lg border border-outline-variant">
+                        <div class="flex items-center gap-4 bg-surface-container-highest p-4 rounded border border-outline-variant">
                             <div class="flex-1 flex flex-col">
                                 <span class="font-label-caps text-label-caps text-on-surface-variant mb-1">ORIGEN</span>
                                 <span class="font-body-md text-body-md text-on-surface">@mov.ApiarioOrigen.Nombre</span>
@@ -146,8 +146,8 @@
         }
         else
         {
-            <div class="bg-surface-container border border-surface-variant rounded-lg overflow-hidden">
-                <div class="overflow-x-auto">
+            <div class="bg-surface-container border border-surface-variant rounded overflow-hidden">
+                <div class="overflow-x-auto md:overflow-visible responsive-table">
                     <table class="w-full text-left border-collapse" id="historyTable">
                         <thead>
                             <tr class="border-b border-surface-variant bg-surface-container-low">
@@ -164,15 +164,15 @@
                             @foreach (var mov in Model.Pasados)
                             {
                                 <tr class="border-b border-surface-variant hover:bg-surface-container-high transition-colors history-row">
-                                    <td class="p-4 font-body-sm text-on-surface whitespace-nowrap">
+                                    <td data-label="ID Colmena" class="p-4 font-body-sm text-on-surface whitespace-nowrap md:whitespace-normal">
                                         @(string.IsNullOrEmpty(mov.Colmena.Identificador) ? mov.Colmena.CodigoEscaneo : mov.Colmena.Identificador)
                                     </td>
-                                    <td class="p-4 font-body-sm text-on-surface-variant whitespace-nowrap">@mov.ApiarioOrigen.Nombre</td>
-                                    <td class="p-4 font-body-sm text-on-surface-variant whitespace-nowrap">@mov.ApiarioDestino.Nombre</td>
-                                    <td class="p-4 font-body-sm text-on-surface-variant max-w-[200px] truncate" title="@mov.Razon">@mov.Razon</td>
-                                    <td class="p-4 font-body-sm text-on-surface-variant whitespace-nowrap">@mov.FechaSalida.ToString("dd MMM yyyy")</td>
-                                    <td class="p-4 font-body-sm text-on-surface-variant whitespace-nowrap">@mov.FechaRegreso.ToString("dd MMM yyyy")</td>
-                                    <td class="p-4 font-body-sm whitespace-nowrap text-right">
+                                    <td data-label="Origen" class="p-4 font-body-sm text-on-surface-variant whitespace-nowrap md:whitespace-normal">@mov.ApiarioOrigen.Nombre</td>
+                                    <td data-label="Destino" class="p-4 font-body-sm text-on-surface-variant whitespace-nowrap md:whitespace-normal">@mov.ApiarioDestino.Nombre</td>
+                                    <td data-label="Razón" class="p-4 font-body-sm text-on-surface-variant max-w-[200px] truncate whitespace-nowrap md:whitespace-normal" title="@mov.Razon">@mov.Razon</td>
+                                    <td data-label="Salida" class="p-4 font-body-sm text-on-surface-variant whitespace-nowrap md:whitespace-normal">@mov.FechaSalida.ToString("dd MMM yyyy")</td>
+                                    <td data-label="Retorno" class="p-4 font-body-sm text-on-surface-variant whitespace-nowrap md:whitespace-normal">@mov.FechaRegreso.ToString("dd MMM yyyy")</td>
+                                    <td data-label="Estado" class="p-4 font-body-sm whitespace-nowrap text-right">
                                         @if(mov.Estado == "Completado")
                                         {
                                             <span class="inline-flex items-center gap-1 text-primary-container bg-surface-container-highest px-2 py-1 rounded font-label-caps text-label-caps">
@@ -209,15 +209,15 @@
 </div>
 
 <!-- Modal Registrar Movimiento -->
-<div id="modalRegistro" class="fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-4 modal-backdrop modal-hidden">
-    <div class="bg-surface border border-outline-variant rounded-lg w-full max-w-lg shadow-2xl flex flex-col max-h-[90vh] modal-container">
-        <div class="flex justify-between items-center p-6 border-b border-surface-variant">
-            <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Nuevo Movimiento</h2>
-            <button onclick="closeModal('modalRegistro')" class="text-on-surface-variant hover:text-on-surface rounded-full p-1">
+<div id="modalRegistro" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop bg-black/75 modal-hidden p-4">
+    <div class="bg-surface-container border border-outline-variant rounded w-full max-w-lg modal-container shadow-2xl flex flex-col max-h-[75vh] md:max-h-[85vh]">
+        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between shrink-0">
+            <h4 class="font-headline-lg text-lg font-bold text-on-surface">Nuevo Movimiento</h4>
+            <button type="button" onclick="closeModal('modalRegistro')" class="text-on-surface-variant hover:text-primary-container transition-colors p-1">
                 <span class="material-symbols-outlined">close</span>
             </button>
         </div>
-        <div class="p-6 overflow-y-auto">
+        <div class="p-6 overflow-y-auto grow custom-scrollbar">
             <form id="formRegistro" class="flex flex-col gap-4">
                 <div class="flex flex-col gap-2">
                     <label class="font-label-caps text-label-caps text-on-surface">Apiario de Origen</label>
@@ -258,55 +258,66 @@
                     <input type="date" id="fechaRegresoInput" onchange="calcularDuracion()" class="bg-surface-container-high border border-outline-variant text-on-surface font-body-md rounded p-3 focus:outline-none focus:border-primary-container w-full" style="color-scheme: dark;" required />
                     <span id="duracionText" class="font-body-sm text-primary-container hidden mt-1"></span>
                 </div>
+                
+                <div class="pt-4 border-t border-surface-container-highest flex flex-col sm:flex-row justify-end gap-3 mt-4">
+                    <button type="button" onclick="closeModal('modalRegistro')" class="border border-outline text-on-surface hover:bg-surface-container-high px-5 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex transition-colors">
+                        Cancelar
+                    </button>
+                    <button type="button" onclick="submitRegistro()" id="btnSubmitRegistro" class="bg-primary-container text-on-primary hover:bg-primary-fixed px-6 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex transition-colors">
+                        Registrar
+                    </button>
+                </div>
             </form>
-        </div>
-        <div class="p-6 border-t border-surface-variant flex justify-end gap-4">
-            <button onclick="closeModal('modalRegistro')" class="font-label-caps text-label-caps text-on-surface px-6 py-3 rounded hover:bg-surface-variant transition-colors border border-outline-variant">
-                Cancelar
-            </button>
-            <button onclick="submitRegistro()" id="btnSubmitRegistro" class="bg-primary-container text-on-primary font-label-caps text-label-caps px-6 py-3 rounded hover:bg-primary-fixed transition-colors">
-                Registrar
-            </button>
         </div>
     </div>
 </div>
 
 <!-- Modal Editar Fecha -->
-<div id="modalEditDate" class="fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-4 modal-backdrop modal-hidden">
-    <div class="bg-surface border border-outline-variant rounded-lg w-full max-w-sm shadow-2xl flex flex-col modal-container">
-        <div class="p-6">
-            <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-4">Editar Fecha Límite</h2>
+<div id="modalEditDate" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop bg-black/75 modal-hidden p-4">
+    <div class="bg-surface-container border border-outline-variant rounded w-full max-w-sm modal-container shadow-2xl flex flex-col max-h-[75vh] md:max-h-[85vh]">
+        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between shrink-0">
+            <h4 class="font-headline-lg text-lg font-bold text-on-surface">Editar Fecha Límite</h4>
+            <button type="button" onclick="closeModal('modalEditDate')" class="text-on-surface-variant hover:text-primary-container transition-colors p-1">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="p-6 overflow-y-auto grow custom-scrollbar">
             <input type="hidden" id="editMovimientoId" />
             <div class="flex flex-col gap-2">
                 <label class="font-label-caps text-label-caps text-on-surface">Nueva Fecha</label>
                 <input type="date" id="editFechaInput" class="bg-surface-container-high border border-outline-variant text-on-surface font-body-md rounded p-3 focus:outline-none focus:border-primary-container w-full" style="color-scheme: dark;" required />
             </div>
-        </div>
-        <div class="p-4 border-t border-surface-variant flex justify-end gap-3 bg-surface-container-low">
-            <button onclick="closeModal('modalEditDate')" class="font-label-caps text-label-caps text-on-surface px-4 py-2 rounded hover:bg-surface-variant transition-colors">
-                Cancelar
-            </button>
-            <button onclick="submitEditDate()" id="btnSubmitEditDate" class="bg-primary-container text-on-primary font-label-caps text-label-caps px-4 py-2 rounded hover:bg-primary-fixed transition-colors">
-                Guardar
-            </button>
+            <div class="pt-4 border-t border-surface-container-highest flex flex-col sm:flex-row justify-end gap-3 mt-6">
+                <button type="button" onclick="closeModal('modalEditDate')" class="border border-outline text-on-surface hover:bg-surface-container-high px-5 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex transition-colors">
+                    Cancelar
+                </button>
+                <button type="button" onclick="submitEditDate()" id="btnSubmitEditDate" class="bg-primary-container text-on-primary hover:bg-primary-fixed px-6 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex transition-colors">
+                    Guardar
+                </button>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- Modal de Confirmación Genérico / Alerta -->
-<div id="modalConfirmacion" class="fixed inset-0 bg-black/85 flex items-center justify-center z-[60] p-4 modal-backdrop modal-hidden">
-    <div class="bg-surface border border-outline-variant rounded-lg w-full max-w-sm shadow-2xl flex flex-col modal-container">
-        <div class="p-6 pb-4">
-            <h2 id="confirmTitle" class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-2">Confirmación</h2>
-            <p id="confirmMessage" class="font-body-md text-on-surface-variant">¿Estás seguro?</p>
+<div id="modalConfirmacion" class="fixed inset-0 z-[60] flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
+    <div class="bg-surface-container border border-outline-variant rounded w-full max-w-sm modal-container shadow-2xl flex flex-col max-h-[75vh] md:max-h-[85vh]">
+        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between shrink-0">
+            <h4 id="confirmTitle" class="font-headline-lg text-lg font-bold text-on-surface">Confirmación</h4>
+            <button type="button" onclick="closeConfirmModal()" class="text-on-surface-variant hover:text-primary-container transition-colors p-1">
+                <span class="material-symbols-outlined">close</span>
+            </button>
         </div>
-        <div class="p-4 flex justify-end gap-3 bg-surface-container-low border-t border-surface-variant rounded-b-lg">
-            <button id="btnCancelConfirm" onclick="closeConfirmModal()" class="font-label-caps text-label-caps text-on-surface px-4 py-2 rounded hover:bg-surface-variant transition-colors">
-                Cancelar
-            </button>
-            <button id="btnConfirmAction" class="font-label-caps text-label-caps px-4 py-2 rounded transition-colors">
-                Confirmar
-            </button>
+        <div class="p-6 overflow-y-auto grow custom-scrollbar">
+            <p id="confirmMessage" class="font-body-md text-on-surface-variant">¿Estás seguro?</p>
+            <div class="pt-4 border-t border-surface-container-highest flex flex-col sm:flex-row justify-end gap-3 mt-6">
+                <button type="button" id="btnCancelConfirm" onclick="closeConfirmModal()" class="border border-outline text-on-surface hover:bg-surface-container-high px-5 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex transition-colors">
+                    Cancelar
+                </button>
+                <button type="button" id="btnConfirmAction" class="bg-primary-container text-on-primary hover:bg-primary-fixed px-6 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex transition-colors">
+                    Confirmar
+                </button>
+            </div>
         </div>
     </div>
 </div>

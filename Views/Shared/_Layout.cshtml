@@ -22,8 +22,8 @@
             isActive = currentController == "Mas" && currentAction == "Movimientos";
         }
         return isActive 
-            ? "px-4 py-2 font-label-caps text-label-caps text-primary-container bg-surface-container-high rounded-lg flex items-center gap-2 border-b-2 border-primary-container"
-            : "px-4 py-2 font-label-caps text-label-caps text-on-surface-variant hover:text-primary-container transition-colors rounded-lg hover:bg-surface-container-high flex items-center gap-2";
+            ? "px-4 py-2 font-label-caps text-label-caps text-primary-container bg-surface-container-high rounded flex items-center gap-2 border-b-2 border-primary-container"
+            : "px-4 py-2 font-label-caps text-label-caps text-on-surface-variant hover:text-primary-container transition-colors rounded hover:bg-surface-container-high flex items-center gap-2";
     }
 
     string GetDropdownItemClass(string controller, string action)
@@ -41,8 +41,8 @@
                      || currentController == "Informes"
                      || currentController == "Admin";
         return isActive
-            ? "px-4 py-2 font-label-caps text-label-caps text-primary-container bg-surface-container-high rounded-lg flex items-center gap-2 border-b-2 border-primary-container"
-            : "px-4 py-2 font-label-caps text-label-caps text-on-surface-variant hover:text-primary-container transition-colors rounded-lg hover:bg-surface-container-high flex items-center gap-2";
+            ? "px-4 py-2 font-label-caps text-label-caps text-primary-container bg-surface-container-high rounded flex items-center gap-2 border-b-2 border-primary-container"
+            : "px-4 py-2 font-label-caps text-label-caps text-on-surface-variant hover:text-primary-container transition-colors rounded hover:bg-surface-container-high flex items-center gap-2";
     }
 
     string GetIconStyle(string controller, string? action = null)
@@ -228,6 +228,8 @@
         }
         .modal-container {
             transition: transform 0.25s ease-out, opacity 0.25s ease-out;
+            max-height: 90vh;
+            overflow-y: auto !important;
         }
         .modal-hidden {
             opacity: 0;
@@ -270,7 +272,7 @@
                                 <span class="material-symbols-outlined text-[18px]">inventory</span> Inventario
                             </a>
                             <a asp-controller="Mas" asp-action="Finanzacion" class="@GetDropdownItemClass("Mas", "Finanzacion")">
-                                <span class="material-symbols-outlined text-[18px]">payments</span> Cálculo de Costos
+                                <span class="material-symbols-outlined text-[18px]">payments</span> Finanzación
                             </a>
                             <a asp-controller="Informes" asp-action="Index" class="@GetDropdownItemClass("Informes", "Index")">
                                 <span class="material-symbols-outlined text-[18px]">assessment</span> Informes
@@ -299,7 +301,7 @@
                     </div>
                 </div>
                 <form asp-controller="Account" asp-action="Logout" method="post" class="inline">
-                    <button type="submit" class="text-on-surface-variant hover:text-error transition-colors focus:ring-2 focus:ring-error outline-none rounded-full p-1 ml-2" title="Cerrar sesión">
+                    <button type="submit" class="text-on-surface-variant hover:text-error transition-colors focus:ring-2 focus:ring-error outline-none rounded p-1 ml-2" title="Cerrar sesión">
                         <span class="material-symbols-outlined">logout</span>
                     </button>
                 </form>
@@ -340,7 +342,7 @@
                     <span class="material-symbols-outlined text-[18px]">inventory</span> Inventario
                 </a>
                 <a asp-controller="Mas" asp-action="Finanzacion" class="@GetDropdownItemClass("Mas", "Finanzacion") py-3">
-                    <span class="material-symbols-outlined text-[18px]">payments</span> Cálculo de Costos
+                    <span class="material-symbols-outlined text-[18px]">payments</span> Finanzación
                 </a>
                 <a asp-controller="Informes" asp-action="Index" class="@GetDropdownItemClass("Informes", "Index") py-3">
                     <span class="material-symbols-outlined text-[18px]">assessment</span> Informes

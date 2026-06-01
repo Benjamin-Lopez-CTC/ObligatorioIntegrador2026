@@ -3,7 +3,7 @@
     ViewData["Title"] = "Dashboard";
 }
 
-<div class="px-margin-desktop py-8 max-w-container-max mx-auto space-y-8 animate-fade-in">
+<div class="px-margin-mobile md:px-margin-desktop py-8 max-w-container-max mx-auto space-y-8 animate-fade-in">
     <!-- Header -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
@@ -11,7 +11,7 @@
             <p class="font-body-md text-on-surface-variant">Estado actual, alertas y métricas clave de tu operación apícola.</p>
         </div>
         <div class="flex gap-4">
-            <a href="/Home/DescargarReporte" target="_blank" class="bg-primary-container text-on-primary-container font-label-caps text-label-caps py-2.5 px-6 rounded hover:bg-primary-fixed transition-colors flex items-center gap-2">
+            <a href="/Home/DescargarReporte" target="_blank" class="bg-primary-container text-on-primary font-label-caps text-label-caps py-2.5 px-6 rounded hover:bg-primary-fixed transition-colors flex items-center gap-2">
                 <span class="material-symbols-outlined text-sm">download</span> Descargar Reporte
             </a>
         </div>
@@ -20,7 +20,7 @@
     <!-- KPIs Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <!-- Apiarios -->
-        <div class="bg-surface-container border border-outline-variant p-6 rounded-lg flex flex-col justify-between hover:border-primary-container transition-colors">
+        <div class="bg-surface-container border border-outline-variant p-6 rounded flex flex-col justify-between hover:border-primary-container transition-colors">
             <div class="flex items-center gap-2 mb-4">
                 <span class="material-symbols-outlined text-primary-container">location_on</span>
                 <span class="font-label-caps text-label-caps text-on-surface-variant">TOTAL APIARIOS</span>
@@ -29,7 +29,7 @@
         </div>
 
         <!-- Colmenas -->
-        <div class="bg-surface-container border border-outline-variant p-6 rounded-lg flex flex-col justify-between hover:border-primary-container transition-colors">
+        <div class="bg-surface-container border border-outline-variant p-6 rounded flex flex-col justify-between hover:border-primary-container transition-colors">
             <div class="flex items-center gap-2 mb-4">
                 <span class="material-symbols-outlined text-primary-container">agriculture</span>
                 <span class="font-label-caps text-label-caps text-on-surface-variant">TOTAL COLMENAS ACTIVAS</span>
@@ -38,7 +38,7 @@
         </div>
 
         <!-- Produccion -->
-        <div class="bg-surface-container border border-outline-variant p-6 rounded-lg flex flex-col justify-between hover:border-primary-container transition-colors">
+        <div class="bg-surface-container border border-outline-variant p-6 rounded flex flex-col justify-between hover:border-primary-container transition-colors">
             <div class="flex items-center gap-2 mb-4">
                 <span class="material-symbols-outlined text-primary-container">inventory_2</span>
                 <span class="font-label-caps text-label-caps text-on-surface-variant">MIEL ACUMULADA</span>
@@ -47,7 +47,7 @@
         </div>
 
         <!-- Alertas -->
-        <div class="bg-error-container border border-error p-6 rounded-lg flex flex-col justify-between hover:border-error transition-colors">
+        <div class="bg-error-container border border-error p-6 rounded flex flex-col justify-between hover:border-error transition-colors">
             <div class="flex items-center gap-2 mb-4">
                 <span class="material-symbols-outlined text-error">warning</span>
                 <span class="font-label-caps text-label-caps text-error">ALERTAS ACTIVAS</span>
@@ -61,7 +61,7 @@
         
         <!-- Left Col: Tendencias -->
         <div class="lg:col-span-2">
-            <div class="bg-surface-container border border-outline-variant p-6 rounded-lg h-full flex flex-col">
+            <div class="bg-surface-container border border-outline-variant p-6 rounded h-full flex flex-col">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="font-display text-headline-sm text-primary">Tendencias de Producción (Últimos 6 meses)</h3>
                 </div>
@@ -85,7 +85,7 @@
 
         <!-- Right Col: Colmenas en Alerta -->
         <div class="lg:col-span-1">
-            <div class="bg-surface-container border border-outline-variant p-6 rounded-lg h-full flex flex-col">
+            <div class="bg-surface-container border border-outline-variant p-6 rounded h-full flex flex-col">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="font-display text-headline-sm text-primary">Colmenas en Alerta</h3>
                     <a href="/Apiarios" class="text-primary-container text-sm font-label-caps hover:underline">Ver todas</a>
@@ -125,7 +125,7 @@
 
         <!-- Bottom Row Left: Movimientos Vigentes -->
         <div class="lg:col-span-2">
-            <div class="bg-surface-container border border-outline-variant p-6 rounded-lg h-full">
+            <div class="bg-surface-container border border-outline-variant p-6 rounded h-full">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="font-display text-headline-sm text-primary">Movimientos Activos</h3>
                     <a href="/Mas/Movimientos" class="text-primary-container text-sm font-label-caps hover:underline">Ver sección</a>
@@ -133,7 +133,7 @@
                 
                 @if (Model.MovimientosVigentes.Count > 0)
                 {
-                    <div class="overflow-x-auto">
+                    <div class="overflow-x-auto md:overflow-visible responsive-table">
                         <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr class="border-b border-outline-variant">
@@ -147,10 +147,10 @@
                                 @foreach(var mov in Model.MovimientosVigentes)
                                 {
                                     <tr class="hover:bg-surface transition-colors">
-                                        <td class="py-3 text-sm font-medium text-primary">@(mov.Colmena?.Identificador ?? mov.Colmena?.CodigoEscaneo)</td>
-                                        <td class="py-3 text-sm text-on-surface-variant">@mov.ApiarioOrigen?.Nombre</td>
-                                        <td class="py-3 text-sm text-on-surface-variant">@mov.ApiarioDestino?.Nombre</td>
-                                        <td class="py-3 text-sm text-primary-container font-medium">@mov.FechaRegreso.ToString("dd/MM/yyyy")</td>
+                                        <td data-label="COLMENA" class="py-3 text-sm font-medium text-primary">@(mov.Colmena?.Identificador ?? mov.Colmena?.CodigoEscaneo)</td>
+                                        <td data-label="ORIGEN" class="py-3 text-sm text-on-surface-variant">@mov.ApiarioOrigen?.Nombre</td>
+                                        <td data-label="DESTINO" class="py-3 text-sm text-on-surface-variant">@mov.ApiarioDestino?.Nombre</td>
+                                        <td data-label="RETORNO" class="py-3 text-sm text-primary-container font-medium">@mov.FechaRegreso.ToString("dd/MM/yyyy")</td>
                                     </tr>
                                 }
                             </tbody>
@@ -166,7 +166,7 @@
 
         <!-- Bottom Row Right: Inventario Crítico -->
         <div class="lg:col-span-1">
-            <div class="bg-surface-container border border-outline-variant p-6 rounded-lg h-full">
+            <div class="bg-surface-container border border-outline-variant p-6 rounded h-full">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="font-display text-headline-sm text-primary">Inventario Bajo Stock</h3>
                     <a href="/Mas/Inventario" class="text-primary-container text-sm font-label-caps hover:underline">Ir a inventario</a>
@@ -202,7 +202,7 @@
 
         <!-- Row 3 Left: Finanzas del Análisis Activo -->
         <div class="lg:col-span-2">
-            <div class="bg-surface-container border border-outline-variant p-6 rounded-lg h-full flex flex-col justify-between">
+            <div class="bg-surface-container border border-outline-variant p-6 rounded h-full flex flex-col justify-between">
                 <div>
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="font-display text-headline-sm text-primary">Análisis Financiero Activo</h3>
@@ -213,7 +213,7 @@
                     {
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <!-- Inversión Total -->
-                            <div class="bg-surface-container-high border border-outline-variant p-4 rounded-lg flex flex-col justify-between hover:border-primary-container transition-colors relative overflow-hidden group">
+                            <div class="bg-surface-container-high border border-outline-variant p-4 rounded flex flex-col justify-between hover:border-primary-container transition-colors relative overflow-hidden group">
                                 <div class="absolute top-0 right-0 w-24 h-24 bg-error/5 rounded-full -mr-8 -mt-8 blur-lg group-hover:bg-error/10 transition-all duration-500"></div>
                                 <div class="flex justify-between items-center z-10 mb-2">
                                     <span class="font-label-caps text-[11px] text-on-surface-variant uppercase tracking-wider">Inversión Total</span>
@@ -224,7 +224,7 @@
                             </div>
 
                             <!-- Ganancia Bruta -->
-                            <div class="bg-surface-container-high border border-outline-variant p-4 rounded-lg flex flex-col justify-between hover:border-primary-container transition-colors relative overflow-hidden group">
+                            <div class="bg-surface-container-high border border-outline-variant p-4 rounded flex flex-col justify-between hover:border-primary-container transition-colors relative overflow-hidden group">
                                 <div class="absolute top-0 right-0 w-24 h-24 bg-primary-container/5 rounded-full -mr-8 -mt-8 blur-lg group-hover:bg-primary-container/10 transition-all duration-500"></div>
                                 <div class="flex justify-between items-center z-10 mb-2">
                                     <span class="font-label-caps text-[11px] text-on-surface-variant uppercase tracking-wider">Ganancia Bruta</span>
@@ -237,7 +237,7 @@
                             <!-- Balance Neto -->
                             @if (Model.ActiveBalanceNeto >= 0)
                             {
-                                <div class="bg-surface-container-high border border-primary-container p-4 rounded-lg flex flex-col justify-between hover:border-primary-container transition-colors relative overflow-hidden group shadow-[0_0_10px_rgba(255,217,0,0.05)]">
+                                <div class="bg-surface-container-high border border-primary-container p-4 rounded flex flex-col justify-between hover:border-primary-container transition-colors relative overflow-hidden group shadow-[0_0_10px_rgba(255,217,0,0.05)]">
                                     <div class="absolute top-0 right-0 w-24 h-24 bg-primary-container/10 rounded-full -mr-8 -mt-8 blur-lg group-hover:bg-primary-container/20 transition-all duration-500"></div>
                                     <div class="flex justify-between items-center z-10 mb-2">
                                         <span class="font-label-caps text-[11px] text-primary-container font-bold uppercase tracking-wider">Balance Neto (Profit)</span>
@@ -248,7 +248,7 @@
                             }
                             else
                             {
-                                <div class="bg-surface-container-high border border-error p-4 rounded-lg flex flex-col justify-between hover:border-error transition-colors relative overflow-hidden group shadow-[0_0_10px_rgba(255,180,171,0.05)]">
+                                <div class="bg-surface-container-high border border-error p-4 rounded flex flex-col justify-between hover:border-error transition-colors relative overflow-hidden group shadow-[0_0_10px_rgba(255,180,171,0.05)]">
                                     <div class="absolute top-0 right-0 w-24 h-24 bg-error/10 rounded-full -mr-8 -mt-8 blur-lg group-hover:bg-error/20 transition-all duration-500"></div>
                                     <div class="flex justify-between items-center z-10 mb-2">
                                         <span class="font-label-caps text-[11px] text-error font-bold uppercase tracking-wider">Balance Neto (Pérdida)</span>
@@ -262,7 +262,7 @@
                     else
                     {
                         <!-- Empty Active Analysis Card mimicking Finanzacion.cshtml -->
-                        <div class="flex flex-col items-center text-center gap-4 py-4 px-2 bg-surface-container-high border border-outline-variant rounded-lg max-w-2xl mx-auto shadow-sm">
+                        <div class="flex flex-col items-center text-center gap-4 py-4 px-2 bg-surface-container-high border border-outline-variant rounded max-w-2xl mx-auto shadow-sm">
                             <span class="material-symbols-outlined text-[48px] text-primary-container animate-bounce mt-2">payments</span>
                             <h3 class="font-headline-lg text-on-surface text-base font-bold">Comenzar Nuevo Análisis Financiero</h3>
                             <p class="font-body-md text-on-surface-variant max-w-md text-xs">
@@ -289,7 +289,7 @@
                 var remDaysStr = !hasDates ? "-" : (remDays > 0 ? $"~{remDays} DÍAS" : "VENCIDA");
                 var badgeColorClass = !hasDates ? "text-on-surface-variant bg-surface-container-high" : (remDays > 0 ? "text-primary-container bg-surface-container-high border-outline-variant" : "text-error bg-error-container/20 border-error/50");
             }
-            <div class="bg-surface-container border border-outline-variant p-6 rounded-lg h-full flex flex-col justify-between">
+            <div class="bg-surface-container border border-outline-variant p-6 rounded h-full flex flex-col justify-between">
                 <div>
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="font-display text-headline-sm text-primary">Declaraciones (SINATPA)</h3>
@@ -303,7 +303,7 @@
                                 <div class="text-[10px] font-label-caps text-on-surface-variant mb-1 tracking-wider">ÚLTIMA PRESENTADA</div>
                                 <div class="font-display font-semibold text-on-surface text-sm">@lastDateStr</div>
                             </div>
-                            <span class="material-symbols-outlined text-primary-container text-2xl">task_alt</span>
+                            <span class="material-symbols-outlined text-primary-container text-2xl">check_box</span>
                         </div>
                         
                         <!-- Próxima a Presentar -->

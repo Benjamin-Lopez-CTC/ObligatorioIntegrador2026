@@ -17,7 +17,7 @@
                 <span class="material-symbols-outlined text-[18px]">compare_arrows</span>
                 Comparar Apiarios
             </a>
-            <button id="btnOpenRegistrar" class="bg-primary-container text-[#000000] font-label-caps text-label-caps px-6 py-3 rounded hover:bg-primary-fixed-dim transition-colors flex items-center justify-center gap-2">
+            <button id="btnOpenRegistrar" class="bg-primary-container text-on-primary font-label-caps text-label-caps px-6 py-3 rounded hover:bg-primary-fixed-dim transition-colors flex items-center justify-center gap-2">
                 <span class="material-symbols-outlined text-[18px]">add</span>
                 Registrar Nuevo Apiario
             </button>
@@ -25,7 +25,7 @@
     </section>
 
     <!-- Apiary Grid (Cards) -->
-    <section class="bg-surface-container-low border border-outline-variant rounded-lg p-6">
+    <section class="bg-surface-container-low border border-outline-variant rounded p-6">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         @foreach (var apiario in Model)
         {
@@ -90,59 +90,61 @@
 </main>
 
 <!-- Registrar Nuevo Apiario Modal -->
-<div id="registrarModal" class="fixed inset-0 bg-black/60 modal-backdrop flex modal-hidden items-center justify-center z-50 p-4">
-    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-md shadow-2xl overflow-hidden modal-container">
-        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between">
+<div id="registrarModal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
+    <div class="bg-surface-container border border-outline-variant rounded w-full max-w-md modal-container shadow-2xl flex flex-col max-h-[75vh] md:max-h-[85vh]">
+        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between shrink-0">
             <h4 class="font-headline-lg text-lg font-bold text-on-surface">Registrar Nuevo Apiario</h4>
-            <button id="btnCancelRegistrarIcon" class="text-on-surface-variant hover:text-primary-container transition-colors">
+            <button type="button" id="btnCancelRegistrarIcon" class="text-on-surface-variant hover:text-primary-container transition-colors p-1">
                 <span class="material-symbols-outlined">close</span>
             </button>
         </div>
-        <form asp-action="RegistrarNuevo" method="post" class="p-6 space-y-4">
-            @Html.AntiForgeryToken()
-            <div>
-                <label for="Nombre" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Nombre *</label>
-                <input type="text" id="Nombre" name="Nombre" required placeholder="Ej. Apiario Central" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
-            </div>
-            <div>
-                <label for="StringIdentificador" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Identificador (Opcional)</label>
-                <input type="text" id="StringIdentificador" name="StringIdentificador" placeholder="Ej. 004" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
-            </div>
-            <div>
-                <label for="UbicacionTexto" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Ubicación *</label>
-                <input type="text" id="UbicacionTexto" name="UbicacionTexto" required placeholder="Ej. Lote 5, Sector Este" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
-            </div>
-            <div>
-                <label for="Departamento" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Departamento</label>
-                <input type="text" id="Departamento" name="Departamento" placeholder="Ej. Flores" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
-            </div>
-            <div class="grid grid-cols-2 gap-4">
+        <div class="p-6 overflow-y-auto grow custom-scrollbar">
+            <form asp-action="RegistrarNuevo" method="post" class="space-y-4">
+                @Html.AntiForgeryToken()
                 <div>
-                    <label for="SeccionPolicial" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Sección Policial</label>
-                    <input type="text" id="SeccionPolicial" name="SeccionPolicial" placeholder="Ej. 6" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                    <label for="Nombre" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Nombre *</label>
+                    <input type="text" id="Nombre" name="Nombre" required placeholder="Ej. Apiario Central" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
                 </div>
                 <div>
-                    <label for="Paraje" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Paraje</label>
-                    <input type="text" id="Paraje" name="Paraje" placeholder="Ej. Talar" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                    <label for="StringIdentificador" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Identificador (Opcional)</label>
+                    <input type="text" id="StringIdentificador" name="StringIdentificador" placeholder="Ej. 004" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
                 </div>
-            </div>
-            <div>
-                <label for="UbicacionCoordenadas" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Coordenadas (Lat, Lng)</label>
-                <input type="text" id="UbicacionCoordenadas" name="UbicacionCoordenadas" placeholder="Ej. 34°05'12.1&quot;S 70°45'22.4&quot;W" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
-            </div>
-            <div>
-                <label for="FechaCreacion" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Fecha de Creación</label>
-                <input type="text" id="FechaCreacion" value="@DateTime.Now.ToString("dd MMMM, yyyy")" disabled class="w-full bg-surface-variant border border-outline-variant px-4 py-2.5 rounded text-on-surface-variant outline-none cursor-not-allowed opacity-70" />
-            </div>
-            <div class="pt-4 border-t border-surface-container-highest flex justify-end gap-3">
-                <button type="button" id="btnCancelRegistrar" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2.5 rounded font-label-caps text-label-caps">
-                    Cancelar
-                </button>
-                <button type="submit" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps ">
-                    Registrar Apiario
-                </button>
-            </div>
-        </form>
+                <div>
+                    <label for="UbicacionTexto" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Ubicación *</label>
+                    <input type="text" id="UbicacionTexto" name="UbicacionTexto" required placeholder="Ej. Lote 5, Sector Este" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                </div>
+                <div>
+                    <label for="Departamento" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Departamento</label>
+                    <input type="text" id="Departamento" name="Departamento" placeholder="Ej. Flores" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="SeccionPolicial" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Sección Policial</label>
+                        <input type="text" id="SeccionPolicial" name="SeccionPolicial" placeholder="Ej. 6" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                    </div>
+                    <div>
+                        <label for="Paraje" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Paraje</label>
+                        <input type="text" id="Paraje" name="Paraje" placeholder="Ej. Talar" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                    </div>
+                </div>
+                <div>
+                    <label for="UbicacionCoordenadas" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Coordenadas (Lat, Lng)</label>
+                    <input type="text" id="UbicacionCoordenadas" name="UbicacionCoordenadas" placeholder="Ej. 34°05'12.1&quot;S 70°45'22.4&quot;W" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                </div>
+                <div>
+                    <label for="FechaCreacion" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Fecha de Creación</label>
+                    <input type="text" id="FechaCreacion" value="@DateTime.Now.ToString("dd MMMM, yyyy")" disabled class="w-full bg-surface-variant border border-outline-variant px-4 py-2.5 rounded text-on-surface-variant outline-none cursor-not-allowed opacity-70" />
+                </div>
+                <div class="pt-4 border-t border-surface-container-highest flex flex-col sm:flex-row justify-end gap-3 mt-4">
+                    <button type="button" id="btnCancelRegistrar" class="border border-outline text-on-surface hover:bg-surface-container-high px-5 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex transition-colors">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="bg-primary-container text-on-primary hover:bg-primary-fixed px-6 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex transition-colors">
+                        Registrar Apiario
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
