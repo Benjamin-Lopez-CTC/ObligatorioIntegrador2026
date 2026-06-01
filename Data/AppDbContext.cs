@@ -18,6 +18,9 @@ namespace ObligatorioIntegrador2026.Data
         public DbSet<TreatmentEquipment> TreatmentEquipments { get; set; }
         public DbSet<NotaTecnica> NotasTecnicas { get; set; }
         public DbSet<Movimiento> Movimientos { get; set; }
+        public DbSet<Analisis> Analisis { get; set; }
+        public DbSet<Inversion> Inversiones { get; set; }
+        public DbSet<Ganancia> Ganancias { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -100,6 +103,42 @@ namespace ObligatorioIntegrador2026.Data
                 new Movimiento { Id = 3, ColmenaId = 3, ApiarioOrigenId = 1, ApiarioDestinoId = 2, Razon = "Prueba de campo", FechaSalida = DateTime.Now.AddDays(-10), FechaRegreso = DateTime.Now.AddDays(-2), Estado = "Vigente" }, // Pendiente de retorno
                 new Movimiento { Id = 4, ColmenaId = 5, ApiarioOrigenId = 2, ApiarioDestinoId = 1, Razon = "Floración temprana", FechaSalida = DateTime.Now.AddDays(-40), FechaRegreso = DateTime.Now.AddDays(-10), Estado = "Completado" },
                 new Movimiento { Id = 5, ColmenaId = 6, ApiarioOrigenId = 2, ApiarioDestinoId = 3, Razon = "Error de registro", FechaSalida = DateTime.Now.AddDays(-5), FechaRegreso = DateTime.Now.AddDays(5), Estado = "Cancelado" }
+            );
+
+            // Relaciones de Inversion y Ganancia con Analisis
+            modelBuilder.Entity<Inversion>()
+                .HasOne(i => i.Analisis)
+                .WithMany(a => a.Inversiones)
+                .HasForeignKey(i => i.AnalisisId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Ganancia>()
+                .HasOne(g => g.Analisis)
+                .WithMany(a => a.Ganancias)
+                .HasForeignKey(g => g.AnalisisId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Seed inicial de Analisis Financieros
+            modelBuilder.Entity<Analisis>().HasData(
+                new Analisis { Id = 1, FechaInicio = new DateTime(2025, 8, 1), FechaFin = new DateTime(2025, 11, 30) },
+                new Analisis { Id = 2, FechaInicio = new DateTime(2026, 5, 29), FechaFin = null }
+            );
+
+            // Seed inicial de Inversiones
+            modelBuilder.Entity<Inversion>().HasData(
+                new Inversion { Id = 1, AnalisisId = 1, Titulo = "Combustible por viaje", Nota = "Logística", Precio = 2400.0 },
+                new Inversion { Id = 2, AnalisisId = 1, Titulo = "Equipamiento nuevo", Nota = "Ahumadores, trajes", Precio = 3150.0 },
+                new Inversion { Id = 3, AnalisisId = 1, Titulo = "Tratamientos Varroa", Nota = "Suministros Médicos", Precio = 4200.0 },
+                new Inversion { Id = 4, AnalisisId = 1, Titulo = "Mantenimiento de Cajas", Nota = "Materiales", Precio = 4500.0 },
+                new Inversion { Id = 5, AnalisisId = 2, Titulo = "Compra de cera estampada", Nota = "Insumo inicial", Precio = 1200.0 }
+            );
+
+            // Seed inicial de Ganancias
+            modelBuilder.Entity<Ganancia>().HasData(
+                new Ganancia { Id = 1, AnalisisId = 1, Titulo = "Venta de Miel (850 kg)", Descripcion = "Precio: $35/kg", Monto = 29750.0 },
+                new Ganancia { Id = 2, AnalisisId = 1, Titulo = "Venta de Núcleos (20 u.)", Descripcion = "Precio: $350/u.", Monto = 7000.0 },
+                new Ganancia { Id = 3, AnalisisId = 1, Titulo = "Venta de Polen (50 kg)", Descripcion = "Precio: $35/kg", Monto = 1750.0 },
+                new Ganancia { Id = 4, AnalisisId = 2, Titulo = "Venta anticipada de propóleo", Descripcion = "Reserva de lote", Monto = 3500.0 }
             );
         }
     }

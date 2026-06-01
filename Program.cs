@@ -40,6 +40,9 @@ using (var scope = app.Services.CreateScope())
         _ = context.Treatments.FirstOrDefault();
         _ = context.NotasTecnicas.FirstOrDefault();
         _ = context.Movimientos.FirstOrDefault();
+        _ = context.Analisis.FirstOrDefault();
+        _ = context.Inversiones.FirstOrDefault();
+        _ = context.Ganancias.FirstOrDefault();
         tableExists = true;
     }
     catch (Exception ex)

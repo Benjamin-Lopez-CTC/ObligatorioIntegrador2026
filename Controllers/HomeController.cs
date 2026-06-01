@@ -54,6 +54,26 @@ public class HomeController : Controller
             .Take(5)
             .ToListAsync();
 
+        // Query active financial analysis
+        var activeAnalysis = await _context.Analisis
+            .Include(a => a.Inversiones)
+            .Include(a => a.Ganancias)
+            .FirstOrDefaultAsync(a => a.FechaFin == null);
+
+        if (activeAnalysis != null)
+        {
+            model.HasActiveAnalysis = true;
+            model.ActiveTotalInversion = activeAnalysis.TotalInversion;
+            model.ActiveGananciaBruta = activeAnalysis.GananciaBruta;
+            model.ActiveBalanceNeto = activeAnalysis.BalanceNeto;
+            model.ActiveEgresosCount = activeAnalysis.Inversiones?.Count ?? 0;
+            model.ActiveIngresosCount = activeAnalysis.Ganancias?.Count ?? 0;
+        }
+        else
+        {
+            model.HasActiveAnalysis = false;
+        }
+
         // Calcular la tendencia de producción de los últimos 6 meses en base a la producción actual
         var tendencia = new List<ProduccionMensual>();
         var hoy = DateTime.Now;
@@ -133,9 +153,20 @@ public class HomeController : Controller
 
         var logoPath = Path.Combine(_webHostEnvironment.WebRootPath, "Logo.png");
 
+        var activeAnalysis = await _context.Analisis
+            .Include(a => a.Inversiones)
+            .Include(a => a.Ganancias)
+            .FirstOrDefaultAsync(a => a.FechaFin == null);
+
+        bool hasActiveAnalysis = activeAnalysis != null;
+        double activeTotalInversion = activeAnalysis?.TotalInversion ?? 0;
+        double activeGananciaBruta = activeAnalysis?.GananciaBruta ?? 0;
+        double activeBalanceNeto = activeAnalysis?.BalanceNeto ?? 0;
+
         var pdfBytes = ObligatorioIntegrador2026.Services.PdfReportGenerator.GenerateGlobalReport(
             totalApiarios, totalColmenas, totalMiel, totalAlertas,
             apiarios, colmenasEnAlerta, movimientos, inventarioBajoStock,
+            hasActiveAnalysis, activeTotalInversion, activeGananciaBruta, activeBalanceNeto,
             logoPath
         );
 

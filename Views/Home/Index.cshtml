@@ -200,6 +200,120 @@
             </div>
         </div>
 
+        <!-- Row 3 Left: Finanzas del Análisis Activo -->
+        <div class="lg:col-span-2">
+            <div class="bg-surface-container border border-outline-variant p-6 rounded-lg h-full flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="font-display text-headline-sm text-primary">Análisis Financiero Activo</h3>
+                        <a href="/Mas/Finanzacion" class="text-primary-container text-sm font-label-caps hover:underline">Ver sección</a>
+                    </div>
+
+                    @if (Model.HasActiveAnalysis)
+                    {
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <!-- Inversión Total -->
+                            <div class="bg-surface-container-high border border-outline-variant p-4 rounded-lg flex flex-col justify-between hover:border-primary-container transition-colors relative overflow-hidden group">
+                                <div class="absolute top-0 right-0 w-24 h-24 bg-error/5 rounded-full -mr-8 -mt-8 blur-lg group-hover:bg-error/10 transition-all duration-500"></div>
+                                <div class="flex justify-between items-center z-10 mb-2">
+                                    <span class="font-label-caps text-[11px] text-on-surface-variant uppercase tracking-wider">Inversión Total</span>
+                                    <span class="material-symbols-outlined text-error text-xl" style="font-variation-settings: 'FILL' 0;">trending_down</span>
+                                </div>
+                                <div class="text-xl font-display text-on-background z-10 font-bold">$@Model.ActiveTotalInversion.ToString("N2")</div>
+                                <div class="text-[11px] text-on-surface-variant z-10 mt-2">@(Model.ActiveEgresosCount) Egresos</div>
+                            </div>
+
+                            <!-- Ganancia Bruta -->
+                            <div class="bg-surface-container-high border border-outline-variant p-4 rounded-lg flex flex-col justify-between hover:border-primary-container transition-colors relative overflow-hidden group">
+                                <div class="absolute top-0 right-0 w-24 h-24 bg-primary-container/5 rounded-full -mr-8 -mt-8 blur-lg group-hover:bg-primary-container/10 transition-all duration-500"></div>
+                                <div class="flex justify-between items-center z-10 mb-2">
+                                    <span class="font-label-caps text-[11px] text-on-surface-variant uppercase tracking-wider">Ganancia Bruta</span>
+                                    <span class="material-symbols-outlined text-primary-container text-xl" style="font-variation-settings: 'FILL' 0;">trending_up</span>
+                                </div>
+                                <div class="text-xl font-display text-on-background z-10 font-bold">+$@Model.ActiveGananciaBruta.ToString("N2")</div>
+                                <div class="text-[11px] text-on-surface-variant z-10 mt-2">@(Model.ActiveIngresosCount) Ingresos</div>
+                            </div>
+
+                            <!-- Balance Neto -->
+                            @if (Model.ActiveBalanceNeto >= 0)
+                            {
+                                <div class="bg-surface-container-high border border-primary-container p-4 rounded-lg flex flex-col justify-between hover:border-primary-container transition-colors relative overflow-hidden group shadow-[0_0_10px_rgba(255,217,0,0.05)]">
+                                    <div class="absolute top-0 right-0 w-24 h-24 bg-primary-container/10 rounded-full -mr-8 -mt-8 blur-lg group-hover:bg-primary-container/20 transition-all duration-500"></div>
+                                    <div class="flex justify-between items-center z-10 mb-2">
+                                        <span class="font-label-caps text-[11px] text-primary-container font-bold uppercase tracking-wider">Balance Neto (Profit)</span>
+                                        <span class="material-symbols-outlined text-primary-container text-xl" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+                                    </div>
+                                    <div class="text-xl font-display text-primary-container z-10 font-bold">$@Model.ActiveBalanceNeto.ToString("N2")</div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="bg-surface-container-high border border-error p-4 rounded-lg flex flex-col justify-between hover:border-error transition-colors relative overflow-hidden group shadow-[0_0_10px_rgba(255,180,171,0.05)]">
+                                    <div class="absolute top-0 right-0 w-24 h-24 bg-error/10 rounded-full -mr-8 -mt-8 blur-lg group-hover:bg-error/20 transition-all duration-500"></div>
+                                    <div class="flex justify-between items-center z-10 mb-2">
+                                        <span class="font-label-caps text-[11px] text-error font-bold uppercase tracking-wider">Balance Neto (Pérdida)</span>
+                                        <span class="material-symbols-outlined text-error text-xl" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+                                    </div>
+                                    <div class="text-xl font-display text-error z-10 font-bold">-$@Math.Abs(Model.ActiveBalanceNeto).ToString("N2")</div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- Empty Active Analysis Card mimicking Finanzacion.cshtml -->
+                        <div class="flex flex-col items-center text-center gap-4 py-4 px-2 bg-surface-container-high border border-outline-variant rounded-lg max-w-2xl mx-auto shadow-sm">
+                            <span class="material-symbols-outlined text-[48px] text-primary-container animate-bounce mt-2">payments</span>
+                            <h3 class="font-headline-lg text-on-surface text-base font-bold">Comenzar Nuevo Análisis Financiero</h3>
+                            <p class="font-body-md text-on-surface-variant max-w-md text-xs">
+                                Para registrar y llevar el control detallado de las inversiones realizadas y ganancias obtenidas en la temporada apícola actual, inicie un nuevo análisis ahora.
+                            </p>
+                            <a href="/Mas/Finanzacion" class="bg-primary-container text-on-primary font-label-caps text-label-caps px-5 py-2 rounded hover:bg-primary-fixed hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2 mb-2 no-underline text-xs">
+                                <span class="material-symbols-outlined text-[16px]">play_arrow</span>
+                                Empezar Análisis Financiero
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Row 3 Right: Declaraciones del Ministerio -->
+        <div class="lg:col-span-1">
+            <div class="bg-surface-container border border-outline-variant p-6 rounded-lg h-full flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="font-display text-headline-sm text-primary">Declaraciones (SINATPA)</h3>
+                        <a href="/Informes" class="text-primary-container text-sm font-label-caps hover:underline">Ver sección</a>
+                    </div>
+                    
+                    <div class="flex flex-col gap-4">
+                        <!-- Última Presentada -->
+                        <div class="bg-surface-container-high border border-outline-variant/30 p-4 rounded flex items-center justify-between">
+                            <div>
+                                <div class="text-[10px] font-label-caps text-on-surface-variant mb-1 tracking-wider">ÚLTIMA PRESENTADA</div>
+                                <div class="font-display font-semibold text-on-surface text-sm">21 de Julio, 2025</div>
+                            </div>
+                            <span class="material-symbols-outlined text-primary-container text-2xl">task_alt</span>
+                        </div>
+                        
+                        <!-- Próxima a Presentar -->
+                        <div class="bg-surface-container-high border border-outline-variant/30 p-4 rounded flex items-center justify-between relative overflow-hidden">
+                            <div class="absolute right-0 top-0 bottom-0 w-1 bg-primary-container"></div>
+                            <div>
+                                <div class="text-[10px] font-label-caps text-on-surface-variant mb-1 tracking-wider">PRÓXIMA A PRESENTAR</div>
+                                <div class="font-display font-semibold text-on-surface text-sm">Julio 2026</div>
+                                <div class="text-[10px] text-on-surface-variant mt-1 flex items-center gap-1 font-body-sm">
+                                    <span class="material-symbols-outlined text-[12px]">calendar_today</span> Válida hasta 30/06/2026
+                                </div>
+                            </div>
+                            <span class="material-symbols-outlined text-primary-container text-2xl">pending_actions</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 

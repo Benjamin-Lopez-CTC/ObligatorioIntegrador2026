@@ -199,9 +199,239 @@ namespace ObligatorioIntegrador2026.Controllers
             return View();
         }
 
-        public IActionResult Finanzacion()
+        public async Task<IActionResult> Finanzacion()
         {
-            return View();
+            var active = await _context.Analisis
+                .Include(a => a.Inversiones)
+                .Include(a => a.Ganancias)
+                .FirstOrDefaultAsync(a => a.FechaFin == null);
+
+            var history = await _context.Analisis
+                .Include(a => a.Inversiones)
+                .Include(a => a.Ganancias)
+                .Where(a => a.FechaFin != null)
+                .OrderByDescending(a => a.FechaFin)
+                .ToListAsync();
+
+            var viewModel = new FinanzacionViewModel
+            {
+                AnalisisActivo = active,
+                HistorialAnalisis = history
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> IniciarAnalisis()
+        {
+            var activeExists = await _context.Analisis.AnyAsync(a => a.FechaFin == null);
+            if (activeExists)
+            {
+                return Json(new { success = false, message = "Ya existe un análisis activo." });
+            }
+
+            var nuevo = new Analisis
+            {
+                FechaInicio = DateTime.Now,
+                FechaFin = null
+            };
+
+            _context.Analisis.Add(nuevo);
+            await _context.SaveChangesAsync();
+
+            return Json(new { success = true });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> FinalizarAnalisis(int id, bool iniciarNuevo)
+        {
+            var analisis = await _context.Analisis.FindAsync(id);
+            if (analisis == null)
+            {
+                return Json(new { success = false, message = "Análisis no encontrado." });
+            }
+
+            if (analisis.FechaFin != null)
+            {
+                return Json(new { success = false, message = "El análisis ya está finalizado." });
+            }
+
+            analisis.FechaFin = DateTime.Now;
+            _context.Analisis.Update(analisis);
+
+            if (iniciarNuevo)
+            {
+                var nuevo = new Analisis
+                {
+                    FechaInicio = DateTime.Now,
+                    FechaFin = null
+                };
+                _context.Analisis.Add(nuevo);
+            }
+
+            await _context.SaveChangesAsync();
+            return Json(new { success = true });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RegistrarInversion([FromBody] InversionInputModel model)
+        {
+            if (model == null || string.IsNullOrWhiteSpace(model.Titulo) || model.Precio <= 0)
+            {
+                return Json(new { success = false, message = "Datos de inversión inválidos." });
+            }
+
+            var active = await _context.Analisis.FirstOrDefaultAsync(a => a.Id == model.AnalisisId && a.FechaFin == null);
+            if (active == null)
+            {
+                return Json(new { success = false, message = "No hay un análisis activo para registrar inversiones." });
+            }
+
+            var inversion = new Inversion
+            {
+                AnalisisId = model.AnalisisId,
+                Titulo = model.Titulo,
+                Nota = model.Nota ?? string.Empty,
+                Precio = model.Precio
+            };
+
+            _context.Inversiones.Add(inversion);
+            await _context.SaveChangesAsync();
+
+            return Json(new { success = true });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RegistrarGanancia([FromBody] GananciaInputModel model)
+        {
+            if (model == null || string.IsNullOrWhiteSpace(model.Titulo) || model.Monto <= 0)
+            {
+                return Json(new { success = false, message = "Datos de ganancia inválidos." });
+            }
+
+            var active = await _context.Analisis.FirstOrDefaultAsync(a => a.Id == model.AnalisisId && a.FechaFin == null);
+            if (active == null)
+            {
+                return Json(new { success = false, message = "No hay un análisis activo para registrar ganancias." });
+            }
+
+            var ganancia = new Ganancia
+            {
+                AnalisisId = model.AnalisisId,
+                Titulo = model.Titulo,
+                Descripcion = model.Descripcion ?? string.Empty,
+                Monto = model.Monto
+            };
+
+            _context.Ganancias.Add(ganancia);
+            await _context.SaveChangesAsync();
+
+            return Json(new { success = true });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAnalisisDetalles(int id)
+        {
+            var analisis = await _context.Analisis
+                .Include(a => a.Inversiones)
+                .Include(a => a.Ganancias)
+                .FirstOrDefaultAsync(a => a.Id == id);
+
+            if (analisis == null)
+            {
+                return Json(new { success = false, message = "Análisis no encontrado." });
+            }
+
+            var data = new
+            {
+                id = analisis.Id,
+                fechaInicio = analisis.FechaInicio.ToString("dd/MM/yyyy HH:mm"),
+                fechaFin = analisis.FechaFin?.ToString("dd/MM/yyyy HH:mm") ?? "En curso",
+                totalInversion = analisis.TotalInversion,
+                gananciaBruta = analisis.GananciaBruta,
+                balanceNeto = analisis.BalanceNeto,
+                inversiones = analisis.Inversiones.Select(i => new {
+                    titulo = i.Titulo,
+                    nota = i.Nota,
+                    precio = i.Precio
+                }).ToList(),
+                ganancias = analisis.Ganancias.Select(g => new {
+                    titulo = g.Titulo,
+                    descripcion = g.Descripcion,
+                    monto = g.Monto
+                }).ToList()
+            };
+
+            return Json(new { success = true, data = data });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EliminarAnalisis(int id)
+        {
+            var analisis = await _context.Analisis
+                .Include(a => a.Inversiones)
+                .Include(a => a.Ganancias)
+                .FirstOrDefaultAsync(a => a.Id == id);
+
+            if (analisis == null)
+            {
+                return Json(new { success = false, message = "Análisis no encontrado." });
+            }
+
+            if (analisis.Inversiones != null)
+                _context.Inversiones.RemoveRange(analisis.Inversiones);
+            if (analisis.Ganancias != null)
+                _context.Ganancias.RemoveRange(analisis.Ganancias);
+
+            _context.Analisis.Remove(analisis);
+            await _context.SaveChangesAsync();
+
+            return Json(new { success = true });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EliminarInversion(int id)
+        {
+            var inv = await _context.Inversiones.FindAsync(id);
+            if (inv == null)
+            {
+                return Json(new { success = false, message = "Inversión no encontrada." });
+            }
+
+            // Ensure it belongs to an active analysis
+            var active = await _context.Analisis.AnyAsync(a => a.Id == inv.AnalisisId && a.FechaFin == null);
+            if (!active)
+            {
+                return Json(new { success = false, message = "Solo se pueden eliminar inversiones de un análisis activo." });
+            }
+
+            _context.Inversiones.Remove(inv);
+            await _context.SaveChangesAsync();
+
+            return Json(new { success = true });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EliminarGanancia(int id)
+        {
+            var gan = await _context.Ganancias.FindAsync(id);
+            if (gan == null)
+            {
+                return Json(new { success = false, message = "Ganancia no encontrada." });
+            }
+
+            // Ensure it belongs to an active analysis
+            var active = await _context.Analisis.AnyAsync(a => a.Id == gan.AnalisisId && a.FechaFin == null);
+            if (!active)
+            {
+                return Json(new { success = false, message = "Solo se pueden eliminar ganancias de un análisis activo." });
+            }
+
+            _context.Ganancias.Remove(gan);
+            await _context.SaveChangesAsync();
+
+            return Json(new { success = true });
         }
 
         public IActionResult Inventario()
@@ -360,6 +590,25 @@ namespace ObligatorioIntegrador2026.Controllers
             _context.Equipments.Add(model);
             await _context.SaveChangesAsync();
 
+            // Registrar inversión automática si hay un análisis activo y el stock inicial es mayor a 0
+            if (model.Stock > 0)
+            {
+                var activeAnalysis = await _context.Analisis.FirstOrDefaultAsync(a => a.FechaFin == null);
+                if (activeAnalysis != null)
+                {
+                    double unitPriceUYU = model.Currency == "USD" ? model.UnitPrice * 40.0 : model.UnitPrice;
+                    var inversion = new Inversion
+                    {
+                        AnalisisId = activeAnalysis.Id,
+                        Titulo = $"Compra inicial: {model.Name}",
+                        Nota = $"Adquisición de {model.Stock} unidades en inventario" + (model.Currency == "USD" ? $" (US$ {model.UnitPrice} c/u, cotiz. $40)" : ""),
+                        Precio = model.Stock * unitPriceUYU
+                    };
+                    _context.Inversiones.Add(inversion);
+                    await _context.SaveChangesAsync();
+                }
+            }
+
             return Json(new { success = true, data = model });
         }
 
@@ -426,6 +675,8 @@ namespace ObligatorioIntegrador2026.Controllers
                 return Json(new { success = false, errors = errors });
             }
 
+            int oldStock = item.Stock;
+
             item.Name = model.Name;
             item.Type = model.Type;
             item.Stock = model.Stock;
@@ -437,6 +688,26 @@ namespace ObligatorioIntegrador2026.Controllers
 
             _context.Equipments.Update(item);
             await _context.SaveChangesAsync();
+
+            // Registrar inversión automática si hay un análisis activo y el stock aumentó
+            if (model.Stock > oldStock)
+            {
+                var activeAnalysis = await _context.Analisis.FirstOrDefaultAsync(a => a.FechaFin == null);
+                if (activeAnalysis != null)
+                {
+                    int diff = model.Stock - oldStock;
+                    double unitPriceUYU = model.Currency == "USD" ? model.UnitPrice * 40.0 : model.UnitPrice;
+                    var inversion = new Inversion
+                    {
+                        AnalisisId = activeAnalysis.Id,
+                        Titulo = $"Adquisición de stock: {item.Name}",
+                        Nota = $"Reposición de {diff} unidades en inventario" + (model.Currency == "USD" ? $" (US$ {model.UnitPrice} c/u, cotiz. $40)" : ""),
+                        Precio = diff * unitPriceUYU
+                    };
+                    _context.Inversiones.Add(inversion);
+                    await _context.SaveChangesAsync();
+                }
+            }
 
             return Json(new { success = true, data = item });
         }

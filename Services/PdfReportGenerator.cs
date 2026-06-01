@@ -20,6 +20,10 @@ namespace ObligatorioIntegrador2026.Services
             List<Colmena> colmenasEnAlerta,
             List<Movimiento> movimientos,
             List<Equipment> inventarioBajoStock,
+            bool hasActiveAnalysis,
+            double activeTotalInversion,
+            double activeGananciaBruta,
+            double activeBalanceNeto,
             string? logoPath = null)
         {
             var document = Document.Create(container =>
@@ -32,7 +36,7 @@ namespace ObligatorioIntegrador2026.Services
                     page.DefaultTextStyle(x => x.FontSize(10).FontFamily(Fonts.Arial));
 
                     page.Header().Element(container => ComposeHeader(container, logoPath));
-                    page.Content().Element(x => ComposeContent(x, totalApiarios, totalColmenas, totalMiel, totalAlertas, apiarios, colmenasEnAlerta, movimientos, inventarioBajoStock));
+                    page.Content().Element(x => ComposeContent(x, totalApiarios, totalColmenas, totalMiel, totalAlertas, apiarios, colmenasEnAlerta, movimientos, inventarioBajoStock, hasActiveAnalysis, activeTotalInversion, activeGananciaBruta, activeBalanceNeto));
                     page.Footer().Element(ComposeFooter);
                 });
             });
@@ -59,7 +63,20 @@ namespace ObligatorioIntegrador2026.Services
             });
         }
 
-        private static void ComposeContent(IContainer container, int totalApiarios, int totalColmenas, double totalMiel, int totalAlertas, List<Apiario> apiarios, List<Colmena> colmenasEnAlerta, List<Movimiento> movimientos, List<Equipment> inventarioBajoStock)
+        private static void ComposeContent(
+            IContainer container, 
+            int totalApiarios, 
+            int totalColmenas, 
+            double totalMiel, 
+            int totalAlertas, 
+            List<Apiario> apiarios, 
+            List<Colmena> colmenasEnAlerta, 
+            List<Movimiento> movimientos, 
+            List<Equipment> inventarioBajoStock,
+            bool hasActiveAnalysis,
+            double activeTotalInversion,
+            double activeGananciaBruta,
+            double activeBalanceNeto)
         {
             container.PaddingVertical(1, Unit.Centimetre).Column(column => 
             {
@@ -199,6 +216,57 @@ namespace ObligatorioIntegrador2026.Services
                 {
                     column.Item().Text("El stock de todo el equipamiento es adecuado.").Italic().FontColor(Colors.Grey.Medium);
                 }
+
+                column.Item().PaddingVertical(10).LineHorizontal(1).LineColor(Colors.Grey.Lighten3);
+
+                // Análisis Financiero Activo
+                column.Item().PaddingBottom(5).Text("Análisis Financiero (Temporada Activa)").FontSize(14).SemiBold().FontColor(Colors.Black);
+                if (hasActiveAnalysis)
+                {
+                    column.Item().Table(table =>
+                    {
+                        table.ColumnsDefinition(columns =>
+                        {
+                            columns.RelativeColumn();
+                            columns.RelativeColumn();
+                            columns.RelativeColumn();
+                        });
+
+                        table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten2).Padding(5).Text("Inversión Total").SemiBold();
+                        table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten2).Padding(5).Text("Ganancia Bruta").SemiBold();
+                        table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten2).Padding(5).Text("Balance Neto").SemiBold();
+
+                        table.Cell().Padding(5).Text($"$ {activeTotalInversion:N2}").FontColor("#D32F2F");
+                        table.Cell().Padding(5).Text($"$ {activeGananciaBruta:N2}").FontColor("#2E7D32");
+                        
+                        var netColor = activeBalanceNeto >= 0 ? "#2E7D32" : "#D32F2F";
+                        var netSign = activeBalanceNeto >= 0 ? "" : "-";
+                        table.Cell().Padding(5).Text($"$ {netSign}{Math.Abs(activeBalanceNeto):N2}").FontColor(netColor).SemiBold();
+                    });
+                }
+                else
+                {
+                    column.Item().Text("No hay un análisis financiero activo en curso.").Italic().FontColor(Colors.Grey.Medium);
+                }
+
+                column.Item().PaddingVertical(10).LineHorizontal(1).LineColor(Colors.Grey.Lighten3);
+
+                // Declaraciones MGAP / SINATPA
+                column.Item().PaddingBottom(5).Text("Declaraciones MGAP (SINATPA)").FontSize(14).SemiBold().FontColor(Colors.Black);
+                column.Item().Table(table =>
+                {
+                    table.ColumnsDefinition(columns =>
+                    {
+                        columns.RelativeColumn();
+                        columns.RelativeColumn();
+                    });
+
+                    table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten2).Padding(5).Text("Última Declaración Presentada").SemiBold();
+                    table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten2).Padding(5).Text("Próxima Declaración Pendiente").SemiBold();
+
+                    table.Cell().Padding(5).Text("21 de Julio, 2025");
+                    table.Cell().Padding(5).Text("Julio 2026 (Válida hasta 30/06/2026)");
+                });
             });
         }
 

@@ -1,5 +1,18 @@
+@model ObligatorioIntegrador2026.Models.FinanzacionViewModel
 @{
     ViewData["Title"] = "Cálculo de Costos y Ganancias";
+    var hasActive = Model.AnalisisActivo != null;
+    var active = Model.AnalisisActivo;
+
+    double totalInversion = active?.TotalInversion ?? 0;
+    double gananciaBruta = active?.GananciaBruta ?? 0;
+    double balanceNeto = active?.BalanceNeto ?? 0;
+
+    double roi = totalInversion > 0 ? (balanceNeto / totalInversion) * 100 : 0;
+
+    double relTotal = totalInversion + gananciaBruta;
+    double pctInversion = relTotal > 0 ? (totalInversion / relTotal) * 100 : 0;
+    double pctGanancia = relTotal > 0 ? (gananciaBruta / relTotal) * 100 : 0;
 }
 
 <style>
@@ -12,209 +25,944 @@
     }
 </style>
 
-<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
-<!-- Header -->
-<section class="flex flex-col gap-4 mt-8">
-    <h1 class="font-display text-display text-on-background">Cálculo de Costos y Ganancias</h1>
-    <p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
-        Análisis financiero detallado de la temporada. Resumen de inversiones operativas, ingresos por producción y balance general.
-    </p>
-</section>
-<!-- Financial Summary Cards -->
-<section class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-    <!-- Investment Card -->
-    <div class="bg-surface-container border border-outline-variant rounded-lg p-6 flex flex-col gap-4 relative overflow-hidden group">
-        <div class="absolute top-0 right-0 w-32 h-32 bg-error/5 rounded-full -mr-10 -mt-10 blur-xl group-hover:bg-error/10 transition-all duration-500"></div>
-        <div class="flex justify-between items-center z-10">
-            <span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">Inversión Total</span>
-            <span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 0;">trending_down</span>
-        </div>
-        <div class="flex items-baseline gap-2 z-10">
-            <span class="font-headline-lg text-headline-lg text-on-background">$</span>
-            <span class="font-display text-display text-on-background">14,250</span>
-        </div>
-        <div class="z-10 mt-2">
-            <span class="font-label-caps text-label-caps bg-surface-container-high border border-outline-variant px-2 py-1 rounded text-on-surface-variant">Temporada 2025</span>
-        </div>
-    </div>
-    <!-- Gross Profit Card -->
-    <div class="bg-surface-container border border-outline-variant rounded-lg p-6 flex flex-col gap-4 relative overflow-hidden group">
-        <div class="absolute top-0 right-0 w-32 h-32 bg-primary-container/5 rounded-full -mr-10 -mt-10 blur-xl group-hover:bg-primary-container/10 transition-all duration-500"></div>
-        <div class="flex justify-between items-center z-10">
-            <span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">Ganancia Bruta</span>
-            <span class="material-symbols-outlined text-primary-container" style="font-variation-settings: 'FILL' 0;">trending_up</span>
-        </div>
-        <div class="flex items-baseline gap-2 z-10">
-            <span class="font-headline-lg text-headline-lg text-on-background">$</span>
-            <span class="font-display text-display text-on-background">38,500</span>
-        </div>
-        <div class="z-10 mt-2 flex gap-2">
-            <span class="font-label-caps text-label-caps bg-surface-container-high border border-outline-variant px-2 py-1 rounded text-on-surface-variant">850 kg Miel</span>
-        </div>
-    </div>
-    <!-- Net Balance Card -->
-    <div class="bg-surface-container border border-primary-container rounded-lg p-6 flex flex-col gap-4 relative overflow-hidden group shadow-[0_0_15px_rgba(255,217,0,0.1)]">
-        <div class="absolute top-0 right-0 w-32 h-32 bg-primary-container/10 rounded-full -mr-10 -mt-10 blur-xl group-hover:bg-primary-container/20 transition-all duration-500"></div>
-        <div class="flex justify-between items-center z-10">
-            <span class="font-label-caps text-label-caps text-primary-container font-bold uppercase tracking-widest">Balance Neto (Profit)</span>
-            <span class="material-symbols-outlined text-primary-container" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
-        </div>
-        <div class="flex items-baseline gap-2 z-10">
-            <span class="font-headline-lg text-headline-lg text-primary-container">$</span>
-            <span class="font-display text-display text-primary-container">24,250</span>
-        </div>
-        <div class="z-10 mt-2">
-            <span class="font-label-caps text-label-caps bg-surface-container-high border border-outline-variant px-2 py-1 rounded text-primary-container">+170% ROI</span>
-        </div>
-    </div>
-</section>
-<!-- Visual Comparison Chart (CSS/HTML) -->
-<section class="bg-surface-container border border-outline-variant rounded-lg p-6 lg:p-8 flex flex-col gap-8 mt-8">
-    <div class="flex justify-between items-center border-b border-surface-container-highest pb-4">
-        <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg">Relación Inversión vs Ganancia</h2>
-        <button class="bg-transparent border border-primary-container text-primary-container font-label-caps text-label-caps px-4 py-2 rounded hover:bg-primary-container/10 transition-colors">
-            Exportar Reporte
-        </button>
-    </div>
-    <div class="flex flex-col gap-6">
-        <!-- Investment Bar -->
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-8">
+    <!-- Header Section -->
+    <header class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-surface-variant pb-8 mt-4">
         <div class="flex flex-col gap-2">
-            <div class="flex justify-between items-end">
-                <span class="font-label-caps text-label-caps text-on-surface-variant">Inversión (27%)</span>
-                <span class="font-body-md text-body-md font-semibold text-on-background">$14,250</span>
+            <div class="flex items-center gap-3">
+                <h1 class="font-display text-display text-on-background">Cálculo de Costos y Ganancias</h1>
+                @if (hasActive)
+                {
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-primary-container/10 border border-primary-container/30 text-primary-container rounded-full font-label-caps text-[10px] uppercase font-bold tracking-wider animate-pulse">
+                        <span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span> Análisis Activo
+                    </span>
+                }
             </div>
-            <div class="w-full h-4 bg-surface-container-high overflow-hidden border border-outline-variant rounded-sm"><div class="h-full bg-error rounded-sm animate-progress" style="width: 27%;"></div></div>
+            <p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+                Análisis financiero detallado de la temporada. Resumen de inversiones operativas, ingresos por producción y balance general.
+            </p>
         </div>
-        <!-- Profit Bar -->
-        <div class="flex flex-col gap-2">
-            <div class="flex justify-between items-end">
-                <span class="font-label-caps text-label-caps text-primary-container">Ganancia Bruta (73%)</span>
-                <span class="font-body-md text-body-md font-semibold text-primary-container">$38,500</span>
+
+        @if (hasActive)
+        {
+            <div class="flex flex-wrap items-center gap-3">
+                <span class="font-body-sm text-on-surface-variant">Iniciado el @(active?.FechaInicio.ToString("dd/MM/yyyy HH:mm"))</span>
+                <button onclick="openFinalizarModal()" class="bg-error-container/20 border border-error/50 text-error hover:bg-error/35 transition-colors px-5 py-2.5 rounded font-label-caps text-label-caps flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px]">check_circle</span>
+                    Finalizar Análisis
+                </button>
             </div>
-            <div class="w-full h-4 bg-surface-container-high overflow-hidden border border-outline-variant rounded-sm"><div class="h-full bg-primary-container rounded-sm animate-progress" style="width: 73%;"></div></div>
+        }
+        else
+        {
+            <button onclick="iniciarAnalisis()" class="bg-primary-container text-on-primary font-label-caps text-label-caps px-6 py-3 rounded hover:bg-primary-fixed transition-colors flex items-center gap-2 shrink-0">
+                <span class="material-symbols-outlined text-[18px]">play_arrow</span>
+                Empezar Análisis
+            </button>
+        }
+    </header>
+
+    <!-- Financial Summary Cards -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+        <!-- Investment Card -->
+        <div class="bg-surface-container border border-outline-variant rounded-lg p-6 flex flex-col gap-4 relative overflow-hidden group">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-error/5 rounded-full -mr-10 -mt-10 blur-xl group-hover:bg-error/10 transition-all duration-500"></div>
+            <div class="flex justify-between items-center z-10">
+                <span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">Inversión Total</span>
+                <span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 0;">trending_down</span>
+            </div>
+            <div class="flex items-baseline gap-2 z-10">
+                <span class="font-headline-lg text-headline-lg text-on-background">$</span>
+                <span class="font-display text-display text-on-background">@totalInversion.ToString("N0")</span>
+            </div>
+            <div class="z-10 mt-2 flex gap-2">
+                <span class="font-label-caps text-label-caps bg-surface-container-high border border-outline-variant px-2 py-1 rounded text-on-surface-variant">
+                    @(hasActive ? $"{active?.Inversiones?.Count ?? 0} Egresos" : "Sin Datos")
+                </span>
+            </div>
+
         </div>
-    </div>
-</section>
-<!-- Details Sections (Side by Side) -->
-<section class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8 mb-12">
-    <!-- Left Column: Investments -->
-    <div class="flex flex-col gap-6">
-        <h3 class="font-headline-lg-mobile text-headline-lg-mobile border-b border-surface-container-highest pb-2 flex items-center gap-2">
-            <span class="material-symbols-outlined text-error">receipt_long</span>
-            Inversión Realizada
-        </h3>
-        <div class="flex flex-col gap-4">
-            <!-- Item 1 -->
-            <div class="bg-surface-container border border-outline-variant rounded-lg p-4 flex justify-between items-center hover:border-primary-container/50 transition-colors">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded bg-surface-container-high border border-outline-variant flex items-center justify-center text-on-surface-variant">
-                        <span class="material-symbols-outlined">local_gas_station</span>
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="font-body-md text-body-md font-semibold text-on-background">Combustible por viaje</span>
-                        <span class="font-label-caps text-label-caps text-on-surface-variant">Logística</span>
-                    </div>
-                </div>
-                <span class="font-body-md text-body-md text-error">-$2,400</span>
+
+        <!-- Gross Profit Card -->
+        <div class="bg-surface-container border border-outline-variant rounded-lg p-6 flex flex-col gap-4 relative overflow-hidden group">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-primary-container/5 rounded-full -mr-10 -mt-10 blur-xl group-hover:bg-primary-container/10 transition-all duration-500"></div>
+            <div class="flex justify-between items-center z-10">
+                <span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">Ganancia Bruta</span>
+                <span class="material-symbols-outlined text-primary-container" style="font-variation-settings: 'FILL' 0;">trending_up</span>
             </div>
-            <!-- Item 2 -->
-            <div class="bg-surface-container border border-outline-variant rounded-lg p-4 flex justify-between items-center hover:border-primary-container/50 transition-colors">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded bg-surface-container-high border border-outline-variant flex items-center justify-center text-on-surface-variant">
-                        <span class="material-symbols-outlined">construction</span>
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="font-body-md text-body-md font-semibold text-on-background">Equipamiento nuevo</span>
-                        <span class="font-label-caps text-label-caps text-on-surface-variant">Ahumadores, trajes</span>
-                    </div>
-                </div>
-                <span class="font-body-md text-body-md text-error">-$3,150</span>
+            <div class="flex items-baseline gap-2 z-10">
+                <span class="font-headline-lg text-headline-lg text-on-background">$</span>
+                <span class="font-display text-display text-on-background">@gananciaBruta.ToString("N0")</span>
             </div>
-            <!-- Item 3 -->
-            <div class="bg-surface-container border border-outline-variant rounded-lg p-4 flex justify-between items-center hover:border-primary-container/50 transition-colors">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded bg-surface-container-high border border-outline-variant flex items-center justify-center text-on-surface-variant">
-                        <span class="material-symbols-outlined">medication</span>
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="font-body-md text-body-md font-semibold text-on-background">Tratamientos Varroa</span>
-                        <span class="font-label-caps text-label-caps text-on-surface-variant">Suministros Médicos</span>
-                    </div>
-                </div>
-                <span class="font-body-md text-body-md text-error">-$4,200</span>
+            <div class="z-10 mt-2 flex gap-2">
+                <span class="font-label-caps text-label-caps bg-surface-container-high border border-outline-variant px-2 py-1 rounded text-on-surface-variant">
+                    @(hasActive ? $"{active?.Ganancias?.Count ?? 0} Ingresos" : "Sin Datos")
+                </span>
             </div>
-            <!-- Item 4 -->
-            <div class="bg-surface-container border border-outline-variant rounded-lg p-4 flex justify-between items-center hover:border-primary-container/50 transition-colors">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded bg-surface-container-high border border-outline-variant flex items-center justify-center text-on-surface-variant">
-                        <span class="material-symbols-outlined">hive</span>
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="font-body-md text-body-md font-semibold text-on-background">Mantenimiento de Cajas</span>
-                        <span class="font-label-caps text-label-caps text-on-surface-variant">Materiales</span>
-                    </div>
-                </div>
-                <span class="font-body-md text-body-md text-error">-$4,500</span>
-            </div>
-            <!-- Subtotal Investments -->
-            <div class="mt-4 flex justify-between items-center border-t border-surface-container-highest pt-4">
-                <span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Subtotal Inversión</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-error">$14,250</span>
-            </div>
+
         </div>
-    </div>
-    <!-- Right Column: Revenue -->
-    <div class="flex flex-col gap-6">
-        <h3 class="font-headline-lg-mobile text-headline-lg-mobile border-b border-surface-container-highest pb-2 flex items-center gap-2">
-            <span class="material-symbols-outlined text-primary-container">point_of_sale</span>
-            Ganancia Obtenida
-        </h3>
-        <div class="flex flex-col gap-4">
-            <!-- Item 1 -->
-            <div class="bg-surface-container border border-outline-variant rounded-lg p-4 flex justify-between items-center hover:border-primary-container transition-colors">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded bg-surface-container-high border border-primary-container/30 flex items-center justify-center text-primary-container">
-                        <span class="material-symbols-outlined">water_drop</span>
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="font-body-md text-body-md font-semibold text-on-background">Venta de Miel (850 kg)</span>
-                        <span class="font-label-caps text-label-caps text-on-surface-variant">Precio: $35/kg</span>
-                    </div>
+
+        <!-- Net Balance Card -->
+        @if (balanceNeto >= 0)
+        {
+            <div class="bg-surface-container border border-primary-container rounded-lg p-6 flex flex-col gap-4 relative overflow-hidden group shadow-[0_0_15px_rgba(255,217,0,0.1)]">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-primary-container/10 rounded-full -mr-10 -mt-10 blur-xl group-hover:bg-primary-container/20 transition-all duration-500"></div>
+                <div class="flex justify-between items-center z-10">
+                    <span class="font-label-caps text-label-caps text-primary-container font-bold uppercase tracking-widest">Balance Neto (Profit)</span>
+                    <span class="material-symbols-outlined text-primary-container" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
                 </div>
-                <span class="font-body-md text-body-md text-primary-container">+$29,750</span>
-            </div>
-            <!-- Item 2 -->
-            <div class="bg-surface-container border border-outline-variant rounded-lg p-4 flex justify-between items-center hover:border-primary-container transition-colors">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded bg-surface-container-high border border-primary-container/30 flex items-center justify-center text-primary-container">
-                        <span class="material-symbols-outlined">bug_report</span>
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="font-body-md text-body-md font-semibold text-on-background">Venta de Núcleos (20 u.)</span>
-                        <span class="font-label-caps text-label-caps text-on-surface-variant">Precio: $350/u.</span>
-                    </div>
+                <div class="flex items-baseline gap-2 z-10">
+                    <span class="font-headline-lg text-headline-lg text-primary-container">$</span>
+                    <span class="font-display text-display text-primary-container">@balanceNeto.ToString("N0")</span>
                 </div>
-                <span class="font-body-md text-body-md text-primary-container">+$7,000</span>
+
             </div>
-            <!-- Item 3 -->
-            <div class="bg-surface-container border border-outline-variant rounded-lg p-4 flex justify-between items-center hover:border-primary-container transition-colors">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded bg-surface-container-high border border-primary-container/30 flex items-center justify-center text-primary-container">
-                        <span class="material-symbols-outlined">spa</span>
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="font-body-md text-body-md font-semibold text-on-background">Venta de Polen (50 kg)</span>
-                        <span class="font-label-caps text-label-caps text-on-surface-variant">Precio: $35/kg</span>
-                    </div>
+        }
+        else
+        {
+            <div class="bg-surface-container border border-error rounded-lg p-6 flex flex-col gap-4 relative overflow-hidden group shadow-[0_0_15px_rgba(255,180,171,0.1)]">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-error/10 rounded-full -mr-10 -mt-10 blur-xl group-hover:bg-error/20 transition-all duration-500"></div>
+                <div class="flex justify-between items-center z-10">
+                    <span class="font-label-caps text-label-caps text-error font-bold uppercase tracking-widest">Balance Neto (Pérdida)</span>
+                    <span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
                 </div>
-                <span class="font-body-md text-body-md text-primary-container">+$1,750</span>
+                <div class="flex items-baseline gap-2 z-10">
+                    <span class="font-headline-lg text-headline-lg text-error">-$</span>
+                    <span class="font-display text-display text-error">@Math.Abs(balanceNeto).ToString("N0")</span>
+                </div>
+
             </div>
-            <!-- Subtotal Revenue -->
-            <div class="mt-auto flex justify-between items-center border-t border-surface-container-highest pt-4">
-                <span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Subtotal Ganancia</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-primary-container">$38,500</span>
+        }
+    </section>
+
+
+
+    @if (hasActive)
+    {
+        <!-- Details Sections (Side by Side) -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+            <!-- Left Column: Investments -->
+            <div class="flex flex-col gap-6">
+                <div class="flex justify-between items-center border-b border-surface-container-highest pb-2">
+                    <h3 class="font-headline-lg-mobile text-headline-lg-mobile flex items-center gap-2">
+                        <span class="material-symbols-outlined text-error">receipt_long</span>
+                        Inversión Realizada
+                    </h3>
+                    <button onclick="openInversionModal()" class="bg-surface-container-high border border-outline hover:border-primary-container hover:text-primary-container transition-all px-3 py-1.5 rounded font-label-caps text-[11px] flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[16px]">add</span> Registrar Egresos
+                    </button>
+                </div>
+                <div class="flex flex-col gap-4 max-h-[500px] overflow-y-auto pr-1">
+                    @if (active?.Inversiones == null || !active.Inversiones.Any())
+                    {
+                        <div class="bg-surface-container-low border border-outline-variant border-dashed rounded-lg p-8 text-center">
+                            <p class="text-on-surface-variant font-body-sm">No hay registros de inversiones en este análisis.</p>
+                        </div>
+                    }
+                    else
+                    {
+                        @foreach (var inv in active.Inversiones)
+                        {
+                            <div class="bg-surface-container border border-outline-variant rounded-lg p-4 flex justify-between items-center hover:border-primary-container/50 transition-colors">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 rounded bg-surface-container-high border border-outline-variant flex items-center justify-center text-on-surface-variant">
+                                        <span class="material-symbols-outlined">payments</span>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span class="font-body-md text-body-md font-semibold text-on-background">@inv.Titulo</span>
+                                        <span class="font-body-sm text-[12px] text-on-surface-variant">@inv.Nota</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="font-body-md text-body-md text-error font-semibold">-$@inv.Precio.ToString("N2")</span>
+                                    <button onclick="confirmarEliminarInversion(@inv.Id, '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(inv.Titulo))')" class="text-on-surface-variant hover:text-error transition-colors p-1" title="Eliminar inversión">
+                                        <span class="material-symbols-outlined text-[18px]">delete</span>
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+                <!-- Subtotal Investments -->
+                <div class="mt-auto flex justify-between items-center border-t border-surface-container-highest pt-4">
+                    <span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Subtotal Inversión</span>
+                    <span class="font-headline-lg-mobile text-headline-lg-mobile text-error font-bold">$@totalInversion.ToString("N2")</span>
+                </div>
             </div>
-        </div>
-    </div>
-</section>
+
+            <!-- Right Column: Revenue -->
+            <div class="flex flex-col gap-6">
+                <div class="flex justify-between items-center border-b border-surface-container-highest pb-2">
+                    <h3 class="font-headline-lg-mobile text-headline-lg-mobile flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary-container">point_of_sale</span>
+                        Ganancia Obtenida
+                    </h3>
+                    <button onclick="openGananciaModal()" class="bg-surface-container-high border border-outline hover:border-primary-container hover:text-primary-container transition-all px-3 py-1.5 rounded font-label-caps text-[11px] flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[16px]">add</span> Registrar Ingresos
+                    </button>
+                </div>
+                <div class="flex flex-col gap-4 max-h-[500px] overflow-y-auto pr-1">
+                    @if (active?.Ganancias == null || !active.Ganancias.Any())
+                    {
+                        <div class="bg-surface-container-low border border-outline-variant border-dashed rounded-lg p-8 text-center">
+                            <p class="text-on-surface-variant font-body-sm">No hay registros de ganancias en este análisis.</p>
+                        </div>
+                    }
+                    else
+                    {
+                        @foreach (var gan in active.Ganancias)
+                        {
+                            <div class="bg-surface-container border border-outline-variant rounded-lg p-4 flex justify-between items-center hover:border-primary-container transition-colors">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 rounded bg-surface-container-high border border-primary-container/20 flex items-center justify-center text-primary-container">
+                                        <span class="material-symbols-outlined">point_of_sale</span>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span class="font-body-md text-body-md font-semibold text-on-background">@gan.Titulo</span>
+                                        <span class="font-body-sm text-[12px] text-on-surface-variant">@gan.Descripcion</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="font-body-md text-body-md text-primary-container font-semibold">+$@gan.Monto.ToString("N2")</span>
+                                    <button onclick="confirmarEliminarGanancia(@gan.Id, '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(gan.Titulo))')" class="text-on-surface-variant hover:text-error transition-colors p-1" title="Eliminar ganancia">
+                                        <span class="material-symbols-outlined text-[18px]">delete</span>
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+                <!-- Subtotal Revenue -->
+                <div class="mt-auto flex justify-between items-center border-t border-surface-container-highest pt-4">
+                    <span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Subtotal Ganancia</span>
+                    <span class="font-headline-lg-mobile text-headline-lg-mobile text-primary-container font-bold">$@gananciaBruta.ToString("N2")</span>
+                </div>
+            </div>
+        </section>
+    }
+    else
+    {
+        <!-- Empty active analysis workspace prompt -->
+        <section class="mt-8 bg-surface-container border border-outline-variant rounded-lg p-8 flex flex-col items-center text-center gap-4 shadow-xl max-w-4xl mx-auto">
+            <span class="material-symbols-outlined text-[60px] text-primary-container animate-bounce mt-4">payments</span>
+            <h3 class="font-headline-lg text-on-surface">Comenzar Nuevo Análisis Financiero</h3>
+            <p class="font-body-md text-on-surface-variant max-w-lg">
+                Para registrar y llevar el control detallado de las inversiones realizadas y ganancias obtenidas en la temporada apícola actual, inicie un nuevo análisis ahora.
+            </p>
+            <button onclick="iniciarAnalisis()" class="bg-primary-container text-on-primary font-label-caps text-label-caps px-8 py-3 rounded-lg hover:bg-primary-fixed hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2 mb-4">
+                <span class="material-symbols-outlined text-[18px]">play_arrow</span>
+                Empezar Análisis Financiero
+            </button>
+        </section>
+    }
+
+    <!-- Historial de Análisis -->
+    <section class="mt-12 mb-12">
+        <h2 class="font-headline-lg text-on-surface mb-6 border-b border-surface-variant pb-2">Historial de Análisis Finalizados</h2>
+        
+        @if (!Model.HistorialAnalisis.Any())
+        {
+            <div class="bg-surface-container border border-surface-variant rounded p-8 text-center shadow-sm">
+                <p class="text-on-surface-variant font-body-md">No hay registros de análisis en el historial.</p>
+            </div>
+        }
+        else
+        {
+            <div class="bg-surface-container border border-surface-variant rounded-lg overflow-hidden shadow-md">
+                <div class="overflow-x-auto responsive-table">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-surface-variant bg-surface-container-low">
+                                <th class="p-4 font-label-caps text-label-caps text-on-surface-variant whitespace-nowrap">ID Análisis</th>
+                                <th class="p-4 font-label-caps text-label-caps text-on-surface-variant whitespace-nowrap">Fecha de Inicio</th>
+                                <th class="p-4 font-label-caps text-label-caps text-on-surface-variant whitespace-nowrap">Fecha de Fin</th>
+                                <th class="p-4 font-label-caps text-label-caps text-on-surface-variant whitespace-nowrap text-right">Inversión Total</th>
+                                <th class="p-4 font-label-caps text-label-caps text-on-surface-variant whitespace-nowrap text-right">Ganancia Bruta</th>
+                                <th class="p-4 font-label-caps text-label-caps text-on-surface-variant whitespace-nowrap text-right">Balance Neto</th>
+                                <th class="p-4 font-label-caps text-label-caps text-on-surface-variant whitespace-nowrap text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.HistorialAnalisis)
+                            {
+                                <tr class="border-b border-surface-variant hover:bg-surface-container-high transition-colors">
+                                    <td class="p-4 font-body-sm text-on-surface font-semibold" data-label="ID Análisis">
+                                        #AN-@item.Id.ToString("D4")
+                                    </td>
+                                    <td class="p-4 font-body-sm text-on-surface-variant" data-label="Fecha de Inicio">
+                                        @item.FechaInicio.ToString("dd/MM/yyyy HH:mm")
+                                    </td>
+                                    <td class="p-4 font-body-sm text-on-surface-variant" data-label="Fecha de Fin">
+                                        @(item.FechaFin?.ToString("dd/MM/yyyy HH:mm") ?? "N/A")
+                                    </td>
+                                    <td class="p-4 font-body-sm text-right text-error font-medium" data-label="Inversión Total">
+                                        -$@item.TotalInversion.ToString("N2")
+                                    </td>
+                                    <td class="p-4 font-body-sm text-right text-primary-container font-medium" data-label="Ganancia Bruta">
+                                        +$@item.GananciaBruta.ToString("N2")
+                                    </td>
+                                    <td class="p-4 font-body-sm text-right font-bold @(item.BalanceNeto >= 0 ? "text-emerald-400" : "text-error")" data-label="Balance Neto">
+                                        @(item.BalanceNeto >= 0 ? "+" : "")$@item.BalanceNeto.ToString("N2")
+                                    </td>
+                                    <td class="p-4 text-center" data-label="Acciones">
+                                        <div class="flex items-center justify-center gap-2">
+                                            <button onclick="verDetalles(@item.Id)" title="Ver Detalle" class="text-on-surface-variant hover:text-primary-container transition-colors p-1">
+                                                <span class="material-symbols-outlined text-[18px]">visibility</span>
+                                            </button>
+                                            <button onclick="confirmarEliminar(@item.Id)" title="Eliminar" class="text-on-surface-variant hover:text-error transition-colors p-1">
+                                                <span class="material-symbols-outlined text-[18px]">delete</span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </section>
 </div>
+
+<!-- ================= MODALS SECTION ================= -->
+
+<!-- 1. Registrar Inversion Modal -->
+<div id="modalInversion" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop bg-black/80 modal-hidden p-4">
+    <div class="bg-surface border border-outline-variant rounded-lg w-full max-w-md modal-container shadow-2xl flex flex-col">
+        <div class="flex justify-between items-center p-6 border-b border-surface-variant">
+            <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Registrar Inversión</h2>
+            <button onclick="closeInversionModal()" class="text-on-surface-variant hover:text-on-surface rounded-full p-1">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="p-6 overflow-y-auto space-y-4">
+            <div id="errorBannerInversion" class="hidden bg-error-container/20 border border-error/50 text-error text-sm rounded p-3 space-y-1"></div>
+            
+            <form id="formInversion" class="flex flex-col gap-4">
+                <div class="flex flex-col gap-2">
+                    <label class="font-label-caps text-label-caps text-on-surface">Concepto / Título</label>
+                    <input type="text" id="invTitulo" class="bg-surface-container-high border border-outline-variant text-on-surface font-body-md rounded p-3 focus:outline-none focus:border-primary-container w-full" placeholder="Ej: Combustible, Ahumadores..." required maxlength="100" />
+                </div>
+                
+                <div class="flex flex-col gap-2">
+                    <label class="font-label-caps text-label-caps text-on-surface">Nota / Descripción</label>
+                    <input type="text" id="invNota" class="bg-surface-container-high border border-outline-variant text-on-surface font-body-md rounded p-3 focus:outline-none focus:border-primary-container w-full" placeholder="Ej: Viaje a Apiario Norte, compra 2 trajes..." maxlength="500" />
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label class="font-label-caps text-label-caps text-on-surface">Monto / Precio ($)</label>
+                    <input type="number" step="0.01" min="0.01" id="invPrecio" class="bg-surface-container-high border border-outline-variant text-on-surface font-body-md rounded p-3 focus:outline-none focus:border-primary-container w-full" placeholder="0.00" required />
+                </div>
+            </form>
+        </div>
+        <div class="p-6 border-t border-surface-variant flex justify-end gap-4 bg-surface-container-low">
+            <button onclick="closeInversionModal()" class="font-label-caps text-label-caps text-on-surface px-5 py-2.5 rounded hover:bg-surface-variant transition-colors border border-outline-variant">
+                Cancelar
+            </button>
+            <button onclick="submitInversion()" id="btnSubmitInversion" class="bg-primary-container text-on-primary font-label-caps text-label-caps px-5 py-2.5 rounded hover:bg-primary-fixed transition-colors">
+                Registrar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- 2. Registrar Ganancia Modal -->
+<div id="modalGanancia" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop bg-black/80 modal-hidden p-4">
+    <div class="bg-surface border border-outline-variant rounded-lg w-full max-w-md modal-container shadow-2xl flex flex-col">
+        <div class="flex justify-between items-center p-6 border-b border-surface-variant">
+            <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Registrar Ganancia</h2>
+            <button onclick="closeGananciaModal()" class="text-on-surface-variant hover:text-on-surface rounded-full p-1">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="p-6 overflow-y-auto space-y-4">
+            <div id="errorBannerGanancia" class="hidden bg-error-container/20 border border-error/50 text-error text-sm rounded p-3 space-y-1"></div>
+            
+            <form id="formGanancia" class="flex flex-col gap-4">
+                <div class="flex flex-col gap-2">
+                    <label class="font-label-caps text-label-caps text-on-surface">Concepto / Título</label>
+                    <input type="text" id="ganTitulo" class="bg-surface-container-high border border-outline-variant text-on-surface font-body-md rounded p-3 focus:outline-none focus:border-primary-container w-full" placeholder="Ej: Venta de Miel, Venta de Polen..." required maxlength="100" />
+                </div>
+                
+                <div class="flex flex-col gap-2">
+                    <label class="font-label-caps text-label-caps text-on-surface">Descripción / Detalle</label>
+                    <input type="text" id="ganDescripcion" class="bg-surface-container-high border border-outline-variant text-on-surface font-body-md rounded p-3 focus:outline-none focus:border-primary-container w-full" placeholder="Ej: 850kg vendidos a distribuidora..." maxlength="500" />
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label class="font-label-caps text-label-caps text-on-surface">Monto / Ganancia ($)</label>
+                    <input type="number" step="0.01" min="0.01" id="ganMonto" class="bg-surface-container-high border border-outline-variant text-on-surface font-body-md rounded p-3 focus:outline-none focus:border-primary-container w-full" placeholder="0.00" required />
+                </div>
+            </form>
+        </div>
+        <div class="p-6 border-t border-surface-variant flex justify-end gap-4 bg-surface-container-low">
+            <button onclick="closeGananciaModal()" class="font-label-caps text-label-caps text-on-surface px-5 py-2.5 rounded hover:bg-surface-variant transition-colors border border-outline-variant">
+                Cancelar
+            </button>
+            <button onclick="submitGanancia()" id="btnSubmitGanancia" class="bg-primary-container text-on-primary font-label-caps text-label-caps px-5 py-2.5 rounded hover:bg-primary-fixed transition-colors">
+                Registrar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- 3. Finalizar Analisis Confirmation Modal -->
+<div id="modalFinalizar" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
+    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-md modal-container shadow-2xl p-6 text-center space-y-4">
+        <span class="material-symbols-outlined text-primary-container text-5xl">check_circle</span>
+        <h4 class="font-headline-lg text-lg font-bold text-on-surface">¿Finalizar Análisis Financiero?</h4>
+        <p class="font-body-md text-body-md text-on-surface-variant">
+            Se registrará la fecha y hora actuales como la finalización del análisis actual. Una vez finalizado, no se podrán realizar más cambios en este período.
+        </p>
+        <p class="text-sm text-primary-container/85 font-medium">
+            Seleccione si desea abrir otro análisis inmediatamente o si lo hará más adelante.
+        </p>
+        <div class="pt-4 flex flex-col sm:flex-row justify-center gap-3">
+            <button onclick="closeFinalizarModal()" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-4 py-2 rounded font-label-caps text-label-caps order-3 sm:order-1">
+                Cancelar
+            </button>
+            <button onclick="finalizarAnalisis(false)" id="btnFinalizarSolo" class="border border-primary-container text-primary-container hover:bg-primary-container/10 transition-colors px-4 py-2 rounded font-label-caps text-label-caps order-2">
+                Solo Finalizar
+            </button>
+            <button onclick="finalizarAnalisis(true)" id="btnFinalizarYCrear" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-4 py-2 rounded font-label-caps text-label-caps order-1">
+                Finalizar y Crear Nuevo
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- 4. Ver Detalles Modal -->
+<div id="modalDetalles" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
+    <div class="bg-surface border border-outline-variant rounded-lg w-full max-w-3xl modal-container shadow-2xl flex flex-col max-h-[90vh]">
+        <div class="flex justify-between items-center p-6 border-b border-surface-variant">
+            <div>
+                <h2 id="detallesTitle" class="font-headline-lg-mobile md:font-headline-lg text-on-surface">Detalles del Análisis</h2>
+                <p id="detallesSub" class="text-sm text-on-surface-variant font-body-sm"></p>
+            </div>
+            <button onclick="closeDetallesModal()" class="text-on-surface-variant hover:text-on-surface rounded-full p-1">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="p-6 overflow-y-auto space-y-6">
+            <!-- Totals Grid in Details -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-surface-container border border-outline-variant p-4 rounded flex flex-col gap-1">
+                    <span class="font-label-caps text-[10px] text-on-surface-variant uppercase">Inversión Total</span>
+                    <span id="detTotalInversion" class="font-body-md text-lg text-error font-semibold"></span>
+                </div>
+                <div class="bg-surface-container border border-outline-variant p-4 rounded flex flex-col gap-1">
+                    <span class="font-label-caps text-[10px] text-on-surface-variant uppercase">Ganancia Bruta</span>
+                    <span id="detGananciaBruta" class="font-body-md text-lg text-primary-container font-semibold"></span>
+                </div>
+                <div class="bg-surface-container border border-outline-variant p-4 rounded flex flex-col gap-1" id="detBalanceCard">
+                    <span class="font-label-caps text-[10px] text-on-surface-variant uppercase">Balance Neto</span>
+                    <span id="detBalanceNeto" class="font-body-md text-lg font-bold"></span>
+                </div>
+            </div>
+
+            <!-- List grids side by side in details -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-surface-container-highest">
+                <!-- Left Details: Investments -->
+                <div class="flex flex-col gap-3">
+                    <h3 class="font-label-caps text-label-caps font-bold text-error border-b border-surface-container-highest pb-1 flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-[16px]">receipt_long</span> Inversiones Realizadas
+                    </h3>
+                    <div id="detListInversiones" class="flex flex-col gap-2 max-h-[250px] overflow-y-auto pr-1"></div>
+                    <div class="flex justify-between items-center border-t border-surface-container-highest pt-2 text-sm font-semibold">
+                        <span class="font-label-caps text-[11px] text-on-surface-variant uppercase">Subtotal Inversión</span>
+                        <span id="detSubtotalInversion" class="text-error"></span>
+                    </div>
+                </div>
+
+                <!-- Right Details: Earnings -->
+                <div class="flex flex-col gap-3">
+                    <h3 class="font-label-caps text-label-caps font-bold text-primary-container border-b border-surface-container-highest pb-1 flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-[16px]">point_of_sale</span> Ganancias Obtenidas
+                    </h3>
+                    <div id="detListGanancias" class="flex flex-col gap-2 max-h-[250px] overflow-y-auto pr-1"></div>
+                    <div class="flex justify-between items-center border-t border-surface-container-highest pt-2 text-sm font-semibold">
+                        <span class="font-label-caps text-[11px] text-on-surface-variant uppercase">Subtotal Ganancia</span>
+                        <span id="detSubtotalGanancia" class="text-primary-container"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="p-6 border-t border-surface-variant flex justify-end bg-surface-container-low">
+            <button onclick="closeDetallesModal()" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps">
+                Cerrar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- 5. Delete Confirmation Modal -->
+<div id="modalEliminar" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
+    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-md modal-container shadow-2xl p-6 text-center space-y-4">
+        <span class="material-symbols-outlined text-error text-5xl">delete_forever</span>
+        <h4 class="font-headline-lg text-lg font-bold text-on-surface">¿Eliminar Análisis?</h4>
+        <p class="font-body-md text-body-md text-on-surface-variant">
+            ¿Está seguro de que desea eliminar el análisis <span id="eliminarItemName" class="text-error font-semibold"></span> del historial?
+        </p>
+        <p class="text-sm text-error/80 font-medium">
+            Esta acción es irreversible. Se eliminarán permanentemente todas las inversiones y ganancias asociadas a este análisis de la base de datos.
+        </p>
+        <div class="pt-4 flex justify-center gap-3">
+            <button onclick="closeEliminarModal()" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2 rounded font-label-caps text-label-caps">
+                Cancelar
+            </button>
+            <button onclick="executeEliminar()" id="btnConfirmEliminar" class="bg-error-container/30 border border-error text-error hover:bg-error/20 transition-colors px-6 py-2 rounded font-label-caps text-label-caps ">
+                Sí, deseo eliminarlo
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- 6. Delete Investment Confirmation Modal -->
+<div id="modalEliminarInversion" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
+    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-md modal-container shadow-2xl p-6 text-center space-y-4">
+        <span class="material-symbols-outlined text-error text-5xl">delete_forever</span>
+        <h4 class="font-headline-lg text-lg font-bold text-on-surface">¿Eliminar Inversión?</h4>
+        <p class="font-body-md text-body-md text-on-surface-variant">
+            ¿Está seguro de que desea eliminar la inversión <span id="eliminarInversionItemName" class="text-error font-semibold"></span> del análisis activo?
+        </p>
+        <p class="text-sm text-error/80 font-medium">
+            Esta acción es irreversible y afectará el balance neto de la temporada actual.
+        </p>
+        <div class="pt-4 flex justify-center gap-3">
+            <button onclick="closeEliminarInversionModal()" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2 rounded font-label-caps text-label-caps">
+                Cancelar
+            </button>
+            <button onclick="executeEliminarInversion()" id="btnConfirmEliminarInversion" class="bg-error-container/30 border border-error text-error hover:bg-error/20 transition-colors px-6 py-2 rounded font-label-caps text-label-caps ">
+                Sí, deseo eliminarlo
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- 7. Delete Earning Confirmation Modal -->
+<div id="modalEliminarGanancia" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
+    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-md modal-container shadow-2xl p-6 text-center space-y-4">
+        <span class="material-symbols-outlined text-error text-5xl">delete_forever</span>
+        <h4 class="font-headline-lg text-lg font-bold text-on-surface">¿Eliminar Ganancia?</h4>
+        <p class="font-body-md text-body-md text-on-surface-variant">
+            ¿Está seguro de que desea eliminar la ganancia <span id="eliminarGananciaItemName" class="text-error font-semibold"></span> del análisis activo?
+        </p>
+        <p class="text-sm text-error/80 font-medium">
+            Esta acción es irreversible y afectará el balance neto de la temporada actual.
+        </p>
+        <div class="pt-4 flex justify-center gap-3">
+            <button onclick="closeEliminarGananciaModal()" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2 rounded font-label-caps text-label-caps">
+                Cancelar
+            </button>
+            <button onclick="executeEliminarGanancia()" id="btnConfirmEliminarGanancia" class="bg-error-container/30 border border-error text-error hover:bg-error/20 transition-colors px-6 py-2 rounded font-label-caps text-label-caps ">
+                Sí, deseo eliminarlo
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ================= SCRIPTS ================= -->
+@section Scripts {
+    <script>
+        const activeAnalysisId = @(active?.Id ?? 0);
+        let pendingDeleteId = null;
+        let pendingDeleteInversionId = null;
+        let pendingDeleteGananciaId = null;
+
+        // Modals elements
+        const modalInversion = document.getElementById("modalInversion");
+        const modalGanancia = document.getElementById("modalGanancia");
+        const modalFinalizar = document.getElementById("modalFinalizar");
+        const modalDetalles = document.getElementById("modalDetalles");
+        const modalEliminar = document.getElementById("modalEliminar");
+        const modalEliminarInversion = document.getElementById("modalEliminarInversion");
+        const modalEliminarGanancia = document.getElementById("modalEliminarGanancia");
+
+        // Error banners
+        const errorBannerInversion = document.getElementById("errorBannerInversion");
+        const errorBannerGanancia = document.getElementById("errorBannerGanancia");
+
+        // Iniciar análisis
+        async function iniciarAnalisis() {
+            try {
+                const response = await fetch('/Mas/IniciarAnalisis', {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showToast("Análisis financiero iniciado con éxito.", "success");
+                    setTimeout(() => window.location.reload(), 1000);
+                } else {
+                    showToast(result.message || "No se pudo iniciar el análisis.", "error");
+                }
+            } catch (err) {
+                showToast("Error de conexión al iniciar el análisis.", "error");
+            }
+        }
+
+        // Finalizar análisis
+        async function finalizarAnalisis(iniciarNuevo) {
+            if (activeAnalysisId === 0) return;
+
+            const btnSolo = document.getElementById("btnFinalizarSolo");
+            const btnYCrear = document.getElementById("btnFinalizarYCrear");
+            
+            btnSolo.disabled = true;
+            btnYCrear.disabled = true;
+            btnYCrear.textContent = "Finalizando...";
+
+            try {
+                const response = await fetch(`/Mas/FinalizarAnalisis?id=${activeAnalysisId}&iniciarNuevo=${iniciarNuevo}`, {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                if (result.success) {
+                    closeFinalizarModal();
+                    showToast("El análisis ha sido finalizado y archivado.", "success");
+                    setTimeout(() => window.location.reload(), 1000);
+                } else {
+                    showToast(result.message || "Error al finalizar el análisis.", "error");
+                    btnSolo.disabled = false;
+                    btnYCrear.disabled = false;
+                    btnYCrear.textContent = "Finalizar y Crear Nuevo";
+                }
+            } catch (err) {
+                showToast("Error de conexión al finalizar el análisis.", "error");
+                btnSolo.disabled = false;
+                btnYCrear.disabled = false;
+                btnYCrear.textContent = "Finalizar y Crear Nuevo";
+            }
+        }
+
+        // Registrar Inversion
+        async function submitInversion() {
+            errorBannerInversion.classList.add("hidden");
+            errorBannerInversion.innerHTML = "";
+
+            const titulo = document.getElementById("invTitulo").value.trim();
+            const nota = document.getElementById("invNota").value.trim();
+            const precio = parseFloat(document.getElementById("invPrecio").value);
+
+            let errors = [];
+            if (!titulo) errors.push("El concepto o título es obligatorio.");
+            if (isNaN(precio) || precio <= 0) errors.push("El precio debe ser un número positivo.");
+
+            if (errors.length > 0) {
+                errorBannerInversion.innerHTML = errors.map(e => `<p class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">error</span> ${e}</p>`).join("");
+                errorBannerInversion.classList.remove("hidden");
+                return;
+            }
+
+            const btn = document.getElementById("btnSubmitInversion");
+            btn.disabled = true;
+            btn.textContent = "Registrando...";
+
+            try {
+                const response = await fetch('/Mas/RegistrarInversion', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        AnalisisId: activeAnalysisId,
+                        Titulo: titulo,
+                        Nota: nota,
+                        Precio: precio
+                    })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    closeInversionModal();
+                    showToast("Egreso registrado con éxito.", "success");
+                    setTimeout(() => window.location.reload(), 1000);
+                } else {
+                    errorBannerInversion.innerHTML = `<p class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">error</span> ${result.message || "Error al registrar la inversión."}</p>`;
+                    errorBannerInversion.classList.remove("hidden");
+                    btn.disabled = false;
+                    btn.textContent = "Registrar";
+                }
+            } catch (err) {
+                errorBannerInversion.innerHTML = `<p class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">error</span> Error de conexión con el servidor.</p>`;
+                errorBannerInversion.classList.remove("hidden");
+                btn.disabled = false;
+                btn.textContent = "Registrar";
+            }
+        }
+
+        // Registrar Ganancia
+        async function submitGanancia() {
+            errorBannerGanancia.classList.add("hidden");
+            errorBannerGanancia.innerHTML = "";
+
+            const titulo = document.getElementById("ganTitulo").value.trim();
+            const descripcion = document.getElementById("ganDescripcion").value.trim();
+            const monto = parseFloat(document.getElementById("ganMonto").value);
+
+            let errors = [];
+            if (!titulo) errors.push("El concepto o título es obligatorio.");
+            if (isNaN(monto) || monto <= 0) errors.push("La ganancia debe ser un número positivo.");
+
+            if (errors.length > 0) {
+                errorBannerGanancia.innerHTML = errors.map(e => `<p class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">error</span> ${e}</p>`).join("");
+                errorBannerGanancia.classList.remove("hidden");
+                return;
+            }
+
+            const btn = document.getElementById("btnSubmitGanancia");
+            btn.disabled = true;
+            btn.textContent = "Registrando...";
+
+            try {
+                const response = await fetch('/Mas/RegistrarGanancia', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        AnalisisId: activeAnalysisId,
+                        Titulo: titulo,
+                        Descripcion: descripcion,
+                        Monto: monto
+                    })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    closeGananciaModal();
+                    showToast("Ingreso registrado con éxito.", "success");
+                    setTimeout(() => window.location.reload(), 1000);
+                } else {
+                    errorBannerGanancia.innerHTML = `<p class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">error</span> ${result.message || "Error al registrar la ganancia."}</p>`;
+                    errorBannerGanancia.classList.remove("hidden");
+                    btn.disabled = false;
+                    btn.textContent = "Registrar";
+                }
+            } catch (err) {
+                errorBannerGanancia.innerHTML = `<p class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">error</span> Error de conexión con el servidor.</p>`;
+                errorBannerGanancia.classList.remove("hidden");
+                btn.disabled = false;
+                btn.textContent = "Registrar";
+            }
+        }
+
+        // Ver Detalles de un Análisis
+        async function verDetalles(id) {
+            try {
+                const response = await fetch(`/Mas/GetAnalisisDetalles?id=${id}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    const data = result.data;
+                    document.getElementById("detallesTitle").innerText = `Detalles del Análisis #AN-${data.id.toString().padStart(4, '0')}`;
+                    document.getElementById("detallesSub").innerText = `Iniciado: ${data.fechaInicio}  |  Finalizado: ${data.fechaFin}`;
+                    
+                    document.getElementById("detTotalInversion").innerText = `-$${data.totalInversion.toLocaleString('es-UY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                    document.getElementById("detGananciaBruta").innerText = `+$${data.gananciaBruta.toLocaleString('es-UY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                    
+                    const balEl = document.getElementById("detBalanceNeto");
+                    const balCard = document.getElementById("detBalanceCard");
+                    
+                    balEl.innerText = `${data.balanceNeto >= 0 ? '+' : ''}$${data.balanceNeto.toLocaleString('es-UY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                    if (data.balanceNeto >= 0) {
+                        balEl.className = "font-body-md text-lg text-emerald-400 font-bold";
+                        balCard.className = "bg-surface-container border border-emerald-500/30 p-4 rounded flex flex-col gap-1";
+                    } else {
+                        balEl.className = "font-body-md text-lg text-error font-bold";
+                        balCard.className = "bg-surface-container border border-error/30 p-4 rounded flex flex-col gap-1";
+                    }
+
+                    document.getElementById("detSubtotalInversion").innerText = `$${data.totalInversion.toLocaleString('es-UY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                    document.getElementById("detSubtotalGanancia").innerText = `$${data.gananciaBruta.toLocaleString('es-UY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+                    // Render lists
+                    const invList = document.getElementById("detListInversiones");
+                    invList.innerHTML = "";
+                    if (data.inversiones.length === 0) {
+                        invList.innerHTML = `<p class="text-xs text-on-surface-variant italic py-2">Sin egresos registrados.</p>`;
+                    } else {
+                        data.inversiones.forEach(inv => {
+                            invList.innerHTML += `
+                                <div class="bg-surface-container-low border border-outline-variant/60 rounded p-3 flex justify-between items-center">
+                                    <div class="flex flex-col">
+                                        <span class="font-body-sm text-[13px] font-semibold text-on-surface">${inv.titulo}</span>
+                                        <span class="text-[11px] text-on-surface-variant">${inv.nota}</span>
+                                    </div>
+                                    <span class="font-body-sm text-[13px] text-error font-medium">-$${inv.precio.toLocaleString('es-UY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                                </div>
+                            `;
+                        });
+                    }
+
+                    const ganList = document.getElementById("detListGanancias");
+                    ganList.innerHTML = "";
+                    if (data.ganancias.length === 0) {
+                        ganList.innerHTML = `<p class="text-xs text-on-surface-variant italic py-2">Sin ingresos registrados.</p>`;
+                    } else {
+                        data.ganancias.forEach(gan => {
+                            ganList.innerHTML += `
+                                <div class="bg-surface-container-low border border-outline-variant/60 rounded p-3 flex justify-between items-center">
+                                    <div class="flex flex-col">
+                                        <span class="font-body-sm text-[13px] font-semibold text-on-surface">${gan.titulo}</span>
+                                        <span class="text-[11px] text-on-surface-variant">${gan.descripcion}</span>
+                                    </div>
+                                    <span class="font-body-sm text-[13px] text-primary-container font-medium">+$${gan.monto.toLocaleString('es-UY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                                </div>
+                            `;
+                        });
+                    }
+
+                    showModal(modalDetalles);
+                } else {
+                    showToast(result.message || "Error al obtener detalles del análisis.", "error");
+                }
+            } catch (err) {
+                showToast("Error de conexión al cargar los detalles.", "error");
+            }
+        }
+
+        // Eliminar análisis
+        function confirmarEliminar(id) {
+            pendingDeleteId = id;
+            document.getElementById("eliminarItemName").innerText = `#AN-${id.toString().padStart(4, '0')}`;
+            showModal(modalEliminar);
+        }
+
+        async function executeEliminar() {
+            if (!pendingDeleteId) return;
+
+            const btn = document.getElementById("btnConfirmEliminar");
+            btn.disabled = true;
+            btn.textContent = "Eliminando...";
+
+            try {
+                const response = await fetch(`/Mas/EliminarAnalisis?id=${pendingDeleteId}`, {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                if (result.success) {
+                    closeEliminarModal();
+                    showToast("El análisis ha sido eliminado permanentemente.", "success");
+                    setTimeout(() => window.location.reload(), 1000);
+                } else {
+                    showToast(result.message || "Error al eliminar el análisis.", "error");
+                    btn.disabled = false;
+                    btn.textContent = "Sí, deseo eliminarlo";
+                }
+            } catch (err) {
+                showToast("Error de conexión al eliminar el análisis.", "error");
+                btn.disabled = false;
+                btn.textContent = "Sí, deseo eliminarlo";
+            }
+        }
+
+        // Visual controls (Modals show/hide wrapper)
+        function openInversionModal() {
+            document.getElementById("formInversion").reset();
+            errorBannerInversion.classList.add("hidden");
+            showModal(modalInversion);
+        }
+        function closeInversionModal() {
+            hideModal(modalInversion);
+        }
+
+        function openGananciaModal() {
+            document.getElementById("formGanancia").reset();
+            errorBannerGanancia.classList.add("hidden");
+            showModal(modalGanancia);
+        }
+        function closeGananciaModal() {
+            hideModal(modalGanancia);
+        }
+
+        function openFinalizarModal() {
+            showModal(modalFinalizar);
+        }
+        function closeFinalizarModal() {
+            hideModal(modalFinalizar);
+        }
+
+        function closeDetallesModal() {
+            hideModal(modalDetalles);
+        }
+
+        function closeEliminarModal() {
+            hideModal(modalEliminar);
+            pendingDeleteId = null;
+        }
+
+        // Delete active investment
+        function confirmarEliminarInversion(id, titulo) {
+            pendingDeleteInversionId = id;
+            document.getElementById("eliminarInversionItemName").innerText = `"${titulo}"`;
+            showModal(modalEliminarInversion);
+        }
+
+        function closeEliminarInversionModal() {
+            hideModal(modalEliminarInversion);
+            pendingDeleteInversionId = null;
+        }
+
+        async function executeEliminarInversion() {
+            if (!pendingDeleteInversionId) return;
+
+            const btn = document.getElementById("btnConfirmEliminarInversion");
+            btn.disabled = true;
+            btn.textContent = "Eliminando...";
+
+            try {
+                const response = await fetch(`/Mas/EliminarInversion?id=${pendingDeleteInversionId}`, {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                if (result.success) {
+                    closeEliminarInversionModal();
+                    showToast("La inversión ha sido eliminada del análisis activo.", "success");
+                    setTimeout(() => window.location.reload(), 1000);
+                } else {
+                    showToast(result.message || "Error al eliminar la inversión.", "error");
+                    btn.disabled = false;
+                    btn.textContent = "Sí, deseo eliminarlo";
+                }
+            } catch (err) {
+                showToast("Error de conexión al eliminar la inversión.", "error");
+                btn.disabled = false;
+                btn.textContent = "Sí, deseo eliminarlo";
+            }
+        }
+
+        // Delete active earning
+        function confirmarEliminarGanancia(id, titulo) {
+            pendingDeleteGananciaId = id;
+            document.getElementById("eliminarGananciaItemName").innerText = `"${titulo}"`;
+            showModal(modalEliminarGanancia);
+        }
+
+        function closeEliminarGananciaModal() {
+            hideModal(modalEliminarGanancia);
+            pendingDeleteGananciaId = null;
+        }
+
+        async function executeEliminarGanancia() {
+            if (!pendingDeleteGananciaId) return;
+
+            const btn = document.getElementById("btnConfirmEliminarGanancia");
+            btn.disabled = true;
+            btn.textContent = "Eliminando...";
+
+            try {
+                const response = await fetch(`/Mas/EliminarGanancia?id=${pendingDeleteGananciaId}`, {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                if (result.success) {
+                    closeEliminarGananciaModal();
+                    showToast("La ganancia ha sido eliminada del análisis activo.", "success");
+                    setTimeout(() => window.location.reload(), 1000);
+                } else {
+                    showToast(result.message || "Error al eliminar la ganancia.", "error");
+                    btn.disabled = false;
+                    btn.textContent = "Sí, deseo eliminarlo";
+                }
+            } catch (err) {
+                showToast("Error de conexión al eliminar la ganancia.", "error");
+                btn.disabled = false;
+                btn.textContent = "Sí, deseo eliminarlo";
+            }
+        }
+    </script>
+}
