@@ -2,12 +2,24 @@
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
     var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
 
-    string GetNavClass(string controller)
+    string GetNavClass(string controller, string? action = null)
     {
-        bool isActive = currentController == controller;
-        if (controller == "Apiarios" && currentController == "Mas" && currentAction == "CompararApiarios")
+        bool isActive = false;
+        if (controller == "Home" && currentController == "Home")
         {
             isActive = true;
+        }
+        else if (controller == "Apiarios")
+        {
+            isActive = currentController == "Apiarios" || (currentController == "Mas" && currentAction == "CompararApiarios");
+        }
+        else if (controller == "Colmenas")
+        {
+            isActive = currentController == "Colmenas" || (currentController == "Mas" && currentAction == "CompararColmenas");
+        }
+        else if (controller == "Mas" && action == "Movimientos")
+        {
+            isActive = currentController == "Mas" && currentAction == "Movimientos";
         }
         return isActive 
             ? "px-4 py-2 font-label-caps text-label-caps text-primary-container bg-surface-container-high rounded-lg flex items-center gap-2 border-b-2 border-primary-container"
@@ -24,7 +36,10 @@
 
     string GetMoreDropdownClass()
     {
-        bool isActive = (currentController == "Mas" && currentAction != "CompararApiarios") || currentController == "Admin";
+        bool isActive = (currentController == "Mas" && currentAction == "Inventario")
+                     || (currentController == "Mas" && currentAction == "Finanzacion")
+                     || currentController == "Informes"
+                     || currentController == "Admin";
         return isActive
             ? "px-4 py-2 font-label-caps text-label-caps text-primary-container bg-surface-container-high rounded-lg flex items-center gap-2 border-b-2 border-primary-container"
             : "px-4 py-2 font-label-caps text-label-caps text-on-surface-variant hover:text-primary-container transition-colors rounded-lg hover:bg-surface-container-high flex items-center gap-2";
@@ -32,10 +47,22 @@
 
     string GetIconStyle(string controller, string? action = null)
     {
-        bool isActive = currentController == controller && (action == null || currentAction == action);
-        if (controller == "Apiarios" && currentController == "Mas" && currentAction == "CompararApiarios")
+        bool isActive = false;
+        if (controller == "Home" && currentController == "Home")
         {
             isActive = true;
+        }
+        else if (controller == "Apiarios")
+        {
+            isActive = currentController == "Apiarios" || (currentController == "Mas" && currentAction == "CompararApiarios");
+        }
+        else if (controller == "Colmenas")
+        {
+            isActive = currentController == "Colmenas" || (currentController == "Mas" && currentAction == "CompararColmenas");
+        }
+        else if (controller == "Mas" && action == "Movimientos")
+        {
+            isActive = currentController == "Mas" && currentAction == "Movimientos";
         }
         return isActive ? "font-variation-settings: 'FILL' 1;" : "";
     }
@@ -230,8 +257,8 @@
                     <a asp-controller="Colmenas" asp-action="Index" class="@GetNavClass("Colmenas")">
                         <span class="material-symbols-outlined text-[18px]" style="@GetIconStyle("Colmenas")">hive</span> Colmenas
                     </a>
-                    <a asp-controller="Informes" asp-action="Index" class="@GetNavClass("Informes")">
-                        <span class="material-symbols-outlined text-[18px]" style="@GetIconStyle("Informes")">assessment</span> Informes
+                    <a asp-controller="Mas" asp-action="Movimientos" class="@GetNavClass("Mas", "Movimientos")">
+                        <span class="material-symbols-outlined text-[18px]" style="@GetIconStyle("Mas", "Movimientos")">local_shipping</span> Movimientos
                     </a>
                     <div class="relative group">
                         <button class="@GetMoreDropdownClass()">
@@ -239,15 +266,14 @@
                             <span class="material-symbols-outlined text-[18px]">expand_more</span>
                         </button>
                         <div class="absolute top-full left-1/2 -translate-x-1/2 w-48 bg-surface-container border border-outline-variant rounded shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 flex flex-col py-1">
-                            <a asp-controller="Mas" asp-action="Movimientos" class="@GetDropdownItemClass("Mas", "Movimientos")">
-                                <span class="material-symbols-outlined text-[18px]">local_shipping</span> Movimientos
+                            <a asp-controller="Mas" asp-action="Inventario" class="@GetDropdownItemClass("Mas", "Inventario")">
+                                <span class="material-symbols-outlined text-[18px]">inventory</span> Inventario
                             </a>
-
                             <a asp-controller="Mas" asp-action="Finanzacion" class="@GetDropdownItemClass("Mas", "Finanzacion")">
                                 <span class="material-symbols-outlined text-[18px]">payments</span> Cálculo de Costos
                             </a>
-                            <a asp-controller="Mas" asp-action="Inventario" class="@GetDropdownItemClass("Mas", "Inventario")">
-                                <span class="material-symbols-outlined text-[18px]">inventory</span> Inventario
+                            <a asp-controller="Informes" asp-action="Index" class="@GetDropdownItemClass("Informes", "Index")">
+                                <span class="material-symbols-outlined text-[18px]">assessment</span> Informes
                             </a>
                             @if (User.IsInRole("Admin"))
                             {
@@ -305,19 +331,19 @@
             <a asp-controller="Colmenas" asp-action="Index" class="@GetNavClass("Colmenas") py-4">
                 <span class="material-symbols-outlined text-[20px]" style="@GetIconStyle("Colmenas")">hive</span> Colmenas
             </a>
-            <a asp-controller="Informes" asp-action="Index" class="@GetNavClass("Informes") py-4">
-                <span class="material-symbols-outlined text-[20px]" style="@GetIconStyle("Informes")">assessment</span> Informes
+            <a asp-controller="Mas" asp-action="Movimientos" class="@GetNavClass("Mas", "Movimientos") py-4">
+                <span class="material-symbols-outlined text-[20px]" style="@GetIconStyle("Mas", "Movimientos")">local_shipping</span> Movimientos
             </a>
             <div class="mt-4 pt-4 border-t border-surface-container-highest">
                 <p class="font-label-caps text-label-caps text-on-surface-variant mb-2">MÁS OPCIONES</p>
-                <a asp-controller="Mas" asp-action="Movimientos" class="@GetDropdownItemClass("Mas", "Movimientos") py-3">
-                    <span class="material-symbols-outlined text-[18px]">local_shipping</span> Movimientos
+                <a asp-controller="Mas" asp-action="Inventario" class="@GetDropdownItemClass("Mas", "Inventario") py-3">
+                    <span class="material-symbols-outlined text-[18px]">inventory</span> Inventario
                 </a>
                 <a asp-controller="Mas" asp-action="Finanzacion" class="@GetDropdownItemClass("Mas", "Finanzacion") py-3">
                     <span class="material-symbols-outlined text-[18px]">payments</span> Cálculo de Costos
                 </a>
-                <a asp-controller="Mas" asp-action="Inventario" class="@GetDropdownItemClass("Mas", "Inventario") py-3">
-                    <span class="material-symbols-outlined text-[18px]">inventory</span> Inventario
+                <a asp-controller="Informes" asp-action="Index" class="@GetDropdownItemClass("Informes", "Index") py-3">
+                    <span class="material-symbols-outlined text-[18px]">assessment</span> Informes
                 </a>
                 @if (User.IsInRole("Admin"))
                 {
@@ -408,6 +434,27 @@
                 setTimeout(() => toast.remove(), 300);
             }, 3500);
         }
+
+        function updateBodyScroll() {
+            const activeModals = Array.from(document.querySelectorAll('.modal-backdrop')).filter(m => !m.classList.contains('modal-hidden'));
+            if (activeModals.length > 0) {
+                document.body.style.overflow = "hidden";
+            } else {
+                document.body.style.overflow = "";
+            }
+        }
+
+        window.showModal = function(el) {
+            if (!el) return;
+            el.classList.remove("modal-hidden");
+            updateBodyScroll();
+        };
+
+        window.hideModal = function(el) {
+            if (!el) return;
+            el.classList.add("modal-hidden");
+            updateBodyScroll();
+        };
     </script>
 
     @if (TempData["SuccessMessage"] != null)

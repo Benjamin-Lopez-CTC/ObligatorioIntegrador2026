@@ -34,13 +34,26 @@
 }
 
 <main class="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-12 flex flex-col gap-10">
+    <!-- Breadcrumb Context Bar -->
+    <div class="w-full flex items-center gap-2 font-label-caps text-label-caps text-on-surface-variant mb-2">
+        @if (ViewBag.FromApiarioId != null)
+        {
+            <a asp-controller="Apiarios" asp-action="Index" class="text-primary-container hover:text-primary-fixed transition-colors">Apiarios</a>
+            <span class="text-primary-container font-bold">&gt;</span>
+            <a asp-controller="Apiarios" asp-action="Detalles" asp-route-id="@ViewBag.FromApiarioId" class="text-primary-container hover:text-primary-fixed transition-colors">Detalle de Apiario</a>
+            <span class="text-primary-container font-bold">&gt;</span>
+        }
+        else
+        {
+            <a asp-action="Index" class="text-primary-container hover:text-primary-fixed transition-colors">Colmenas</a>
+            <span class="text-primary-container font-bold">&gt;</span>
+        }
+        <span class="text-on-surface">Detalle de Colmena</span>
+    </div>
+
     <!-- Header Section -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-surface-container-highest pb-8">
         <div class="flex flex-col gap-4">
-            <a asp-action="Index" class="flex items-center gap-2 text-on-surface-variant hover:text-primary-container transition-colors mb-4 group font-label-caps text-label-caps uppercase w-fit">
-                <span class="material-symbols-outlined text-sm group-hover:-translate-x-1 transition-transform">arrow_back</span>
-                Volver a Colmenas
-            </a>
             <div class="flex items-center flex-wrap gap-4">
                 <h1 class="font-display text-display md:text-[40px] text-[32px] text-primary-container break-words max-w-full">
                     @(string.IsNullOrEmpty(Model.Identificador) ? Model.CodigoEscaneo : Model.Identificador)
@@ -227,7 +240,7 @@
             <div class="flex flex-col gap-6">
                 <div class="flex justify-between items-end border-b border-surface-container-highest pb-3">
                     <h2 class="font-headline-lg text-[24px] text-on-surface">Tratamientos Recientes</h2>
-                    <a asp-action="Tratamientos" asp-controller="Colmenas" asp-route-id="@Model.Id" class="font-label-caps text-label-caps text-primary-container hover:text-primary-fixed transition-colors uppercase">Ver historial completo</a>
+                    <a asp-action="Tratamientos" asp-controller="Colmenas" asp-route-id="@Model.Id" asp-route-fromApiarioId="@ViewBag.FromApiarioId" class="font-label-caps text-label-caps text-primary-container hover:text-primary-fixed transition-colors uppercase">Ver historial completo</a>
                 </div>
                 <div class="flex flex-col gap-unit">
                     @if (ViewBag.Tratamientos != null)

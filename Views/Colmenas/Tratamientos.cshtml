@@ -7,10 +7,22 @@
 <main class="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-12 flex flex-col gap-8">
     <!-- Breadcrumb Context Bar -->
     <div class="w-full flex items-center gap-2 font-label-caps text-label-caps text-on-surface-variant mb-2">
-        <a asp-action="Index" class="hover:text-primary-container transition-colors">Colmenas</a>
-        <span class="material-symbols-outlined text-[14px]">chevron_right</span>
-        <a asp-action="Detalles" asp-route-id="@Model.Id" class="hover:text-primary-container transition-colors">Detalle de Colmena</a>
-        <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+        @if (ViewBag.FromApiarioId != null)
+        {
+            <a asp-controller="Apiarios" asp-action="Index" class="text-primary-container hover:text-primary-fixed transition-colors">Apiarios</a>
+            <span class="text-primary-container font-bold">&gt;</span>
+            <a asp-controller="Apiarios" asp-action="Detalles" asp-route-id="@ViewBag.FromApiarioId" class="text-primary-container hover:text-primary-fixed transition-colors">Detalle de Apiario</a>
+            <span class="text-primary-container font-bold">&gt;</span>
+            <a asp-action="Detalles" asp-route-id="@Model.Id" asp-route-fromApiarioId="@ViewBag.FromApiarioId" class="text-primary-container hover:text-primary-fixed transition-colors">Detalle de Colmena</a>
+            <span class="text-primary-container font-bold">&gt;</span>
+        }
+        else
+        {
+            <a asp-action="Index" class="text-primary-container hover:text-primary-fixed transition-colors">Colmenas</a>
+            <span class="text-primary-container font-bold">&gt;</span>
+            <a asp-action="Detalles" asp-route-id="@Model.Id" class="text-primary-container hover:text-primary-fixed transition-colors">Detalle de Colmena</a>
+            <span class="text-primary-container font-bold">&gt;</span>
+        }
         <span class="text-on-surface">Gestión de Tratamientos</span>
     </div>
 

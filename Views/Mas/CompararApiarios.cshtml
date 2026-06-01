@@ -50,7 +50,12 @@
     <!-- Header Section -->
     <section class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
         <div>
-            <p class="font-label-caps text-label-caps text-on-surface-variant mb-2">HERRAMIENTAS DE ANÁLISIS</p>
+            <!-- Breadcrumb Context Bar -->
+            <div class="w-full flex items-center gap-2 font-label-caps text-label-caps text-on-surface-variant mb-2">
+                <a asp-controller="Apiarios" asp-action="Index" class="text-primary-container hover:text-primary-fixed transition-colors">Apiarios</a>
+                <span class="text-primary-container font-bold">&gt;</span>
+                <span class="text-on-surface">Comparar Apiarios</span>
+            </div>
             <h1 class="font-display text-headline-lg-mobile md:text-display text-on-surface mb-2">Comparar Apiarios</h1>
             <p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
                 Análisis de rendimiento y métricas de salud en tiempo real. Seleccione ubicaciones para comparar los datos de producción lado a lado.

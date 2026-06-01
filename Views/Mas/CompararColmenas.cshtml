@@ -2,187 +2,645 @@
     ViewData["Title"] = "Comparar Colmenas";
 }
 
-<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
-<!-- Header Section -->
-<section class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mt-8">
-    <div>
-        <h2 class="font-display text-display text-on-surface mb-2">Comparar Colmenas</h2>
-        <p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
-            Análisis cruzado de métricas vitales y rendimiento de producción. Seleccione los identificadores de las colmenas para visualizar las diferencias clave.
-        </p>
-    </div>
-    <div class="flex gap-3 w-full md:w-auto">
-        <button class="md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-transparent border border-primary-container text-primary-container hover:bg-primary-container/10 transition-colors rounded font-label-caps text-label-caps">
-            <span class="material-symbols-outlined text-[18px]">tune</span> Filtrar
-        </button>
-    </div>
-</section>
-<!-- Selection Control -->
-<div class="bg-surface-container-low border border-outline-variant rounded p-6 mt-8">
-    <div class="flex flex-col md:flex-row gap-6 items-center">
-        <div class="flex-1 w-full relative">
-            <label class="block font-label-caps text-label-caps text-on-surface-variant mb-2">COLMENA A</label>
-            <select class="w-full bg-surface-container border border-outline-variant text-on-surface font-body-md p-3 rounded focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container appearance-none transition-colors">
-                <option selected="">COL-042-NTE</option>
-                <option>COL-085-SJO</option>
-                <option>COL-112-EST</option>
-            </select>
-            <span class="material-symbols-outlined absolute right-3 top-10 text-on-surface-variant pointer-events-none">expand_more</span>
+<style>
+    /* Remove default dropdown arrow */
+    select#selectColmenaA, select#selectColmenaB {
+        -webkit-appearance: none !important;
+        -moz-appearance: none !important;
+        appearance: none !important;
+        background-image: none !important;
+    }
+    select#selectColmenaA::-ms-expand, select#selectColmenaB::-ms-expand {
+        display: none !important;
+    }
+</style>
+
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-8">
+    <!-- Header Section -->
+    <section class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+        <div>
+            <!-- Breadcrumb Context Bar -->
+            <div class="w-full flex items-center gap-2 font-label-caps text-label-caps text-on-surface-variant mb-2">
+                <a asp-controller="Colmenas" asp-action="Index" class="text-primary-container hover:text-primary-fixed transition-colors">Colmenas</a>
+                <span class="text-primary-container font-bold">&gt;</span>
+                <span class="text-on-surface">Comparar Colmenas</span>
+            </div>
+            <h1 class="font-display text-headline-lg-mobile md:text-display text-on-surface mb-2">Comparar Colmenas</h1>
+            <p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+                Análisis cruzado de métricas vitales y rendimiento de producción. Seleccione los identificadores de las colmenas para visualizar las diferencias clave.
+            </p>
         </div>
-        <div class="flex items-center justify-center h-12 w-12 rounded-full border border-outline-variant bg-surface-container-high my-2 md:my-0 mt-6 md:mt-8 shrink-0">
-            <span class="material-symbols-outlined text-primary-container">compare_arrows</span>
+    </section>
+
+    <!-- Selection Control -->
+    <div class="bg-surface-container-low border border-outline-variant rounded p-6 mt-8">
+        <div class="flex flex-col md:flex-row gap-6 items-end">
+            <!-- Selector A -->
+            <div class="flex-1 w-full relative">
+                <label for="selectColmenaA" class="block font-label-caps text-label-caps text-on-surface-variant mb-2">COLMENA A</label>
+                <div class="relative">
+                    <select id="selectColmenaA" class="w-full bg-surface-container border border-outline-variant text-on-surface font-body-md p-3 pr-10 rounded focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container appearance-none transition-colors">
+                        <!-- Loaded by JS -->
+                    </select>
+                    <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">expand_more</span>
+                </div>
+            </div>
+
+            <!-- Swap Button -->
+            <button type="button" id="btnSwap" class="flex items-center justify-center h-12 w-12 rounded-full border border-outline-variant bg-surface-container-high shrink-0 hover:bg-surface-container-highest hover:border-primary-container transition-all group focus:outline-none focus:ring-2 focus:ring-primary-container self-center md:self-end md:mb-0 mb-2" title="Intercambiar selecciones">
+                <span class="material-symbols-outlined text-primary-container group-hover:-rotate-180 transition-transform duration-300">sync</span>
+            </button>
+
+            <!-- Selector B -->
+            <div class="flex-1 w-full relative">
+                <label for="selectColmenaB" class="block font-label-caps text-label-caps text-on-surface-variant mb-2">COLMENA B</label>
+                <div class="relative">
+                    <select id="selectColmenaB" class="w-full bg-surface-container border border-outline-variant text-on-surface font-body-md p-3 pr-10 rounded focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container appearance-none transition-colors">
+                        <!-- Loaded by JS -->
+                    </select>
+                    <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">expand_more</span>
+                </div>
+            </div>
         </div>
-        <div class="flex-1 w-full relative">
-            <label class="block font-label-caps text-label-caps text-on-surface-variant mb-2">COLMENA B</label>
-            <select class="w-full bg-surface-container border border-outline-variant text-on-surface font-body-md p-3 rounded focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container appearance-none transition-colors">
-                <option>COL-042-NTE</option>
-                <option selected="">COL-085-SJO</option>
-                <option>COL-112-EST</option>
-            </select>
-            <span class="material-symbols-outlined absolute right-3 top-10 text-on-surface-variant pointer-events-none">expand_more</span>
+    </div>
+
+    <!-- KPI Comparison -->
+    <div id="kpisGrid" class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+        <!-- KPI 1: Peso -->
+        <div id="cardPeso" class="bg-surface-container-low border border-outline-variant rounded p-6 flex flex-col hover:border-primary-container/50 transition-colors">
+            <h3 class="font-label-caps text-label-caps text-on-surface-variant mb-6 flex items-center justify-between border-b border-outline-variant pb-2">
+                PESO TOTAL (KG)
+                <span class="material-symbols-outlined text-[18px] text-primary-container">scale</span>
+            </h3>
+            
+            <div class="space-y-4 flex-grow">
+                <!-- Colmena A -->
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center text-body-md">
+                        <span id="lblKpiPesoA" class="font-semibold text-primary-container uppercase truncate max-w-[200px]">COLMENA A</span>
+                        <span id="valKpiPesoA" class="font-display font-bold text-on-surface">0 kg</span>
+                    </div>
+                    <div class="w-full bg-surface-container-highest h-3 rounded-full overflow-hidden">
+                        <div id="barKpiPesoA" class="bg-primary-container h-full rounded-full transition-all duration-500" style="width: 0%;"></div>
+                    </div>
+                </div>
+
+                <!-- Colmena B -->
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center text-body-md">
+                        <span id="lblKpiPesoB" class="font-semibold text-on-surface-variant uppercase truncate max-w-[200px]">COLMENA B</span>
+                        <span id="valKpiPesoB" class="font-display font-bold text-on-surface-variant">0 kg</span>
+                    </div>
+                    <div class="w-full bg-surface-container-highest h-3 rounded-full overflow-hidden">
+                        <div id="barKpiPesoB" class="bg-outline h-full rounded-full transition-all duration-500" style="width: 0%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumen Explicativo -->
+            <div class="mt-6 pt-4 border-t border-outline-variant flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-body-sm">
+                <span id="explainKpiPeso" class="text-on-surface font-medium flex items-center gap-1.5">
+                    <!-- Rellenado por JS -->
+                </span>
+                <span id="varKpiPeso" class="font-label-caps text-xs bg-primary-container/10 px-2.5 py-1 rounded text-primary-container font-semibold">
+                    0% Var
+                </span>
+            </div>
+        </div>
+
+        <!-- KPI 2: Miel Producida -->
+        <div id="cardMiel" class="bg-surface-container-low border border-outline-variant rounded p-6 flex flex-col hover:border-primary-container/50 transition-colors">
+            <h3 class="font-label-caps text-label-caps text-on-surface-variant mb-6 flex items-center justify-between border-b border-outline-variant pb-2">
+                MIEL PRODUCIDA (KG)
+                <span class="material-symbols-outlined text-[18px] text-primary-container">hive</span>
+            </h3>
+            
+            <div class="space-y-4 flex-grow">
+                <!-- Colmena A -->
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center text-body-md">
+                        <span id="lblKpiMielA" class="font-semibold text-primary-container uppercase truncate max-w-[200px]">COLMENA A</span>
+                        <span id="valKpiMielA" class="font-display font-bold text-on-surface">0 kg</span>
+                    </div>
+                    <div class="w-full bg-surface-container-highest h-3 rounded-full overflow-hidden">
+                        <div id="barKpiMielA" class="bg-primary-container h-full rounded-full transition-all duration-500" style="width: 0%;"></div>
+                    </div>
+                </div>
+
+                <!-- Colmena B -->
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center text-body-md">
+                        <span id="lblKpiMielB" class="font-semibold text-on-surface-variant uppercase truncate max-w-[200px]">COLMENA B</span>
+                        <span id="valKpiMielB" class="font-display font-bold text-on-surface-variant">0 kg</span>
+                    </div>
+                    <div class="w-full bg-surface-container-highest h-3 rounded-full overflow-hidden">
+                        <div id="barKpiMielB" class="bg-outline h-full rounded-full transition-all duration-500" style="width: 0%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumen Explicativo -->
+            <div class="mt-6 pt-4 border-t border-outline-variant flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-body-sm">
+                <span id="explainKpiMiel" class="text-on-surface font-medium flex items-center gap-1.5">
+                    <!-- Rellenado por JS -->
+                </span>
+                <span id="varKpiMiel" class="font-label-caps text-xs bg-primary-container/10 px-2.5 py-1 rounded text-primary-container font-semibold">
+                    0% Var
+                </span>
+            </div>
+        </div>
+
+        <!-- KPI 3: Temperatura Interna (Condicional) -->
+        <div id="cardTemp" class="bg-surface-container-low border border-outline-variant rounded p-6 flex flex-col hover:border-primary-container/50 transition-colors hidden">
+            <h3 class="font-label-caps text-label-caps text-on-surface-variant mb-6 flex items-center justify-between border-b border-outline-variant pb-2">
+                TEMPERATURA INTERNA (°C)
+                <span class="material-symbols-outlined text-[18px] text-primary-container">thermostat</span>
+            </h3>
+            
+            <div class="space-y-4 flex-grow">
+                <!-- Colmena A -->
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center text-body-md">
+                        <span id="lblKpiTempA" class="font-semibold text-primary-container uppercase truncate max-w-[200px]">COLMENA A</span>
+                        <span id="valKpiTempA" class="font-display font-bold text-on-surface">0 °C</span>
+                    </div>
+                    <div class="w-full bg-surface-container-highest h-3 rounded-full overflow-hidden">
+                        <div id="barKpiTempA" class="bg-primary-container h-full rounded-full transition-all duration-500" style="width: 0%;"></div>
+                    </div>
+                </div>
+
+                <!-- Colmena B -->
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center text-body-md">
+                        <span id="lblKpiTempB" class="font-semibold text-on-surface-variant uppercase truncate max-w-[200px]">COLMENA B</span>
+                        <span id="valKpiTempB" class="font-display font-bold text-on-surface-variant">0 °C</span>
+                    </div>
+                    <div class="w-full bg-surface-container-highest h-3 rounded-full overflow-hidden">
+                        <div id="barKpiTempB" class="bg-outline h-full rounded-full transition-all duration-500" style="width: 0%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumen Explicativo -->
+            <div class="mt-6 pt-4 border-t border-outline-variant flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-body-sm">
+                <span id="explainKpiTemp" class="text-on-surface font-medium flex items-center gap-1.5">
+                    <!-- Rellenado por JS -->
+                </span>
+                <span id="varKpiTemp" class="font-label-caps text-xs bg-primary-container/10 px-2.5 py-1 rounded text-primary-container font-semibold">
+                    0% Var
+                </span>
+            </div>
+        </div>
+
+        <!-- KPI 4: Humedad Interna (Condicional) -->
+        <div id="cardHum" class="bg-surface-container-low border border-outline-variant rounded p-6 flex flex-col hover:border-primary-container/50 transition-colors hidden">
+            <h3 class="font-label-caps text-label-caps text-on-surface-variant mb-6 flex items-center justify-between border-b border-outline-variant pb-2">
+                HUMEDAD INTERNA (%)
+                <span class="material-symbols-outlined text-[18px] text-primary-container">humidity_percentage</span>
+            </h3>
+            
+            <div class="space-y-4 flex-grow">
+                <!-- Colmena A -->
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center text-body-md">
+                        <span id="lblKpiHumA" class="font-semibold text-primary-container uppercase truncate max-w-[200px]">COLMENA A</span>
+                        <span id="valKpiHumA" class="font-display font-bold text-on-surface">0%</span>
+                    </div>
+                    <div class="w-full bg-surface-container-highest h-3 rounded-full overflow-hidden">
+                        <div id="barKpiHumA" class="bg-primary-container h-full rounded-full transition-all duration-500" style="width: 0%;"></div>
+                    </div>
+                </div>
+
+                <!-- Colmena B -->
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center text-body-md">
+                        <span id="lblKpiHumB" class="font-semibold text-on-surface-variant uppercase truncate max-w-[200px]">COLMENA B</span>
+                        <span id="valKpiHumB" class="font-display font-bold text-on-surface-variant">0%</span>
+                    </div>
+                    <div class="w-full bg-surface-container-highest h-3 rounded-full overflow-hidden">
+                        <div id="barKpiHumB" class="bg-outline h-full rounded-full transition-all duration-500" style="width: 0%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumen Explicativo -->
+            <div class="mt-6 pt-4 border-t border-outline-variant flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-body-sm">
+                <span id="explainKpiHum" class="text-on-surface font-medium flex items-center gap-1.5">
+                    <!-- Rellenado por JS -->
+                </span>
+                <span id="varKpiHum" class="font-label-caps text-xs bg-primary-container/10 px-2.5 py-1 rounded text-primary-container font-semibold">
+                    0% Var
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detailed Comparison Table -->
+    <div class="bg-surface-container-low border border-outline-variant rounded mt-8 mb-12 responsive-table p-4 md:p-0">
+        <div class="p-6 border-b border-outline-variant bg-surface-container-high md:rounded-t">
+            <h3 class="font-headline-lg-mobile text-[20px] font-semibold text-on-surface">Métricas Detalladas</h3>
+        </div>
+        <div class="overflow-x-auto md:overflow-visible">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-surface-container border-b border-outline-variant font-label-caps text-label-caps text-on-surface-variant">
+                        <th class="p-4 font-medium w-1/3">Métrica</th>
+                        <th id="thColmenaA" class="p-4 font-medium text-primary-container border-l border-outline-variant w-1/3">Colmena A</th>
+                        <th id="thColmenaB" class="p-4 font-medium border-l border-outline-variant w-1/3">Colmena B</th>
+                    </tr>
+                </thead>
+                <tbody class="font-body-sm text-on-surface">
+                    <!-- ID Colmena -->
+                    <tr class="border-b border-outline-variant hover:bg-surface-container transition-colors">
+                        <td data-label="MÉTRICA" class="p-4 flex items-center gap-2 border-b border-surface-container-highest md:border-none">
+                            <span class="material-symbols-outlined text-[18px] text-on-surface-variant">fingerprint</span> ID Colmena
+                        </td>
+                        <td data-label="COLMENA A" id="tdIdA" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">-</td>
+                        <td data-label="COLMENA B" id="tdIdB" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">-</td>
+                    </tr>
+                    <!-- Código de Escaneo -->
+                    <tr class="border-b border-outline-variant hover:bg-surface-container transition-colors">
+                        <td data-label="MÉTRICA" class="p-4 flex items-center gap-2 border-b border-surface-container-highest md:border-none">
+                            <span class="material-symbols-outlined text-[18px] text-on-surface-variant">qr_code_scanner</span> Código de escaneo
+                        </td>
+                        <td data-label="COLMENA A" id="tdEscaneoA" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">-</td>
+                        <td data-label="COLMENA B" id="tdEscaneoB" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">-</td>
+                    </tr>
+                    <!-- Apiario de Origen -->
+                    <tr class="border-b border-outline-variant hover:bg-surface-container transition-colors">
+                        <td data-label="MÉTRICA" class="p-4 flex items-center gap-2 border-b border-surface-container-highest md:border-none">
+                            <span class="material-symbols-outlined text-[18px] text-on-surface-variant">location_on</span> Apiario de origen
+                        </td>
+                        <td data-label="COLMENA A" id="tdApiarioA" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">-</td>
+                        <td data-label="COLMENA B" id="tdApiarioB" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">-</td>
+                    </tr>
+                    <!-- Estado -->
+                    <tr class="border-b border-outline-variant hover:bg-surface-container transition-colors">
+                        <td data-label="MÉTRICA" class="p-4 flex items-center gap-2 border-b border-surface-container-highest md:border-none">
+                            <span class="material-symbols-outlined text-[18px] text-on-surface-variant">health_metrics</span> Estado
+                        </td>
+                        <td data-label="COLMENA A" id="tdEstadoA" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">-</td>
+                        <td data-label="COLMENA B" id="tdEstadoB" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">-</td>
+                    </tr>
+                    <!-- Población Estimada -->
+                    <tr class="border-b border-outline-variant hover:bg-surface-container transition-colors">
+                        <td data-label="MÉTRICA" class="p-4 flex items-center gap-2 border-b border-surface-container-highest md:border-none">
+                            <span class="material-symbols-outlined text-[18px] text-on-surface-variant">groups</span> Población estimada
+                        </td>
+                        <td data-label="COLMENA A" id="tdPoblacionA" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">-</td>
+                        <td data-label="COLMENA B" id="tdPoblacionB" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">-</td>
+                    </tr>
+                    <!-- Comportamiento -->
+                    <tr class="border-b border-outline-variant hover:bg-surface-container transition-colors">
+                        <td data-label="MÉTRICA" class="p-4 flex items-center gap-2 border-b border-surface-container-highest md:border-none">
+                            <span class="material-symbols-outlined text-[18px] text-on-surface-variant">psychology</span> Comportamiento
+                        </td>
+                        <td data-label="COLMENA A" id="tdComportamientoA" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">-</td>
+                        <td data-label="COLMENA B" id="tdComportamientoB" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">-</td>
+                    </tr>
+                    <!-- Estado de la Reina -->
+                    <tr class="border-b border-outline-variant hover:bg-surface-container transition-colors">
+                        <td data-label="MÉTRICA" class="p-4 flex items-center gap-2 border-b border-surface-container-highest md:border-none">
+                            <span class="material-symbols-outlined text-[18px] text-on-surface-variant">female</span> Estado de la reina
+                        </td>
+                        <td data-label="COLMENA A" id="tdReinaA" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">-</td>
+                        <td data-label="COLMENA B" id="tdReinaB" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">-</td>
+                    </tr>
+                    <!-- Fecha de Último Tratamiento -->
+                    <tr class="border-b border-outline-variant hover:bg-surface-container transition-colors">
+                        <td data-label="MÉTRICA" class="p-4 flex items-center gap-2 border-b border-surface-container-highest md:border-none">
+                            <span class="material-symbols-outlined text-[18px] text-on-surface-variant">vaccines</span> Último tratamiento
+                        </td>
+                        <td data-label="COLMENA A" id="tdTratamientoA" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">-</td>
+                        <td data-label="COLMENA B" id="tdTratamientoB" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">-</td>
+                    </tr>
+                    <!-- Fecha de Última Nota Técnica -->
+                    <tr class="hover:bg-surface-container transition-colors">
+                        <td data-label="MÉTRICA" class="p-4 flex items-center gap-2 border-b border-surface-container-highest md:border-none">
+                            <span class="material-symbols-outlined text-[18px] text-on-surface-variant">edit_note</span> Última nota técnica
+                        </td>
+                        <td data-label="COLMENA A" id="tdNotaA" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">-</td>
+                        <td data-label="COLMENA B" id="tdNotaB" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">-</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
-<!-- KPI Comparison -->
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-    <!-- KPI 1: Peso -->
-    <div class="bg-surface-container-low border border-outline-variant rounded p-6 flex flex-col hover:border-primary-container/50 transition-colors">
-        <h3 class="font-label-caps text-label-caps text-on-surface-variant mb-4 flex items-center justify-between">
-            PESO (KG)
-            <span class="material-symbols-outlined text-[18px]">scale</span>
-        </h3>
-        <div class="flex items-end justify-between mb-3">
-            <div>
-                <div class="text-[10px] text-primary-container mb-1 font-label-caps">COL-042-NTE</div>
-                <div class="font-display text-headline-lg text-on-surface">45.2 <span class="text-body-sm">kg</span></div>
-            </div>
-            <div class="text-right">
-                <div class="text-[10px] text-on-surface-variant mb-1 font-label-caps">COL-085-SJO</div>
-                <div class="font-display text-headline-lg text-on-surface-variant">42.8 <span class="text-body-sm">kg</span></div>
-            </div>
-        </div>
-        <div class="mt-auto">
-            <div class="w-full bg-surface-container-highest h-[4px] rounded-full mb-1.5 flex">
-                <div class="bg-primary-container h-[4px] rounded-full" style="width: 90%;"></div>
-            </div>
-            <div class="w-full bg-surface-container-highest h-[4px] rounded-full flex">
-                <div class="bg-surface-variant h-[4px] rounded-full" style="width: 85%;"></div>
-            </div>
-            <div class="flex justify-between mt-3 font-label-caps text-[10px] text-on-surface-variant">
-                <span class="text-primary-container">+2.4 kg Dif.</span>
-                <span class="">Base: COL-042</span>
-            </div>
-        </div>
-    </div>
-    <!-- KPI 2: Temp. Int. -->
-    <div class="bg-surface-container-low border border-outline-variant rounded p-6 flex flex-col hover:border-primary-container/50 transition-colors">
-        <h3 class="font-label-caps text-label-caps text-on-surface-variant mb-4 flex items-center justify-between">
-            TEMP. INT. (°C)
-            <span class="material-symbols-outlined text-[18px]">thermostat</span>
-        </h3>
-        <div class="flex items-end justify-between mb-3">
-            <div>
-                <div class="text-[10px] text-primary-container mb-1 font-label-caps">COL-042-NTE</div>
-                <div class="font-display text-headline-lg text-on-surface">34.5<span class="text-body-sm">°C</span></div>
-            </div>
-            <div class="text-right">
-                <div class="text-[10px] text-on-surface-variant mb-1 font-label-caps">COL-085-SJO</div>
-                <div class="font-display text-headline-lg text-on-surface-variant">32.0<span class="text-body-sm">°C</span></div>
-            </div>
-        </div>
-        <div class="mt-auto">
-            <div class="w-full bg-surface-container-highest h-[4px] rounded-full mb-1.5 flex">
-                <div class="bg-primary-container h-[4px] rounded-full" style="width: 86%;"></div>
-            </div>
-            <div class="w-full bg-surface-container-highest h-[4px] rounded-full flex">
-                <div class="bg-surface-variant h-[4px] rounded-full" style="width: 80%;"></div>
-            </div>
-            <div class="flex justify-between mt-3 font-label-caps text-[10px] text-on-surface-variant">
-                <span class="text-primary-container">-2.5°C Dif.</span>
-                <span class="">Base: COL-042</span>
-            </div>
-        </div>
-    </div>
-    <!-- KPI 3: Estado -->
-    <div class="bg-surface-container-low border border-outline-variant rounded p-6 flex flex-col hover:border-primary-container/50 transition-colors">
-        <h3 class="font-label-caps text-label-caps text-on-surface-variant mb-4 flex items-center justify-between">
-            ESTADO GENERAL
-            <span class="material-symbols-outlined text-[18px]">health_metrics</span>
-        </h3>
-        <div class="flex items-end justify-between mb-3">
-            <div>
-                <div class="text-[10px] text-primary-container mb-1 font-label-caps">COL-042-NTE</div>
-                <div class="inline-flex items-center gap-1 text-primary-container font-bold"><span class="material-symbols-outlined text-[20px]">check_circle</span>Óptimo</div>
-            </div>
-            <div class="text-right">
-                <div class="text-[10px] text-on-surface-variant mb-1 font-label-caps">COL-085-SJO</div>
-                <div class="inline-flex items-center gap-1 text-error font-bold"><span class="material-symbols-outlined text-[20px]">warning</span>Alerta</div>
-            </div>
-        </div>
-        <div class="mt-auto">
-            <div class="grid grid-cols-2 gap-2 mt-4">
-                <div class="h-1 bg-primary-container rounded-full"></div>
-                <div class="h-1 bg-error rounded-full"></div>
-            </div>
-            <div class="flex justify-between mt-3 font-label-caps text-[10px] text-on-surface-variant">
-                <span class="text-error">Divergencia</span>
-                <span class="">Comparativa de Salud</span>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Detailed Comparison Table -->
-<div class="bg-surface-container-low border border-outline-variant rounded mt-8 mb-12 responsive-table p-4 md:p-0">
-    <div class="p-6 border-b border-outline-variant flex justify-between items-center md:rounded-t">
-        <h3 class="font-headline-lg-mobile text-[20px] font-semibold text-on-surface">Métricas Detalladas</h3>
-    </div>
-    <div class="overflow-x-auto md:overflow-visible">
-        <table class="w-full text-left border-collapse">
-            <thead>
-                <tr class="bg-surface-container border-b border-outline-variant font-label-caps text-label-caps text-on-surface-variant">
-                    <th class="p-4 font-medium">Dato / Métrica</th>
-                    <th class="p-4 font-medium text-primary-container border-l border-outline-variant">COL-042-NTE</th>
-                    <th class="p-4 font-medium border-l border-outline-variant">COL-085-SJO</th>
-                    <th class="p-4 font-medium border-l border-outline-variant">Observación</th>
-                </tr>
-            </thead>
-            <tbody class="font-body-sm text-on-surface">
-                <tr class="border-b border-outline-variant hover:bg-surface-container transition-colors">
-                    <td data-label="DATO / MÉTRICA" class="p-4 border-b border-surface-container-highest md:border-none">ID Colmena</td>
-                    <td data-label="COLMENA A" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant font-label-caps text-primary-container">#HIVE-0042</td>
-                    <td data-label="COLMENA B" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant font-label-caps text-on-surface-variant">#HIVE-0089</td>
-                    <td data-label="OBSERVACIÓN" class="p-4 md:border-none md:border-l md:border-outline-variant text-on-surface-variant">N/A</td>
-                </tr>
-                <tr class="border-b border-outline-variant hover:bg-surface-container transition-colors">
-                    <td data-label="DATO / MÉTRICA" class="p-4 border-b border-surface-container-highest md:border-none">Apiario de Origen</td>
-                    <td data-label="COLMENA A" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">Sector Norte Alpha</td>
-                    <td data-label="COLMENA B" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">Sector Norte Alpha</td>
-                    <td data-label="OBSERVACIÓN" class="p-4 md:border-none md:border-l md:border-outline-variant text-on-surface-variant">Iguales</td>
-                </tr>
-                <tr class="border-b border-outline-variant hover:bg-surface-container transition-colors">
-                    <td data-label="DATO / MÉTRICA" class="p-4 border-b border-surface-container-highest md:border-none">Estado</td>
-                    <td data-label="COLMENA A" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">
-                        <span class="inline-flex items-center gap-1 px-2 py-0.5 border border-primary-container rounded bg-primary-container/10 text-primary-container font-label-caps text-[10px]"><span class="material-symbols-outlined text-[12px]">check_circle</span>Óptimo</span>
-                    </td>
-                    <td data-label="COLMENA B" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">
-                        <span class="inline-flex items-center gap-1 px-2 py-0.5 border border-error rounded bg-error/10 text-error font-label-caps text-[10px]"><span class="material-symbols-outlined text-[12px]">warning</span>Alerta</span>
-                    </td>
-                    <td data-label="OBSERVACIÓN" class="p-4 md:border-none md:border-l md:border-outline-variant text-error">Revisión Alerta</td>
-                </tr>
-                <tr class="border-b border-outline-variant hover:bg-surface-container transition-colors">
-                    <td data-label="DATO / MÉTRICA" class="p-4 border-b border-surface-container-highest md:border-none">Peso (kg)</td>
-                    <td data-label="COLMENA A" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">45.2</td>
-                    <td data-label="COLMENA B" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">42.8</td>
-                    <td data-label="OBSERVACIÓN" class="p-4 md:border-none md:border-l md:border-outline-variant text-on-surface-variant">-2.4 kg</td>
-                </tr>
-                <tr class="hover:bg-surface-container transition-colors">
-                    <td data-label="DATO / MÉTRICA" class="p-4 border-b border-surface-container-highest md:border-none">Temp. Int.</td>
-                    <td data-label="COLMENA A" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">34.5°C</td>
-                    <td data-label="COLMENA B" class="p-4 border-b border-surface-container-highest md:border-none md:border-l md:border-outline-variant">32.0°C</td>
-                    <td data-label="OBSERVACIÓN" class="p-4 md:border-none md:border-l md:border-outline-variant text-on-surface-variant">-2.5°C</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
-</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const colmenas = @Html.Raw(ViewBag.ColmenasJson ?? "[]");
+
+            if (!colmenas || colmenas.length === 0) {
+                console.error("No hay colmenas disponibles para comparar.");
+                return;
+            }
+
+            const selectA = document.getElementById("selectColmenaA");
+            const selectB = document.getElementById("selectColmenaB");
+            const btnSwap = document.getElementById("btnSwap");
+
+            // Populate selects
+            function populateSelects() {
+                selectA.innerHTML = "";
+                selectB.innerHTML = "";
+
+                colmenas.forEach(c => {
+                    const idText = c.identificador ? c.identificador : c.codigoEscaneo;
+                    const text = idText + (c.esPiloto ? " (P)" : "");
+
+                    const optA = document.createElement("option");
+                    optA.value = c.id;
+                    optA.textContent = text;
+                    selectA.appendChild(optA);
+
+                    const optB = document.createElement("option");
+                    optB.value = c.id;
+                    optB.textContent = text;
+                    selectB.appendChild(optB);
+                });
+
+                if (colmenas.length > 0) selectA.value = colmenas[0].id;
+                if (colmenas.length > 1) selectB.value = colmenas[1].id;
+                else if (colmenas.length > 0) selectB.value = colmenas[0].id;
+            }
+
+            // Sync options disabling duplicates
+            function syncSelectOptions() {
+                const valA = selectA.value;
+                const valB = selectB.value;
+
+                Array.from(selectB.options).forEach(opt => {
+                    opt.disabled = opt.value === valA;
+                });
+
+                Array.from(selectA.options).forEach(opt => {
+                    opt.disabled = opt.value === valB;
+                });
+            }
+
+            // Numeric difference format
+            function formatNumericDiff(valA, valB, unit = "", decimals = 0) {
+                const diff = valA - valB;
+                const roundedDiff = parseFloat(diff.toFixed(decimals));
+                
+                if (roundedDiff > 0) {
+                    return `+${roundedDiff.toLocaleString("es-UY")}${unit}`;
+                } else if (roundedDiff < 0) {
+                    return `${roundedDiff.toLocaleString("es-UY")}${unit}`;
+                } else {
+                    return `0${decimals > 0 ? ".0" : ""}${unit}`;
+                }
+            }
+
+            // Status badge HTML helper
+            function getStatusBadge(estado) {
+                if (estado === "Óptimo") {
+                    return `<span class="inline-flex items-center gap-1 px-2 py-0.5 border border-[#4CAF50] rounded bg-[#4CAF50]/10 text-[#4CAF50] font-label-caps text-[10px]"><span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>Óptimo</span>`;
+                } else if (estado === "Alerta") {
+                    return `<span class="inline-flex items-center gap-1 px-2 py-0.5 border border-primary-container rounded bg-primary-container/10 text-primary-container font-label-caps text-[10px]"><span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">info</span>Alerta</span>`;
+                } else if (estado === "Crítico") {
+                    return `<span class="inline-flex items-center gap-1 px-2 py-0.5 border border-error rounded bg-error/10 text-error font-label-caps text-[10px]"><span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">warning</span>Crítico</span>`;
+                }
+                return estado || "-";
+            }
+
+            // Update entire comparison
+            function updateComparison() {
+                const idA = parseInt(selectA.value);
+                const idB = parseInt(selectB.value);
+
+                const cA = colmenas.find(c => c.id === idA);
+                const cB = colmenas.find(c => c.id === idB);
+
+                if (!cA || !cB) return;
+
+                const nameA = cA.identificador ? cA.identificador : cA.codigoEscaneo;
+                const nameB = cB.identificador ? cB.identificador : cB.codigoEscaneo;
+
+                // --- 1. Dynamic names in table headers and KPIs ---
+                document.getElementById("thColmenaA").textContent = nameA;
+                document.getElementById("thColmenaB").textContent = nameB;
+
+                document.getElementById("lblKpiPesoA").textContent = nameA;
+                document.getElementById("lblKpiPesoB").textContent = nameB;
+
+                document.getElementById("lblKpiMielA").textContent = nameA;
+                document.getElementById("lblKpiMielB").textContent = nameB;
+
+                // --- 2. KPI: Peso ---
+                document.getElementById("valKpiPesoA").textContent = cA.pesoKg.toFixed(1) + " kg";
+                document.getElementById("valKpiPesoB").textContent = cB.pesoKg.toFixed(1) + " kg";
+
+                const maxPeso = Math.max(cA.pesoKg, cB.pesoKg, 1);
+                document.getElementById("barKpiPesoA").style.width = `${(cA.pesoKg / maxPeso) * 100}%`;
+                document.getElementById("barKpiPesoB").style.width = `${(cB.pesoKg / maxPeso) * 100}%`;
+
+                const diffPeso = cA.pesoKg - cB.pesoKg;
+                const formattedDiffPeso = Math.abs(diffPeso).toFixed(1).replace(".", ",");
+                const explainKpiPeso = document.getElementById("explainKpiPeso");
+                if (diffPeso > 0) {
+                    explainKpiPeso.innerHTML = `<span class="material-symbols-outlined text-[#4CAF50] text-[18px]">trending_up</span> <span><strong>${nameA}</strong> pesa <strong>${formattedDiffPeso} kg</strong> más.</span>`;
+                } else if (diffPeso < 0) {
+                    explainKpiPeso.innerHTML = `<span class="material-symbols-outlined text-error text-[18px]">trending_down</span> <span><strong>${nameA}</strong> pesa <strong>${formattedDiffPeso} kg</strong> menos.</span>`;
+                } else {
+                    explainKpiPeso.innerHTML = `<span class="material-symbols-outlined text-on-surface-variant text-[18px]">remove</span> <span>Ambos tienen el mismo peso.</span>`;
+                }
+
+                const varKpiPeso = document.getElementById("varKpiPeso");
+                if (cB.pesoKg > 0) {
+                    const pctPeso = Math.round((diffPeso / cB.pesoKg) * 100);
+                    const sign = pctPeso >= 0 ? "+" : "";
+                    varKpiPeso.textContent = `${sign}${pctPeso}% Var`;
+                    varKpiPeso.className = pctPeso >= 0 
+                        ? "font-label-caps text-xs bg-[#4CAF50]/10 px-2.5 py-1 rounded text-[#4CAF50] font-semibold" 
+                        : "font-label-caps text-xs bg-error/10 px-2.5 py-1 rounded text-error font-semibold";
+                    varKpiPeso.style.display = "inline-block";
+                } else {
+                    varKpiPeso.style.display = "none";
+                }
+
+                // --- 3. KPI: Miel Producida ---
+                document.getElementById("valKpiMielA").textContent = cA.produccionMielKg.toFixed(1) + " kg";
+                document.getElementById("valKpiMielB").textContent = cB.produccionMielKg.toFixed(1) + " kg";
+
+                const maxMiel = Math.max(cA.produccionMielKg, cB.produccionMielKg, 1);
+                document.getElementById("barKpiMielA").style.width = `${(cA.produccionMielKg / maxMiel) * 100}%`;
+                document.getElementById("barKpiMielB").style.width = `${(cB.produccionMielKg / maxMiel) * 100}%`;
+
+                const diffMiel = cA.produccionMielKg - cB.produccionMielKg;
+                const formattedDiffMiel = Math.abs(diffMiel).toFixed(1).replace(".", ",");
+                const explainKpiMiel = document.getElementById("explainKpiMiel");
+                if (diffMiel > 0) {
+                    explainKpiMiel.innerHTML = `<span class="material-symbols-outlined text-[#4CAF50] text-[18px]">trending_up</span> <span><strong>${nameA}</strong> produce <strong>${formattedDiffMiel} kg</strong> más.</span>`;
+                } else if (diffMiel < 0) {
+                    explainKpiMiel.innerHTML = `<span class="material-symbols-outlined text-error text-[18px]">trending_down</span> <span><strong>${nameA}</strong> produce <strong>${formattedDiffMiel} kg</strong> menos.</span>`;
+                } else {
+                    explainKpiMiel.innerHTML = `<span class="material-symbols-outlined text-on-surface-variant text-[18px]">remove</span> <span>Ambos tienen la misma producción de miel.</span>`;
+                }
+
+                const varKpiMiel = document.getElementById("varKpiMiel");
+                if (cB.produccionMielKg > 0) {
+                    const pctMiel = Math.round((diffMiel / cB.produccionMielKg) * 100);
+                    const sign = pctMiel >= 0 ? "+" : "";
+                    varKpiMiel.textContent = `${sign}${pctMiel}% Var`;
+                    varKpiMiel.className = pctMiel >= 0 
+                        ? "font-label-caps text-xs bg-[#4CAF50]/10 px-2.5 py-1 rounded text-[#4CAF50] font-semibold" 
+                        : "font-label-caps text-xs bg-error/10 px-2.5 py-1 rounded text-error font-semibold";
+                    varKpiMiel.style.display = "inline-block";
+                } else {
+                    varKpiMiel.style.display = "none";
+                }
+
+                // --- 4. KPIs Condicionales (Piloto): Temp y Humedad ---
+                const bothPilot = cA.esPiloto && cB.esPiloto;
+                const kpisGrid = document.getElementById("kpisGrid");
+                const cardTemp = document.getElementById("cardTemp");
+                const cardHum = document.getElementById("cardHum");
+
+                if (bothPilot) {
+                    cardTemp.classList.remove("hidden");
+                    cardHum.classList.remove("hidden");
+                    kpisGrid.className = "grid grid-cols-1 md:grid-cols-2 gap-6 mt-8";
+
+                    // Temperatura
+                    document.getElementById("lblKpiTempA").textContent = nameA;
+                    document.getElementById("lblKpiTempB").textContent = nameB;
+                    document.getElementById("valKpiTempA").textContent = cA.temperaturaInterna.toFixed(1) + " °C";
+                    document.getElementById("valKpiTempB").textContent = cB.temperaturaInterna.toFixed(1) + " °C";
+
+                    const maxTemp = Math.max(cA.temperaturaInterna, cB.temperaturaInterna, 1);
+                    document.getElementById("barKpiTempA").style.width = `${(cA.temperaturaInterna / maxTemp) * 100}%`;
+                    document.getElementById("barKpiTempB").style.width = `${(cB.temperaturaInterna / maxTemp) * 100}%`;
+
+                    const diffTemp = cA.temperaturaInterna - cB.temperaturaInterna;
+                    const formattedDiffTemp = Math.abs(diffTemp).toFixed(1).replace(".", ",");
+                    const explainKpiTemp = document.getElementById("explainKpiTemp");
+                    if (diffTemp > 0) {
+                        explainKpiTemp.innerHTML = `<span class="material-symbols-outlined text-[#4CAF50] text-[18px]">trending_up</span> <span><strong>${nameA}</strong> es <strong>${formattedDiffTemp} °C</strong> más cálida.</span>`;
+                    } else if (diffTemp < 0) {
+                        explainKpiTemp.innerHTML = `<span class="material-symbols-outlined text-error text-[18px]">trending_down</span> <span><strong>${nameA}</strong> es <strong>${formattedDiffTemp} °C</strong> más fría.</span>`;
+                    } else {
+                        explainKpiTemp.innerHTML = `<span class="material-symbols-outlined text-on-surface-variant text-[18px]">remove</span> <span>Tienen la misma temperatura.</span>`;
+                    }
+
+                    const varKpiTemp = document.getElementById("varKpiTemp");
+                    if (cB.temperaturaInterna > 0) {
+                        const pctTemp = Math.round((diffTemp / cB.temperaturaInterna) * 100);
+                        const sign = pctTemp >= 0 ? "+" : "";
+                        varKpiTemp.textContent = `${sign}${pctTemp}% Var`;
+                        varKpiTemp.className = pctTemp >= 0 
+                            ? "font-label-caps text-xs bg-[#4CAF50]/10 px-2.5 py-1 rounded text-[#4CAF50] font-semibold" 
+                            : "font-label-caps text-xs bg-error/10 px-2.5 py-1 rounded text-error font-semibold";
+                        varKpiTemp.style.display = "inline-block";
+                    } else {
+                        varKpiTemp.style.display = "none";
+                    }
+
+                    // Humedad
+                    document.getElementById("lblKpiHumA").textContent = nameA;
+                    document.getElementById("lblKpiHumB").textContent = nameB;
+                    document.getElementById("valKpiHumA").textContent = cA.humedadInterna.toFixed(0) + "%";
+                    document.getElementById("valKpiHumB").textContent = cB.humedadInterna.toFixed(0) + "%";
+
+                    const maxHum = Math.max(cA.humedadInterna, cB.humedadInterna, 1);
+                    document.getElementById("barKpiHumA").style.width = `${(cA.humedadInterna / maxHum) * 100}%`;
+                    document.getElementById("barKpiHumB").style.width = `${(cB.humedadInterna / maxHum) * 100}%`;
+
+                    const diffHum = cA.humedadInterna - cB.humedadInterna;
+                    const formattedDiffHum = Math.abs(diffHum).toFixed(0);
+                    const explainKpiHum = document.getElementById("explainKpiHum");
+                    if (diffHum > 0) {
+                        explainKpiHum.innerHTML = `<span class="material-symbols-outlined text-[#4CAF50] text-[18px]">trending_up</span> <span><strong>${nameA}</strong> es <strong>${formattedDiffHum}%</strong> más húmeda.</span>`;
+                    } else if (diffHum < 0) {
+                        explainKpiHum.innerHTML = `<span class="material-symbols-outlined text-error text-[18px]">trending_down</span> <span><strong>${nameA}</strong> es <strong>${formattedDiffHum}%</strong> menos húmeda.</span>`;
+                    } else {
+                        explainKpiHum.innerHTML = `<span class="material-symbols-outlined text-on-surface-variant text-[18px]">remove</span> <span>Tienen la misma humedad.</span>`;
+                    }
+
+                    const varKpiHum = document.getElementById("varKpiHum");
+                    if (cB.humedadInterna > 0) {
+                        const pctHum = Math.round((diffHum / cB.humedadInterna) * 100);
+                        const sign = pctHum >= 0 ? "+" : "";
+                        varKpiHum.textContent = `${sign}${pctHum}% Var`;
+                        varKpiHum.className = pctHum >= 0 
+                            ? "font-label-caps text-xs bg-[#4CAF50]/10 px-2.5 py-1 rounded text-[#4CAF50] font-semibold" 
+                            : "font-label-caps text-xs bg-error/10 px-2.5 py-1 rounded text-error font-semibold";
+                        varKpiHum.style.display = "inline-block";
+                    } else {
+                        varKpiHum.style.display = "none";
+                    }
+                } else {
+                    cardTemp.classList.add("hidden");
+                    cardHum.classList.add("hidden");
+                    kpisGrid.className = "grid grid-cols-1 md:grid-cols-2 gap-6 mt-8";
+                }
+
+                // --- 5. Populate Detailed Table ---
+                // ID Colmena
+                document.getElementById("tdIdA").textContent = cA.identificador ? cA.identificador : "Sin ID";
+                document.getElementById("tdIdB").textContent = cB.identificador ? cB.identificador : "Sin ID";
+
+                // Código de Escaneo
+                document.getElementById("tdEscaneoA").textContent = cA.codigoEscaneo;
+                document.getElementById("tdEscaneoB").textContent = cB.codigoEscaneo;
+
+                // Apiario de Origen
+                document.getElementById("tdApiarioA").textContent = cA.apiarioOrigen;
+                document.getElementById("tdApiarioB").textContent = cB.apiarioOrigen;
+
+                // Estado
+                document.getElementById("tdEstadoA").innerHTML = getStatusBadge(cA.estado);
+                document.getElementById("tdEstadoB").innerHTML = getStatusBadge(cB.estado);
+
+                // Población Estimada
+                document.getElementById("tdPoblacionA").textContent = cA.cantidadAbejas.toLocaleString("es-UY") + " abejas";
+                document.getElementById("tdPoblacionB").textContent = cB.cantidadAbejas.toLocaleString("es-UY") + " abejas";
+
+                // Comportamiento
+                document.getElementById("tdComportamientoA").textContent = cA.comportamientoAbejas || "No registrado";
+                document.getElementById("tdComportamientoB").textContent = cB.comportamientoAbejas || "No registrado";
+
+                // Estado de la Reina
+                document.getElementById("tdReinaA").textContent = cA.estadoReina;
+                document.getElementById("tdReinaB").textContent = cB.estadoReina;
+
+                // Fecha de Último Tratamiento
+                document.getElementById("tdTratamientoA").textContent = cA.fechaUltimoTratamiento;
+                document.getElementById("tdTratamientoB").textContent = cB.fechaUltimoTratamiento;
+
+                // Fecha de Última Nota Técnica
+                document.getElementById("tdNotaA").textContent = cA.fechaUltimaNotaTecnica;
+                document.getElementById("tdNotaB").textContent = cB.fechaUltimaNotaTecnica;
+            }
+
+            // Event Listeners for Select Changes
+            selectA.addEventListener("change", function () {
+                syncSelectOptions();
+                updateComparison();
+            });
+
+            selectB.addEventListener("change", function () {
+                syncSelectOptions();
+                updateComparison();
+            });
+
+            // Swap Button handler
+            btnSwap.addEventListener("click", function () {
+                const temp = selectA.value;
+                selectA.value = selectB.value;
+                selectB.value = temp;
+
+                syncSelectOptions();
+                updateComparison();
+            });
+
+            // Initialize Page
+            populateSelects();
+            syncSelectOptions();
+            updateComparison();
+        });
+    </script>
+}

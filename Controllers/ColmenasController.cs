@@ -105,13 +105,15 @@ namespace ObligatorioIntegrador2026.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Detalles(int id)
+        public async Task<IActionResult> Detalles(int id, int? fromApiarioId = null)
         {
             var colmena = await _context.Colmenas.Include(c => c.Apiario).Include(c => c.NotasTecnicas).FirstOrDefaultAsync(c => c.Id == id);
             if (colmena == null) return NotFound();
 
             ActualizarEstadoAutomatico(colmena);
             await _context.SaveChangesAsync();
+
+            ViewBag.FromApiarioId = fromApiarioId;
 
             ViewBag.Tratamientos = await _context.Treatments
                 .Where(t => t.ColmenaId == id)
@@ -202,10 +204,12 @@ namespace ObligatorioIntegrador2026.Controllers
             return RedirectToAction(nameof(Detalles), new { id = id });
         }
 
-        public async Task<IActionResult> Tratamientos(int id)
+        public async Task<IActionResult> Tratamientos(int id, int? fromApiarioId = null)
         {
             var colmena = await _context.Colmenas.Include(c => c.Apiario).FirstOrDefaultAsync(c => c.Id == id);
             if (colmena == null) return NotFound();
+
+            ViewBag.FromApiarioId = fromApiarioId;
 
             var equipments = await _context.Equipments.OrderBy(e => e.DisplayOrder).ToListAsync();
             

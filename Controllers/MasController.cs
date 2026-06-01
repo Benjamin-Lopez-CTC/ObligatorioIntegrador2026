@@ -165,8 +165,37 @@ namespace ObligatorioIntegrador2026.Controllers
             return View(apiarios);
         }
 
-        public IActionResult CompararColmenas()
+        public async Task<IActionResult> CompararColmenas()
         {
+            var colmenas = await _context.Colmenas
+                .Include(c => c.Apiario)
+                .Include(c => c.NotasTecnicas)
+                .ToListAsync();
+
+            var latestTreatments = await _context.Treatments
+                .GroupBy(t => t.ColmenaId)
+                .Select(g => new { ColmenaId = g.Key, LatestDate = g.Max(t => t.Fecha) })
+                .ToDictionaryAsync(x => x.ColmenaId, x => x.LatestDate);
+
+            var colmenasDto = colmenas.Select(c => new {
+                id = c.Id,
+                identificador = c.Identificador,
+                codigoEscaneo = c.CodigoEscaneo,
+                apiarioOrigen = c.Apiario?.Nombre ?? "Sin Apiario",
+                estado = c.Estado,
+                pesoKg = c.PesoKg,
+                temperaturaInterna = c.TemperaturaInterna,
+                humedadInterna = c.HumedadInterna,
+                produccionMielKg = c.ProduccionMielKg,
+                esPiloto = c.EsPiloto,
+                cantidadAbejas = c.CantidadAbejas,
+                comportamientoAbejas = c.ComportamientoAbejas,
+                estadoReina = c.EstadoReina,
+                fechaUltimoTratamiento = latestTreatments.TryGetValue(c.Id, out var tDate) ? tDate.ToString("dd/MM/yyyy") : "N/A",
+                fechaUltimaNotaTecnica = c.NotasTecnicas.Any() ? c.NotasTecnicas.Max(n => n.Fecha).ToString("dd/MM/yyyy") : "N/A"
+            }).ToList();
+
+            ViewBag.ColmenasJson = System.Text.Json.JsonSerializer.Serialize(colmenasDto);
             return View();
         }
 

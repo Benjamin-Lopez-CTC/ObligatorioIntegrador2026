@@ -1010,18 +1010,7 @@
         }, 3500);
     }
 
-    // Modal Visual Controls
-    function showModal(el) {
-        el.classList.remove("modal-hidden");
-        document.body.style.overflow = "hidden"; // Prevent background scroll
-    }
-
-    function hideModal(el) {
-        el.classList.add("modal-hidden");
-        if (document.querySelectorAll('.fixed.inset-0:not(.modal-hidden)').length === 0) {
-            document.body.style.overflow = ""; // Re-enable scroll
-        }
-    }
+    // Modal Visual Controls are now loaded globally from _Layout.cshtml
 
     // Form Modal Open for Create
     function openCreateModal() {
