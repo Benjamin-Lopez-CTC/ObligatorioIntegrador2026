@@ -69,7 +69,7 @@ namespace ObligatorioIntegrador2026.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RegistrarNuevo(string Nombre, string UbicacionTexto, string StringIdentificador)
+        public async Task<IActionResult> RegistrarNuevo(string Nombre, string UbicacionTexto, string StringIdentificador, string? Departamento, string? SeccionPolicial, string? Paraje, string? UbicacionCoordenadas)
         {
             if (string.IsNullOrWhiteSpace(Nombre) || string.IsNullOrWhiteSpace(UbicacionTexto))
             {
@@ -82,7 +82,10 @@ namespace ObligatorioIntegrador2026.Controllers
                 UbicacionTexto = UbicacionTexto,
                 StringIdentificador = string.IsNullOrWhiteSpace(StringIdentificador) ? new System.Random().Next(100, 999).ToString() : StringIdentificador,
                 FechaCreacion = System.DateTime.Now,
-                UbicacionCoordenadas = "No registradas",
+                UbicacionCoordenadas = string.IsNullOrWhiteSpace(UbicacionCoordenadas) ? "No registradas" : UbicacionCoordenadas,
+                Departamento = Departamento,
+                SeccionPolicial = SeccionPolicial,
+                Paraje = Paraje,
                 Responsable = "N/A",
                 NotasEstado = "Apiario recién registrado."
             };
@@ -93,6 +96,37 @@ namespace ObligatorioIntegrador2026.Controllers
             TempData["SuccessMessage"] = $"El apiario '{apiario.Nombre}' fue registrado correctamente.";
 
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditarApiario(int id, string Nombre, string UbicacionTexto, string StringIdentificador, string? Departamento, string? SeccionPolicial, string? Paraje, string? UbicacionCoordenadas)
+        {
+            var apiario = await _context.Apiarios.FindAsync(id);
+            if (apiario == null)
+            {
+                return NotFound();
+            }
+
+            if (string.IsNullOrWhiteSpace(Nombre) || string.IsNullOrWhiteSpace(UbicacionTexto))
+            {
+                TempData["ErrorMessage"] = "El nombre y la ubicación del apiario son obligatorios.";
+                return RedirectToAction(nameof(Detalles), new { id = id });
+            }
+
+            apiario.Nombre = Nombre;
+            apiario.UbicacionTexto = UbicacionTexto;
+            apiario.StringIdentificador = StringIdentificador;
+            apiario.Departamento = Departamento;
+            apiario.SeccionPolicial = SeccionPolicial;
+            apiario.Paraje = Paraje;
+            apiario.UbicacionCoordenadas = string.IsNullOrWhiteSpace(UbicacionCoordenadas) ? "No registradas" : UbicacionCoordenadas;
+
+            _context.Apiarios.Update(apiario);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "El apiario fue actualizado correctamente.";
+            return RedirectToAction(nameof(Detalles), new { id = id });
         }
 
         [HttpPost]

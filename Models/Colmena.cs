@@ -25,6 +25,7 @@ namespace ObligatorioIntegrador2026.Models
         public double ProduccionMielKg { get; set; } // Producción aportada por esta colmena
         
         public bool EsPiloto { get; set; } // Determina si se usa para el promedio de temperatura del apiario
+        public bool EsNucleo { get; set; }
 
         // Nuevas propiedades
         public int CantidadAbejas { get; set; }

@@ -22,6 +22,10 @@ namespace ObligatorioIntegrador2026.Models
         public double ActiveBalanceNeto { get; set; }
         public int ActiveEgresosCount { get; set; }
         public int ActiveIngresosCount { get; set; }
+
+        // Declarations overview
+        public System.DateTime? FechaUltimaDeclaracion { get; set; }
+        public System.DateTime? FechaProximaDeclaracion { get; set; }
     }
 
     public class ProduccionMensual

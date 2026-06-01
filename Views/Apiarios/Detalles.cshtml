@@ -38,8 +38,12 @@
             <h1 class="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-on-surface">Detalles del Apiario: <span class="text-primary-container">@Model.Nombre</span></h1>
         </div>
         <div class="flex gap-4">
-            <button id="btnEditarNota" class="border border-primary-container text-primary-container rounded flex items-center gap-2 px-4 py-2 font-label-caps text-label-caps uppercase hover:bg-surface-container-high transition-colors">
+            <button id="btnEditarApiario" class="border border-primary-container text-primary-container rounded flex items-center gap-2 px-4 py-2 font-label-caps text-label-caps uppercase hover:bg-surface-container-high transition-colors">
                 <span class="material-symbols-outlined text-sm">edit</span>
+                Editar Detalles
+            </button>
+            <button id="btnEditarNota" class="border border-primary-container text-primary-container rounded flex items-center gap-2 px-4 py-2 font-label-caps text-label-caps uppercase hover:bg-surface-container-high transition-colors">
+                <span class="material-symbols-outlined text-sm">edit_note</span>
                 Editar Nota
             </button>
         </div>
@@ -67,6 +71,17 @@
                             </span>
                         </dd>
                     </div>
+                    @if (!string.IsNullOrEmpty(Model.Departamento))
+                    {
+                        <div>
+                            <dt class="font-label-caps text-label-caps text-on-surface-variant uppercase">División Administrativa</dt>
+                            <dd class="text-on-surface mt-1 font-body-sm text-body-sm text-on-surface-variant">
+                                Depto: <span class="text-on-surface font-medium">@Model.Departamento</span> | 
+                                Secc. Policial: <span class="text-on-surface font-medium">@Model.SeccionPolicial</span> | 
+                                Paraje: <span class="text-on-surface font-medium">@Model.Paraje</span>
+                            </dd>
+                        </div>
+                    }
                     <div>
                         <dt class="font-label-caps text-label-caps text-on-surface-variant uppercase">Cantidad de Colmenas</dt>
                         <dd class="text-on-surface mt-1">@colmenas.Count() Colmenas</dd>
@@ -293,6 +308,60 @@
     </div>
 </div>
 
+<!-- Edit Apiario Modal -->
+<div id="editarApiarioModal" class="fixed inset-0 bg-black/60 modal-backdrop flex modal-hidden items-center justify-center z-50 p-4">
+    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-md shadow-2xl overflow-hidden modal-container">
+        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between">
+            <h4 class="font-headline-lg text-lg font-bold text-on-surface">Editar Detalles del Apiario</h4>
+            <button id="btnCancelEditarApiarioIcon" class="text-on-surface-variant hover:text-primary-container transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <form asp-action="EditarApiario" method="post" class="p-6 space-y-4">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@Model.Id" />
+            <div>
+                <label for="Nombre" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Nombre *</label>
+                <input type="text" id="Nombre" name="Nombre" value="@Model.Nombre" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+            </div>
+            <div>
+                <label for="StringIdentificador" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Identificador</label>
+                <input type="text" id="StringIdentificador" name="StringIdentificador" value="@Model.StringIdentificador" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+            </div>
+            <div>
+                <label for="UbicacionTexto" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Ubicación Texto *</label>
+                <input type="text" id="UbicacionTexto" name="UbicacionTexto" value="@Model.UbicacionTexto" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+            </div>
+            <div>
+                <label for="Departamento" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Departamento</label>
+                <input type="text" id="Departamento" name="Departamento" value="@Model.Departamento" placeholder="Ej. Flores" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="SeccionPolicial" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Sección Policial</label>
+                    <input type="text" id="SeccionPolicial" name="SeccionPolicial" value="@Model.SeccionPolicial" placeholder="Ej. 6" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                </div>
+                <div>
+                    <label for="Paraje" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Paraje</label>
+                    <input type="text" id="Paraje" name="Paraje" value="@Model.Paraje" placeholder="Ej. Talar" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                </div>
+            </div>
+            <div>
+                <label for="UbicacionCoordenadas" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Coordenadas (Lat, Lng)</label>
+                <input type="text" id="UbicacionCoordenadas" name="UbicacionCoordenadas" value="@Model.UbicacionCoordenadas" placeholder="Ej. 34°05'12.1&quot;S 70°45'22.4&quot;W" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+            </div>
+            <div class="pt-4 border-t border-surface-container-highest flex justify-end gap-3">
+                <button type="button" id="btnCancelEditarApiario" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2.5 rounded font-label-caps text-label-caps">
+                    Cancelar
+                </button>
+                <button type="submit" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps">
+                    Guardar Cambios
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 @section Scripts {
     <!-- Registrar Colmena Modal -->
 <div id="registrarColmenaModal" class="fixed inset-0 bg-black/60 modal-backdrop flex modal-hidden items-center justify-center z-50 p-4">
@@ -344,6 +413,10 @@
             <div class="flex items-center gap-2 mt-4">
                 <input type="checkbox" id="EsPiloto" name="EsPiloto" value="true" class="w-4 h-4 text-primary-container bg-background border-outline-variant rounded focus:ring-primary-container focus:ring-2" />
                 <label for="EsPiloto" class="font-body-md text-body-md text-on-surface">Convertir en Colmena Piloto</label>
+            </div>
+            <div class="flex items-center gap-2 mt-2">
+                <input type="checkbox" id="EsNucleo" name="EsNucleo" value="true" class="w-4 h-4 text-primary-container bg-background border-outline-variant rounded focus:ring-primary-container focus:ring-2" />
+                <label for="EsNucleo" class="font-body-md text-body-md text-on-surface">¿Es un Núcleo?</label>
             </div>
             <div class="bg-primary-container/10 border border-primary-container rounded p-3 flex items-start gap-3 mt-4">
                 <span class="material-symbols-outlined text-primary-container text-[20px] shrink-0">info</span>
@@ -498,6 +571,24 @@
         btnEditarNota.addEventListener('click', openEditarNotaModal);
         btnCancelEditarNota.addEventListener('click', closeEditarNotaModal);
         btnCancelEditarNotaIcon.addEventListener('click', closeEditarNotaModal);
+
+        // Editar Apiario Modal Logic
+        const btnEditarApiario = document.getElementById('btnEditarApiario');
+        const editarApiarioModal = document.getElementById('editarApiarioModal');
+        const btnCancelEditarApiario = document.getElementById('btnCancelEditarApiario');
+        const btnCancelEditarApiarioIcon = document.getElementById('btnCancelEditarApiarioIcon');
+
+        function openEditarApiarioModal() {
+            editarApiarioModal.classList.remove('modal-hidden');
+        }
+
+        function closeEditarApiarioModal() {
+            editarApiarioModal.classList.add('modal-hidden');
+        }
+
+        if (btnEditarApiario) btnEditarApiario.addEventListener('click', openEditarApiarioModal);
+        if (btnCancelEditarApiario) btnCancelEditarApiario.addEventListener('click', closeEditarApiarioModal);
+        if (btnCancelEditarApiarioIcon) btnCancelEditarApiarioIcon.addEventListener('click', closeEditarApiarioModal);
 
         // Registrar Colmena Modal Logic
         const btnOpenRegistrarColmena = document.getElementById('btnOpenRegistrarColmena');

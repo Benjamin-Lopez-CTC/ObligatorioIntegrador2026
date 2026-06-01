@@ -43,6 +43,7 @@ using (var scope = app.Services.CreateScope())
         _ = context.Analisis.FirstOrDefault();
         _ = context.Inversiones.FirstOrDefault();
         _ = context.Ganancias.FirstOrDefault();
+        _ = context.Declaraciones.FirstOrDefault();
         tableExists = true;
     }
     catch (Exception ex)

@@ -1,148 +1,296 @@
+@model ObligatorioIntegrador2026.Models.InformesViewModel
 @{
     ViewData["Title"] = "Informes y Declaraciones Juradas";
+    var culture = new System.Globalization.CultureInfo("es-ES");
 }
 
-<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
-<!-- Header Section -->
-<header class="space-y-4 max-w-3xl mt-8">
-    <h1 class="font-display text-display text-on-surface">Informes y Declaraciones Juradas</h1>
-    <p class="font-body-md text-on-surface-variant text-lg">
-        Gestión centralizada del Registro Nacional de Apicultores. Revisa el estado de tus declaraciones y exporta los datos necesarios para el portal SINATPA.
-    </p>
-</header>
-<!-- Status Summary Cards -->
-<section class="grid grid-cols-1 md:grid-cols-2 gap-gutter mt-8">
-    <!-- Last Declaration -->
-    <div class="bg-surface-container-highest border border-outline-variant p-6 rounded flex flex-col justify-between">
-        <div>
-            <h3 class="font-label-caps text-label-caps text-on-secondary-container uppercase mb-2">Última Declaración Presentada</h3>
-            <p class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">21 de Julio, 2025</p>
-        </div>
-        <div class="mt-6 flex items-center gap-2 text-primary-container">
-        </div>
-    </div>
-    <!-- Next Declaration -->
-    <div class="bg-surface-container-highest border border-outline-variant p-6 rounded flex flex-col justify-between relative overflow-hidden group hover:border-primary-container transition-colors duration-300">
-        <div class="absolute inset-y-0 right-0 w-1 bg-primary-container"></div>
-        <div>
-            <h3 class="font-label-caps text-label-caps text-on-secondary-container uppercase mb-2">Próxima Declaración Pendiente</h3>
-            <p class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Julio 2026</p>
-        </div>
-        <div class="mt-6 flex items-center justify-between">
-            <div class="flex items-center gap-2 text-on-surface-variant">
-                <span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
-                <span class="font-body-sm text-body-sm">Válida hasta 30/06/2026</span>
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-12">
+    <!-- Header Section -->
+    <header class="space-y-4 max-w-3xl mb-8">
+        <h1 class="font-display text-display text-on-surface">Informes y Declaraciones Juradas</h1>
+        <p class="font-body-md text-on-surface-variant text-lg">
+            Gestión centralizada del Registro Nacional de Apicultores (RNA). Revisa el estado de tus declaraciones juradas obligatorias ante el MGAP y exporta la información técnica del sistema.
+        </p>
+    </header>
+
+    <!-- Status Summary Cards -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-gutter mb-12">
+        <!-- Last Declaration -->
+        <div class="bg-surface-container-highest border border-outline-variant p-6 rounded flex flex-col justify-between relative overflow-hidden group hover:border-primary-container transition-colors duration-300">
+            <div>
+                <div class="flex justify-between items-start mb-2">
+                    <h3 class="font-label-caps text-label-caps text-on-secondary-container uppercase">Última Declaración Presentada</h3>
+                    <button id="btnEditarFecha" class="text-primary-container hover:text-primary-fixed transition-colors flex items-center gap-1 text-xs font-label-caps" title="Actualizar fecha manualmente">
+                        <span class="material-symbols-outlined text-[16px]">edit</span> EDITAR
+                    </button>
+                </div>
+                <p id="txtFechaUltima" class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">
+                    @(Model.FechaUltimaDeclaracion.HasValue 
+                        ? Model.FechaUltimaDeclaracion.Value.ToString("dd 'de' MMMM, yyyy", culture) 
+                        : "No registrada")
+                </p>
             </div>
-            <span class="font-label-caps text-label-caps bg-surface-container-high px-3 py-1 text-primary-container rounded border border-outline-variant">
-                ~340 DÍAS
-            </span>
+            <div class="mt-6 flex items-center gap-2 text-primary-container">
+                <span class="material-symbols-outlined text-[20px]">check_circle</span>
+                <span class="font-body-sm text-body-sm text-on-surface-variant">Registro guardado en el sistema</span>
+            </div>
         </div>
-    </div>
-</section>
-<!-- Data for SINATPA Section -->
-<section class="space-y-6 mt-12 mb-12">
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-            <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Datos para SINATPA</h2>
-            <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Resumen técnico basado en el inventario actual.</p>
+
+        <!-- Next Declaration -->
+        <div class="bg-surface-container-highest border border-outline-variant p-6 rounded flex flex-col justify-between relative overflow-hidden group hover:border-primary-container transition-colors duration-300">
+            <div class="absolute inset-y-0 right-0 w-1 bg-primary-container"></div>
+            <div>
+                <h3 class="font-label-caps text-label-caps text-on-secondary-container uppercase mb-2">Próxima Declaración Pendiente</h3>
+                <p id="txtFechaProxima" class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">
+                    @(Model.FechaProximaDeclaracion.HasValue 
+                        ? Model.FechaProximaDeclaracion.Value.ToString("MMMM yyyy", culture).ToUpper() 
+                        : "No registrada")
+                </p>
+            </div>
+            <div class="mt-6 flex items-center justify-between">
+                <div class="flex items-center gap-2 text-on-surface-variant">
+                    <span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+                    <span id="txtValidaHasta" class="font-body-sm text-body-sm">
+                        @(Model.FechaProximaDeclaracion.HasValue 
+                            ? $"Válida hasta 30/06/{Model.FechaProximaDeclaracion.Value.Year}" 
+                            : "Vigencia no definida")
+                    </span>
+                </div>
+                <span id="badgeDiasRestantes" class="font-label-caps text-label-caps bg-surface-container-high px-3 py-1 text-primary-container rounded border border-outline-variant">
+                    @(Model.DiasRestantes > 0 ? $"~{Model.DiasRestantes} DÍAS" : "VENCIDA")
+                </span>
+            </div>
         </div>
-        <div class="flex flex-wrap gap-4">
-            <button class="bg-transparent border border-primary-container text-primary-container font-label-caps text-label-caps px-6 py-3 rounded flex items-center gap-2 hover:bg-primary-container/10 transition-colors">
-                <span class="material-symbols-outlined" data-icon="download">download</span>
-                EXPORTAR DATOS (.TXT)
-            </button>
-            <button class="bg-primary-container text-on-primary font-label-caps text-label-caps px-6 py-3 rounded flex items-center gap-2 hover:bg-primary-fixed transition-colors">
-                <span class="material-symbols-outlined" data-icon="open_in_new">open_in_new</span>
-                IR AL PORTAL SINATPA (MGAP)
-            </button>
+    </section>
+
+    <!-- Data for SINATPA Section -->
+    <section class="space-y-6">
+        <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 border-b border-outline-variant pb-6">
+            <div>
+                <h2 class="font-headline-lg-mobile text-headline-lg text-on-surface">Datos para SINATPA</h2>
+                <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Resumen técnico basado en el inventario actual de apiarios y colmenas.</p>
+            </div>
+            <div class="flex flex-wrap gap-4 w-full xl:w-auto">
+                <form asp-action="MarcarEntregado" method="post" class="m-0">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="bg-primary-container text-on-primary font-label-caps text-label-caps px-6 py-3 rounded flex items-center gap-2 hover:bg-primary-fixed transition-all hover:scale-[1.02] active:scale-[0.98]">
+                        <span class="material-symbols-outlined text-[20px]">check_circle</span>
+                        MARCAR COMO ENTREGADO
+                    </button>
+                </form>
+
+                <a asp-action="ExportarTxt" class="bg-transparent border border-primary-container text-primary-container font-label-caps text-label-caps px-6 py-3 rounded flex items-center gap-2 hover:bg-primary-container/10 transition-colors">
+                    <span class="material-symbols-outlined" data-icon="download">download</span>
+                    EXPORTAR DATOS (.TXT)
+                </a>
+
+                <a href="https://mi.iduruguay.gub.uy/login?process_state=rrpe7WWZBlhVSbsnGvx_vJtbJl9OV7J23S490--q_Xw" target="_blank" rel="noopener noreferrer" class="bg-surface-container-high border border-outline text-on-surface font-label-caps text-label-caps px-6 py-3 rounded flex items-center gap-2 hover:bg-surface-container-highest transition-colors">
+                    <span class="material-symbols-outlined" data-icon="open_in_new">open_in_new</span>
+                    IR AL PORTAL OFICIAL
+                </a>
+            </div>
         </div>
-    </div>
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
-        <!-- Stock Summary -->
-        <div class="lg:col-span-1 space-y-gutter">
-            <div class="bg-surface-container-highest border border-outline-variant p-6 rounded">
-                <h3 class="font-label-caps text-label-caps text-on-secondary-container uppercase mb-6 border-b border-outline-variant pb-2">Stock Apícola Total</h3>
-                <div class="space-y-4">
-                    <div>
-                        <p class="font-body-sm text-body-sm text-on-surface-variant">Cantidad de colmenas en propiedad</p>
-                        <p class="font-headline-lg-mobile text-headline-lg-mobile text-primary-container">269</p>
-                    </div>
-                    <div>
-                        <p class="font-body-sm text-body-sm text-on-surface-variant">Cantidad de núcleos</p>
-                        <p class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">0</p>
-                    </div>
+
+        <!-- Stock Summary Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-gutter">
+            <!-- Stock Colmenas -->
+            <div class="bg-surface-container-highest border border-outline-variant p-6 rounded flex flex-col justify-between relative overflow-hidden group hover:border-primary-container transition-colors duration-300">
+                <div>
+                    <h3 class="font-label-caps text-label-caps text-on-secondary-container uppercase mb-2">Colmenas en Propiedad</h3>
+                    <p class="font-headline-lg-mobile text-headline-lg-mobile text-primary-container font-bold">@Model.TotalColmenasPropiedad</p>
+                </div>
+                <div class="mt-6 flex items-center gap-2 text-on-surface-variant">
+                    <span class="material-symbols-outlined text-[20px]">inventory_2</span>
+                    <span class="font-body-sm text-body-sm">Total de colmenas activas</span>
                 </div>
             </div>
-            <div class="bg-surface-container-highest border border-outline-variant p-6 rounded">
-                <h3 class="font-label-caps text-label-caps text-on-secondary-container uppercase mb-4">Información Titular</h3>
-                <div class="space-y-3 font-body-sm text-body-sm">
-                    <div class="flex justify-between">
-                        <span class="text-on-surface-variant">RNA:</span>
-                        <span class="text-on-surface">205068</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-on-surface-variant">Sección Policial:</span>
-                        <span class="text-on-surface">6 (Colonia Valdense)</span>
-                    </div>
+
+            <!-- Stock Núcleos -->
+            <div class="bg-surface-container-highest border border-outline-variant p-6 rounded flex flex-col justify-between relative overflow-hidden group hover:border-primary-container transition-colors duration-300">
+                <div>
+                    <h3 class="font-label-caps text-label-caps text-on-secondary-container uppercase mb-2">Núcleos Totales</h3>
+                    <p class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface font-bold">@Model.TotalNucleos</p>
+                </div>
+                <div class="mt-6 flex items-center gap-2 text-on-surface-variant">
+                    <span class="material-symbols-outlined text-[20px]">hive</span>
+                    <span class="font-body-sm text-body-sm">Cajas de fecundación y núcleos</span>
                 </div>
             </div>
         </div>
+
         <!-- Apiary Locations Table -->
-        <div class="lg:col-span-2 bg-surface-container-highest border border-outline-variant rounded overflow-hidden flex flex-col">
-            <div class="p-6 border-b border-outline-variant">
+        <div class="bg-surface-container-low border border-outline-variant rounded-lg p-4 md:p-6 responsive-table flex flex-col gap-4">
+            <div class="border-b border-surface-container-highest pb-3">
                 <h3 class="font-label-caps text-label-caps text-on-secondary-container uppercase">Desglose de Apiarios</h3>
             </div>
-            <div class="overflow-x-auto flex-grow">
-                <table class="w-full text-left font-body-sm text-body-sm border-collapse">
-                    <thead class="bg-surface-container-high text-on-surface-variant font-label-caps text-label-caps">
-                        <tr class="border-b border-outline-variant">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-surface-container-highest font-label-caps text-label-caps text-on-surface-variant">
                             <th class="p-4 font-medium">NRO</th>
                             <th class="p-4 font-medium">NOMBRE</th>
                             <th class="p-4 font-medium">DEPARTAMENTO</th>
+                            <th class="p-4 font-medium">SECCIÓN POLICIAL</th>
+                            <th class="p-4 font-medium">PARAJE</th>
                             <th class="p-4 font-medium">COLMENAS</th>
                             <th class="p-4 font-medium">NÚCLEOS</th>
+                            <th class="p-4 font-medium">COORDENADAS (LAT, LNG)</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-outline-variant text-on-surface">
-                        <tr class="hover:bg-surface-container transition-colors">
-                            <td class="p-4">1</td>
-                            <td class="p-4 font-medium">Talar</td>
-                            <td class="p-4 text-on-surface-variant">Flores</td>
-                            <td class="p-4 text-primary-container">70</td>
-                            <td class="p-4">0</td>
-                        </tr>
-                        <tr class="hover:bg-surface-container transition-colors">
-                            <td class="p-4">2</td>
-                            <td class="p-4 font-medium">Cerro</td>
-                            <td class="p-4 text-on-surface-variant">Flores</td>
-                            <td class="p-4 text-primary-container">70</td>
-                            <td class="p-4">0</td>
-                        </tr>
-                        <tr class="hover:bg-surface-container transition-colors">
-                            <td class="p-4">3</td>
-                            <td class="p-4 font-medium">Cantera</td>
-                            <td class="p-4 text-on-surface-variant">San José</td>
-                            <td class="p-4 text-primary-container">30</td>
-                            <td class="p-4">0</td>
-                        </tr>
-                        <tr class="hover:bg-surface-container transition-colors">
-                            <td class="p-4">4</td>
-                            <td class="p-4 font-medium">Alfalfa</td>
-                            <td class="p-4 text-on-surface-variant">San José</td>
-                            <td class="p-4 text-primary-container">30</td>
-                            <td class="p-4">0</td>
-                        </tr>
-                        <tr class="hover:bg-surface-container transition-colors">
-                            <td class="p-4">5</td>
-                            <td class="p-4 font-medium">Caraguatá</td>
-                            <td class="p-4 text-on-surface-variant">San José</td>
-                            <td class="p-4 text-primary-container">69</td>
-                            <td class="p-4">0</td>
-                        </tr>
+                    <tbody class="font-body-sm text-body-sm text-on-surface">
+                        @if (Model.Apiarios != null && Model.Apiarios.Any())
+                        {
+                            foreach (var apiario in Model.Apiarios)
+                            {
+                                <tr class="border-b border-surface-container-highest hover:bg-surface-container transition-colors">
+                                    <td data-label="NRO" class="p-4">@apiario.Nro</td>
+                                    <td data-label="NOMBRE" class="p-4 font-medium">@apiario.Nombre</td>
+                                    <td data-label="DEPARTAMENTO" class="p-4 text-on-surface-variant">@apiario.Departamento</td>
+                                    <td data-label="SECCIÓN POLICIAL" class="p-4 text-on-surface-variant text-center">@apiario.SeccionPolicial</td>
+                                    <td data-label="PARAJE" class="p-4 text-on-surface-variant">@apiario.Paraje</td>
+                                    <td data-label="COLMENAS" class="p-4 text-primary-container font-semibold text-center">@apiario.CantidadColmenas</td>
+                                    <td data-label="NÚCLEOS" class="p-4 text-center">@apiario.CantidadNucleos</td>
+                                    <td data-label="COORDENADAS" class="p-4 text-xs font-mono">@apiario.Coordenadas</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr class="border-b border-surface-container-highest">
+                                <td colspan="8" class="p-8 text-center text-on-surface-variant">
+                                    No hay apiarios registrados en el sistema.
+                                </td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 </div>
+
+<!-- Modal: Editar Fecha de Declaración -->
+<div id="editarFechaModal" class="fixed inset-0 bg-black/60 modal-backdrop flex modal-hidden items-center justify-center z-50 p-4">
+    <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-md shadow-2xl overflow-hidden modal-container">
+        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between">
+            <h4 class="font-headline-lg text-lg font-bold text-on-surface">Actualizar Fecha de Declaración</h4>
+            <button id="btnCancelEditarFechaIcon" class="text-on-surface-variant hover:text-primary-container transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <form asp-action="ActualizarFecha" method="post" class="p-6 space-y-4">
+            @Html.AntiForgeryToken()
+            <div>
+                <label for="fechaUltima" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Fecha de Última Declaración Presentada</label>
+                <input type="date" id="fechaUltima" name="fechaUltima" required 
+                       value="@(Model.FechaUltimaDeclaracion.HasValue ? Model.FechaUltimaDeclaracion.Value.ToString("yyyy-MM-dd") : "")" 
+                       class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+            </div>
+
+            <!-- Preview Card inside Modal -->
+            <div class="bg-surface-container-low border border-outline-variant rounded p-4 space-y-3">
+                <h5 class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-wider">Cálculo Automático de Siguiente Entrega</h5>
+                <div class="flex justify-between text-sm">
+                    <span class="text-on-surface-variant">Próxima Declaración:</span>
+                    <span id="lblProximaFechaPreview" class="text-on-surface font-semibold">Cargando...</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-on-surface-variant">Vigencia hasta:</span>
+                    <span id="lblValidaHastaPreview" class="text-on-surface-variant">Cargando...</span>
+                </div>
+                <div class="flex justify-between text-sm items-center">
+                    <span class="text-on-surface-variant">Días restantes:</span>
+                    <span id="lblDiasRestantesPreview" class="font-label-caps text-[11px] bg-surface-container-high px-2 py-0.5 text-primary-container rounded border border-outline-variant">Cargando...</span>
+                </div>
+            </div>
+
+            <div class="pt-4 border-t border-surface-container-highest flex justify-end gap-3">
+                <button type="button" id="btnCancelEditarFecha" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2.5 rounded font-label-caps text-label-caps">
+                    Cancelar
+                </button>
+                <button type="submit" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps">
+                    Guardar Cambios
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const btnOpen = document.getElementById('btnEditarFecha');
+        const modal = document.getElementById('editarFechaModal');
+        const btnCancel1 = document.getElementById('btnCancelEditarFecha');
+        const btnCancel2 = document.getElementById('btnCancelEditarFechaIcon');
+        const inputFechaUltima = document.getElementById('fechaUltima');
+
+        const previewProxima = document.getElementById('lblProximaFechaPreview');
+        const previewValida = document.getElementById('lblValidaHastaPreview');
+        const previewDias = document.getElementById('lblDiasRestantesPreview');
+
+        function openModal() {
+            modal.classList.remove('modal-hidden');
+            updatePreviews();
+        }
+
+        function closeModal() {
+            modal.classList.add('modal-hidden');
+        }
+
+        function updatePreviews() {
+            const dateVal = inputFechaUltima.value;
+            if (!dateVal) {
+                previewProxima.textContent = "Ingrese fecha";
+                previewValida.textContent = "-";
+                previewDias.textContent = "-";
+                return;
+            }
+
+            const selectedDate = new Date(dateVal + 'T00:00:00');
+            if (isNaN(selectedDate.getTime())) return;
+
+            // Add 1 year
+            const nextDate = new Date(selectedDate);
+            nextDate.setFullYear(nextDate.getFullYear() + 1);
+
+            // Format next date in Spanish (Month Year)
+            const months = [
+                "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+                "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+            ];
+            previewProxima.textContent = months[nextDate.getMonth()] + " " + nextDate.getFullYear();
+
+            // Valid until 30/06 of next year
+            previewValida.textContent = "30/06/" + nextDate.getFullYear();
+
+            // Days remaining
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            nextDate.setHours(0,0,0,0);
+            const timeDiff = nextDate - today;
+            const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+
+            if (daysDiff > 0) {
+                previewDias.textContent = "~" + daysDiff + " DÍAS";
+                previewDias.className = "font-label-caps text-[11px] bg-surface-container-high px-2 py-0.5 text-primary-container rounded border border-outline-variant";
+            } else {
+                previewDias.textContent = "VENCIDA";
+                previewDias.className = "font-label-caps text-[11px] bg-error-container/30 px-2 py-0.5 text-error rounded border border-error/50";
+            }
+        }
+
+        btnOpen.addEventListener('click', openModal);
+        btnCancel1.addEventListener('click', closeModal);
+        btnCancel2.addEventListener('click', closeModal);
+        inputFechaUltima.addEventListener('input', updatePreviews);
+
+        // Pre-fill a default today's date in input if it was empty
+        if (!inputFechaUltima.value) {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            inputFechaUltima.value = `${yyyy}-${mm}-${dd}`;
+        }
+    </script>
+}

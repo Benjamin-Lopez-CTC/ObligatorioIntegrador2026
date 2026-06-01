@@ -24,6 +24,8 @@ namespace ObligatorioIntegrador2026.Services
             double activeTotalInversion,
             double activeGananciaBruta,
             double activeBalanceNeto,
+            DateTime? fechaUltimaDeclaracion,
+            DateTime? fechaProximaDeclaracion,
             string? logoPath = null)
         {
             var document = Document.Create(container =>
@@ -36,7 +38,7 @@ namespace ObligatorioIntegrador2026.Services
                     page.DefaultTextStyle(x => x.FontSize(10).FontFamily(Fonts.Arial));
 
                     page.Header().Element(container => ComposeHeader(container, logoPath));
-                    page.Content().Element(x => ComposeContent(x, totalApiarios, totalColmenas, totalMiel, totalAlertas, apiarios, colmenasEnAlerta, movimientos, inventarioBajoStock, hasActiveAnalysis, activeTotalInversion, activeGananciaBruta, activeBalanceNeto));
+                    page.Content().Element(x => ComposeContent(x, totalApiarios, totalColmenas, totalMiel, totalAlertas, apiarios, colmenasEnAlerta, movimientos, inventarioBajoStock, hasActiveAnalysis, activeTotalInversion, activeGananciaBruta, activeBalanceNeto, fechaUltimaDeclaracion, fechaProximaDeclaracion));
                     page.Footer().Element(ComposeFooter);
                 });
             });
@@ -76,7 +78,9 @@ namespace ObligatorioIntegrador2026.Services
             bool hasActiveAnalysis,
             double activeTotalInversion,
             double activeGananciaBruta,
-            double activeBalanceNeto)
+            double activeBalanceNeto,
+            DateTime? fechaUltimaDeclaracion,
+            DateTime? fechaProximaDeclaracion)
         {
             container.PaddingVertical(1, Unit.Centimetre).Column(column => 
             {
@@ -264,8 +268,8 @@ namespace ObligatorioIntegrador2026.Services
                     table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten2).Padding(5).Text("Última Declaración Presentada").SemiBold();
                     table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten2).Padding(5).Text("Próxima Declaración Pendiente").SemiBold();
 
-                    table.Cell().Padding(5).Text("21 de Julio, 2025");
-                    table.Cell().Padding(5).Text("Julio 2026 (Válida hasta 30/06/2026)");
+                    table.Cell().Padding(5).Text(fechaUltimaDeclaracion.HasValue ? fechaUltimaDeclaracion.Value.ToString("dd 'de' MMMM, yyyy", new System.Globalization.CultureInfo("es-ES")) : "No registrada");
+                    table.Cell().Padding(5).Text(fechaProximaDeclaracion.HasValue ? $"{fechaProximaDeclaracion.Value.ToString("MMMM yyyy", new System.Globalization.CultureInfo("es-ES"))} (Válida hasta 30/06/{fechaProximaDeclaracion.Value.Year})" : "No registrada");
                 });
             });
         }

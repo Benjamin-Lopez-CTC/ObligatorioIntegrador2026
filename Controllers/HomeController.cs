@@ -74,6 +74,17 @@ public class HomeController : Controller
             model.HasActiveAnalysis = false;
         }
 
+        // Load latest declaration dates
+        var latestDec = await _context.Declaraciones
+            .OrderByDescending(d => d.FechaEntrega)
+            .FirstOrDefaultAsync();
+
+        if (latestDec != null)
+        {
+            model.FechaUltimaDeclaracion = latestDec.FechaEntrega;
+            model.FechaProximaDeclaracion = latestDec.FechaEntrega.AddYears(1);
+        }
+
         // Calcular la tendencia de producción de los últimos 6 meses en base a la producción actual
         var tendencia = new List<ProduccionMensual>();
         var hoy = DateTime.Now;
@@ -163,10 +174,18 @@ public class HomeController : Controller
         double activeGananciaBruta = activeAnalysis?.GananciaBruta ?? 0;
         double activeBalanceNeto = activeAnalysis?.BalanceNeto ?? 0;
 
+        // Load latest declaration dates
+        var latestDec = await _context.Declaraciones
+            .OrderByDescending(d => d.FechaEntrega)
+            .FirstOrDefaultAsync();
+        DateTime? fechaUltima = latestDec?.FechaEntrega;
+        DateTime? fechaProxima = fechaUltima?.AddYears(1);
+
         var pdfBytes = ObligatorioIntegrador2026.Services.PdfReportGenerator.GenerateGlobalReport(
             totalApiarios, totalColmenas, totalMiel, totalAlertas,
             apiarios, colmenasEnAlerta, movimientos, inventarioBajoStock,
             hasActiveAnalysis, activeTotalInversion, activeGananciaBruta, activeBalanceNeto,
+            fechaUltima, fechaProxima,
             logoPath
         );
 

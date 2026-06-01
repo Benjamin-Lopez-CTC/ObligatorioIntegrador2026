@@ -113,6 +113,24 @@
                 <input type="text" id="UbicacionTexto" name="UbicacionTexto" required placeholder="Ej. Lote 5, Sector Este" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
             </div>
             <div>
+                <label for="Departamento" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Departamento</label>
+                <input type="text" id="Departamento" name="Departamento" placeholder="Ej. Flores" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="SeccionPolicial" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Sección Policial</label>
+                    <input type="text" id="SeccionPolicial" name="SeccionPolicial" placeholder="Ej. 6" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                </div>
+                <div>
+                    <label for="Paraje" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Paraje</label>
+                    <input type="text" id="Paraje" name="Paraje" placeholder="Ej. Talar" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                </div>
+            </div>
+            <div>
+                <label for="UbicacionCoordenadas" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Coordenadas (Lat, Lng)</label>
+                <input type="text" id="UbicacionCoordenadas" name="UbicacionCoordenadas" placeholder="Ej. 34°05'12.1&quot;S 70°45'22.4&quot;W" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+            </div>
+            <div>
                 <label for="FechaCreacion" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Fecha de Creación</label>
                 <input type="text" id="FechaCreacion" value="@DateTime.Now.ToString("dd MMMM, yyyy")" disabled class="w-full bg-surface-variant border border-outline-variant px-4 py-2.5 rounded text-on-surface-variant outline-none cursor-not-allowed opacity-70" />
             </div>

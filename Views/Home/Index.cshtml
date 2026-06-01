@@ -280,6 +280,15 @@
 
         <!-- Row 3 Right: Declaraciones del Ministerio -->
         <div class="lg:col-span-1">
+            @{
+                var hasDates = Model.FechaUltimaDeclaracion.HasValue && Model.FechaProximaDeclaracion.HasValue;
+                var lastDateStr = hasDates ? Model.FechaUltimaDeclaracion!.Value.ToString("dd 'de' MMMM, yyyy", new System.Globalization.CultureInfo("es-ES")) : "No registrada";
+                var nextDateStr = hasDates ? Model.FechaProximaDeclaracion!.Value.ToString("MMMM yyyy", new System.Globalization.CultureInfo("es-ES")).ToUpper() : "No registrada";
+                var validUntilStr = hasDates ? $"Válida hasta 30/06/{Model.FechaProximaDeclaracion!.Value.Year}" : "Vigencia no definida";
+                var remDays = hasDates ? (int)Math.Ceiling((Model.FechaProximaDeclaracion!.Value - DateTime.Today).TotalDays) : 0;
+                var remDaysStr = !hasDates ? "-" : (remDays > 0 ? $"~{remDays} DÍAS" : "VENCIDA");
+                var badgeColorClass = !hasDates ? "text-on-surface-variant bg-surface-container-high" : (remDays > 0 ? "text-primary-container bg-surface-container-high border-outline-variant" : "text-error bg-error-container/20 border-error/50");
+            }
             <div class="bg-surface-container border border-outline-variant p-6 rounded-lg h-full flex flex-col justify-between">
                 <div>
                     <div class="flex justify-between items-center mb-6">
@@ -292,22 +301,35 @@
                         <div class="bg-surface-container-high border border-outline-variant/30 p-4 rounded flex items-center justify-between">
                             <div>
                                 <div class="text-[10px] font-label-caps text-on-surface-variant mb-1 tracking-wider">ÚLTIMA PRESENTADA</div>
-                                <div class="font-display font-semibold text-on-surface text-sm">21 de Julio, 2025</div>
+                                <div class="font-display font-semibold text-on-surface text-sm">@lastDateStr</div>
                             </div>
                             <span class="material-symbols-outlined text-primary-container text-2xl">task_alt</span>
                         </div>
                         
                         <!-- Próxima a Presentar -->
                         <div class="bg-surface-container-high border border-outline-variant/30 p-4 rounded flex items-center justify-between relative overflow-hidden">
-                            <div class="absolute right-0 top-0 bottom-0 w-1 bg-primary-container"></div>
+                            @if (hasDates && remDays > 0)
+                            {
+                                <div class="absolute right-0 top-0 bottom-0 w-1 bg-primary-container"></div>
+                            }
+                            else if (hasDates)
+                            {
+                                <div class="absolute right-0 top-0 bottom-0 w-1 bg-error"></div>
+                            }
                             <div>
                                 <div class="text-[10px] font-label-caps text-on-surface-variant mb-1 tracking-wider">PRÓXIMA A PRESENTAR</div>
-                                <div class="font-display font-semibold text-on-surface text-sm">Julio 2026</div>
+                                <div class="font-display font-semibold text-on-surface text-sm">@nextDateStr</div>
                                 <div class="text-[10px] text-on-surface-variant mt-1 flex items-center gap-1 font-body-sm">
-                                    <span class="material-symbols-outlined text-[12px]">calendar_today</span> Válida hasta 30/06/2026
+                                    <span class="material-symbols-outlined text-[12px]">calendar_today</span> @validUntilStr
                                 </div>
                             </div>
-                            <span class="material-symbols-outlined text-primary-container text-2xl">pending_actions</span>
+                            <div class="flex flex-col items-end gap-1 shrink-0">
+                                <span class="material-symbols-outlined text-primary-container text-2xl">pending_actions</span>
+                                @if (hasDates)
+                                {
+                                    <span class="font-label-caps text-[9px] px-1.5 py-0.5 rounded border @badgeColorClass">@remDaysStr</span>
+                                }
+                            </div>
                         </div>
                     </div>
                 </div>

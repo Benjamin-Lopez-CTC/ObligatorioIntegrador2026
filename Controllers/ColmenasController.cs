@@ -55,7 +55,7 @@ namespace ObligatorioIntegrador2026.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RegistrarNueva([Bind("Identificador,ApiarioId,CantidadAbejas,UbicacionIntraApiario,EstadoReina,ComportamientoAbejas,EsPiloto")] Colmena colmena, string? returnUrl = null)
+        public async Task<IActionResult> RegistrarNueva([Bind("Identificador,ApiarioId,CantidadAbejas,UbicacionIntraApiario,EstadoReina,ComportamientoAbejas,EsPiloto,EsNucleo")] Colmena colmena, string? returnUrl = null)
         {
             ModelState.Remove("Apiario");
             ModelState.Remove("CodigoEscaneo");
