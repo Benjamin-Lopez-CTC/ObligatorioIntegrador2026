@@ -67,27 +67,18 @@
                 </div>
                 <!-- Gráfico de barras rediseñado -->
                 <div class="flex-grow flex items-end gap-3 border-b border-outline-variant pb-2 mt-4 min-h-[200px]">
-                    <div class="w-full bg-[#B28F05] hover:bg-[#FFD900] transition-colors h-[40%] rounded-t-sm relative group flex justify-center">
-                        <span class="absolute -top-8 bg-surface-container-high px-2 py-1 rounded text-xs font-bold text-primary shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">40kg</span>
-                    </div>
-                    <div class="w-full bg-[#B28F05] hover:bg-[#FFD900] transition-colors h-[50%] rounded-t-sm relative group flex justify-center">
-                        <span class="absolute -top-8 bg-surface-container-high px-2 py-1 rounded text-xs font-bold text-primary shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">50kg</span>
-                    </div>
-                    <div class="w-full bg-[#B28F05] hover:bg-[#FFD900] transition-colors h-[30%] rounded-t-sm relative group flex justify-center">
-                        <span class="absolute -top-8 bg-surface-container-high px-2 py-1 rounded text-xs font-bold text-primary shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">30kg</span>
-                    </div>
-                    <div class="w-full bg-[#B28F05] hover:bg-[#FFD900] transition-colors h-[70%] rounded-t-sm relative group flex justify-center">
-                        <span class="absolute -top-8 bg-surface-container-high px-2 py-1 rounded text-xs font-bold text-primary shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">70kg</span>
-                    </div>
-                    <div class="w-full bg-[#B28F05] hover:bg-[#FFD900] transition-colors h-[85%] rounded-t-sm relative group flex justify-center">
-                        <span class="absolute -top-8 bg-surface-container-high px-2 py-1 rounded text-xs font-bold text-primary shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">85kg</span>
-                    </div>
-                    <div class="w-full bg-[#B28F05] hover:bg-[#FFD900] transition-colors h-[60%] rounded-t-sm relative group flex justify-center">
-                        <span class="absolute -top-8 bg-surface-container-high px-2 py-1 rounded text-xs font-bold text-primary shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">60kg</span>
-                    </div>
+                    @foreach (var mesInfo in Model.TendenciaProduccion)
+                    {
+                        <div class="w-full bg-[#B28F05] hover:bg-[#FFD900] transition-colors rounded-t-sm relative group flex justify-center" style="height: @(mesInfo.PorcentajeAltura.ToString("0"))%">
+                            <span class="absolute -top-8 bg-surface-container-high px-2 py-1 rounded text-xs font-bold text-primary shadow-sm opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">@mesInfo.CantidadKg.ToString("0.#") kg</span>
+                        </div>
+                    }
                 </div>
-                <div class="flex justify-between mt-3 text-label-caps text-on-surface-variant font-label-caps">
-                    <span>Dic</span><span>Ene</span><span>Feb</span><span>Mar</span><span>Abr</span><span class="text-primary font-bold">May</span>
+                <div class="flex justify-between mt-3 text-label-caps text-on-surface-variant font-label-caps px-1">
+                    @foreach (var mesInfo in Model.TendenciaProduccion)
+                    {
+                        <span class="w-full text-center @(mesInfo.EsMesActual ? "text-primary font-bold" : "")">@mesInfo.Mes</span>
+                    }
                 </div>
             </div>
         </div>

@@ -54,6 +54,45 @@ public class HomeController : Controller
             .Take(5)
             .ToListAsync();
 
+        // Calcular la tendencia de producción de los últimos 6 meses en base a la producción actual
+        var tendencia = new List<ProduccionMensual>();
+        var hoy = DateTime.Now;
+        var mesesAbreviados = new[] { "", "Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic" };
+        var perfilProduccion = new[] { 0, 0.30, 0.20, 0.15, 0.05, 0.02, 0.01, 0.01, 0.01, 0.05, 0.10, 0.15, 0.25 };
+        
+        var ultimosMeses = new List<DateTime>();
+        for (int i = 5; i >= 0; i--)
+        {
+            ultimosMeses.Add(hoy.AddMonths(-i));
+        }
+
+        double sumaPesos = 0;
+        foreach (var mesFecha in ultimosMeses)
+        {
+            sumaPesos += perfilProduccion[mesFecha.Month];
+        }
+
+        foreach (var mesFecha in ultimosMeses)
+        {
+            double pesoMes = perfilProduccion[mesFecha.Month];
+            double cantKg = sumaPesos > 0 ? model.TotalProduccionMielKg * (pesoMes / sumaPesos) : 0;
+            
+            tendencia.Add(new ProduccionMensual
+            {
+                Mes = mesesAbreviados[mesFecha.Month],
+                CantidadKg = cantKg,
+                EsMesActual = (mesFecha.Month == hoy.Month && mesFecha.Year == hoy.Year)
+            });
+        }
+
+        double maxMielMes = tendencia.Any() ? tendencia.Max(t => t.CantidadKg) : 0;
+        foreach (var item in tendencia)
+        {
+            item.PorcentajeAltura = maxMielMes > 0 ? (item.CantidadKg / maxMielMes) * 90 + 10 : 10;
+        }
+
+        model.TendenciaProduccion = tendencia;
+
         return View(model);
     }
 
