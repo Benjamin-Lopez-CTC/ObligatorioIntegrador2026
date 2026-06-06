@@ -102,24 +102,20 @@
         <div class="border-t border-outline-variant/30 mt-4 pt-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <!-- Lower Row Option 1: Separate Sorting Selectors -->
             <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 w-full md:w-auto" id="extra-filters-container">
-                <!-- Alphabetical Sort Selector -->
-                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 w-full sm:w-auto" id="name-sort-container">
-                    <label for="filter-sort-name" class="font-label-caps text-label-caps text-on-surface-variant shrink-0">Ordenar Alfabéticamente:</label>
-                    <select id="filter-sort-name" class="w-full sm:w-auto sm:min-w-[150px] pr-8 bg-background border border-outline-variant px-3 py-1.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors text-sm">
-                        <option value="none">Por defecto</option>
-                        <option value="nameAsc">A - Z</option>
-                        <option value="nameDesc">Z - A</option>
-                    </select>
-                </div>
-                
-                <!-- Stock Sort Selector -->
-                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 w-full sm:w-auto" id="stock-sort-container">
-                    <label for="filter-sort-stock" class="font-label-caps text-label-caps text-on-surface-variant shrink-0">Ordenar por Stock:</label>
-                    <select id="filter-sort-stock" class="w-full sm:w-auto sm:min-w-[150px] pr-8 bg-background border border-outline-variant px-3 py-1.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors text-sm">
-                        <option value="none">Por defecto</option>
-                        <option value="stockAsc">Menor a Mayor</option>
-                        <option value="stockDesc">Mayor a Menor</option>
-                    </select>
+                <!-- Unified Sort Selector -->
+                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 w-full sm:w-auto" id="unified-sort-container">
+                    <label for="filter-sort" class="font-label-caps text-label-caps text-on-surface-variant shrink-0">Ordenar por:</label>
+                    <div class="flex gap-2 w-full sm:w-auto">
+                        <select id="filter-sort" class="w-full sm:w-auto sm:min-w-[200px] pr-8 bg-background border border-outline-variant px-3 py-1.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors text-sm">
+                            <option value="none">Por defecto</option>
+                            <option value="name">Alfabético</option>
+                            <option value="stock">Stock</option>
+                            <option value="price">Precio</option>
+                        </select>
+                        <button id="btn-sort-order" class="p-1.5 border border-outline-variant rounded hover:text-primary-container hover:border-primary-container transition-colors flex items-center justify-center bg-background" title="Alternar Orden">
+                            <span class="material-symbols-outlined text-[18px]">arrow_downward</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -518,8 +514,10 @@
     const filterStatus = document.getElementById("filter-status");
     const filterType = document.getElementById("filter-type");
     
-    const filterSortName = document.getElementById("filter-sort-name");
-    const filterSortStock = document.getElementById("filter-sort-stock");
+    const filterSort = document.getElementById("filter-sort");
+    const btnSortOrder = document.getElementById("btn-sort-order");
+    let isSortAscending = true;
+    
     const toggleCustomReorder = document.getElementById("toggle-custom-reorder");
     const reorderIcon = document.getElementById("reorder-icon");
     const dragHint = document.getElementById("drag-hint");
@@ -609,21 +607,30 @@
             loadInventory();
         });
 
-        filterSortName.addEventListener("change", (e) => {
-            if (e.target.value !== "none") {
-                filterSortStock.value = "none";
-            }
-            currentSortBy = e.target.value;
+        filterSort.addEventListener("change", (e) => {
+            updateSortBy();
             loadInventory();
         });
-
-        filterSortStock.addEventListener("change", (e) => {
-            if (e.target.value !== "none") {
-                filterSortName.value = "none";
-            }
-            currentSortBy = e.target.value;
+        
+        btnSortOrder.addEventListener("click", () => {
+            isSortAscending = !isSortAscending;
+            btnSortOrder.innerHTML = isSortAscending ? '<span class="material-symbols-outlined text-[18px]">arrow_downward</span>' : '<span class="material-symbols-outlined text-[18px]">arrow_upward</span>';
+            updateSortBy();
             loadInventory();
         });
+        
+        function updateSortBy() {
+            const val = filterSort.value;
+            if (val === "none") {
+                currentSortBy = "none";
+            } else if (val === "name") {
+                currentSortBy = isSortAscending ? "nameAsc" : "nameDesc";
+            } else if (val === "stock") {
+                currentSortBy = isSortAscending ? "stockDesc" : "stockAsc";
+            } else if (val === "price") {
+                currentSortBy = isSortAscending ? "priceDesc" : "priceAsc";
+            }
+        }
 
         toggleCustomReorder.addEventListener("change", function() {
             customReorderActive = this.checked;

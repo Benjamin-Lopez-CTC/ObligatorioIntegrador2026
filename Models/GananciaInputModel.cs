@@ -4,6 +4,8 @@ namespace ObligatorioIntegrador2026.Models
 {
     public class GananciaInputModel
     {
+        public int? Id { get; set; }
+
         [Required]
         public int AnalisisId { get; set; }
 

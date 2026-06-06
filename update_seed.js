@@ -42,13 +42,13 @@ function generateColmenas() {
     let code = "            // Seed inicial de Colmenas\n            modelBuilder.Entity<Colmena>().HasData(\n";
     let items = [];
     
-    items.push('new Colmena { Id = 1, Identificador = "#HIVE-0042", CodigoEscaneo = "100001", ApiarioId = 1, Estado = "Óptimo", PesoKg = 45.2, TemperaturaInterna = 34.5, HumedadInterna = 55.0, ProduccionMielKg = 40.0, EsPiloto = true, EsNucleo = false, CantidadAbejas = 45000, UbicacionIntraApiario = "Fila 1, Pos 1", ComportamientoAbejas = "Dócil", EstadoReina = "Presente" }');
-    items.push('new Colmena { Id = 2, Identificador = "#HIVE-0089", CodigoEscaneo = "100002", ApiarioId = 1, Estado = "Alerta", PesoKg = 42.8, TemperaturaInterna = 32.0, HumedadInterna = 0, ProduccionMielKg = 35.0, EsPiloto = false, EsNucleo = true, CantidadAbejas = 38000, UbicacionIntraApiario = "Fila 1, Pos 2", ComportamientoAbejas = "Defensivo", EstadoReina = "Presente" }');
-    items.push('new Colmena { Id = 3, Identificador = "#HIVE-0112", CodigoEscaneo = "100003", ApiarioId = 2, Estado = "Crítico", PesoKg = 31.0, TemperaturaInterna = 36.5, HumedadInterna = 60.0, ProduccionMielKg = 20.0, EsPiloto = true, EsNucleo = false, CantidadAbejas = 15000, UbicacionIntraApiario = "Fila 2, Pos 1", ComportamientoAbejas = "Agresivo", EstadoReina = "Ausente" }');
-    items.push('new Colmena { Id = 4, Identificador = "#HIVE-0045", CodigoEscaneo = "100004", ApiarioId = 2, Estado = "Óptimo", PesoKg = 48.1, TemperaturaInterna = 34.2, HumedadInterna = 58.0, ProduccionMielKg = 45.0, EsPiloto = true, EsNucleo = true, CantidadAbejas = 50000, UbicacionIntraApiario = "Fila 2, Pos 2", ComportamientoAbejas = "Dócil", EstadoReina = "Presente" }');
-    items.push('new Colmena { Id = 5, Identificador = "#HIVE-0001", CodigoEscaneo = "100005", ApiarioId = 3, Estado = "Óptimo", PesoKg = 40.0, TemperaturaInterna = 35.1, HumedadInterna = 52.0, ProduccionMielKg = 30.0, EsPiloto = true, EsNucleo = false, CantidadAbejas = 42000, UbicacionIntraApiario = "Fila 1, Pos 1", ComportamientoAbejas = "Dócil", EstadoReina = "Presente" }');
-    items.push('new Colmena { Id = 6, Identificador = "#HIVE-0002", CodigoEscaneo = "100006", ApiarioId = 4, Estado = "Óptimo", PesoKg = 39.5, TemperaturaInterna = 34.8, HumedadInterna = 0, ProduccionMielKg = 30.0, EsPiloto = false, EsNucleo = false, CantidadAbejas = 41000, UbicacionIntraApiario = "Fila 1, Pos 2", ComportamientoAbejas = "Dócil", EstadoReina = "Presente" }');
-    items.push('new Colmena { Id = 7, Identificador = "#HIVE-0003", CodigoEscaneo = "100007", ApiarioId = 5, Estado = "Crítico", PesoKg = 25.0, TemperaturaInterna = 30.0, HumedadInterna = 82.0, ProduccionMielKg = 10.0, EsPiloto = true, EsNucleo = true, CantidadAbejas = 12000, UbicacionIntraApiario = "Única", ComportamientoAbejas = "Agresivo", EstadoReina = "Presente" }');
+    items.push('new Colmena { Id = 1, Identificador = "#HIVE-0042", CodigoEscaneo = "100001", ApiarioId = 1, Estado = "Óptimo", PesoKg = 45.2, TemperaturaInterna = 34.5, HumedadInterna = 55.0, ProduccionMielKg = 40.0, EsPiloto = true, EsNucleo = false, CantidadAbejas = 45000, UbicacionIntraApiario = "Fila 1, Pos 1", ComportamientoAbejas = "Dócil", EstadoReina = "Presente", Alzas = 2, MediasAlzas = 1, AlzasTresCuartos = 0 }');
+    items.push('new Colmena { Id = 2, Identificador = "#HIVE-0089", CodigoEscaneo = "100002", ApiarioId = 1, Estado = "Alerta", PesoKg = 42.8, TemperaturaInterna = 32.0, HumedadInterna = 0, ProduccionMielKg = 35.0, EsPiloto = false, EsNucleo = true, CantidadAbejas = 38000, UbicacionIntraApiario = "Fila 1, Pos 2", ComportamientoAbejas = "Defensivo", EstadoReina = "Presente", Alzas = 1, MediasAlzas = 0, AlzasTresCuartos = 1 }');
+    items.push('new Colmena { Id = 3, Identificador = "#HIVE-0112", CodigoEscaneo = "100003", ApiarioId = 2, Estado = "Crítico", PesoKg = 31.0, TemperaturaInterna = 36.5, HumedadInterna = 60.0, ProduccionMielKg = 20.0, EsPiloto = true, EsNucleo = false, CantidadAbejas = 15000, UbicacionIntraApiario = "Fila 2, Pos 1", ComportamientoAbejas = "Agresivo", EstadoReina = "Ausente", Alzas = 0, MediasAlzas = 0, AlzasTresCuartos = 0 }');
+    items.push('new Colmena { Id = 4, Identificador = "#HIVE-0045", CodigoEscaneo = "100004", ApiarioId = 2, Estado = "Óptimo", PesoKg = 48.1, TemperaturaInterna = 34.2, HumedadInterna = 58.0, ProduccionMielKg = 45.0, EsPiloto = true, EsNucleo = true, CantidadAbejas = 50000, UbicacionIntraApiario = "Fila 2, Pos 2", ComportamientoAbejas = "Dócil", EstadoReina = "Presente", Alzas = 3, MediasAlzas = 0, AlzasTresCuartos = 0 }');
+    items.push('new Colmena { Id = 5, Identificador = "#HIVE-0001", CodigoEscaneo = "100005", ApiarioId = 3, Estado = "Óptimo", PesoKg = 40.0, TemperaturaInterna = 35.1, HumedadInterna = 52.0, ProduccionMielKg = 30.0, EsPiloto = true, EsNucleo = false, CantidadAbejas = 42000, UbicacionIntraApiario = "Fila 1, Pos 1", ComportamientoAbejas = "Dócil", EstadoReina = "Presente", Alzas = 1, MediasAlzas = 1, AlzasTresCuartos = 1 }');
+    items.push('new Colmena { Id = 6, Identificador = "#HIVE-0002", CodigoEscaneo = "100006", ApiarioId = 4, Estado = "Óptimo", PesoKg = 39.5, TemperaturaInterna = 34.8, HumedadInterna = 0, ProduccionMielKg = 30.0, EsPiloto = false, EsNucleo = false, CantidadAbejas = 41000, UbicacionIntraApiario = "Fila 1, Pos 2", ComportamientoAbejas = "Dócil", EstadoReina = "Presente", Alzas = 2, MediasAlzas = 0, AlzasTresCuartos = 0 }');
+    items.push('new Colmena { Id = 7, Identificador = "#HIVE-0003", CodigoEscaneo = "100007", ApiarioId = 5, Estado = "Crítico", PesoKg = 25.0, TemperaturaInterna = 30.0, HumedadInterna = 82.0, ProduccionMielKg = 10.0, EsPiloto = true, EsNucleo = true, CantidadAbejas = 12000, UbicacionIntraApiario = "Única", ComportamientoAbejas = "Agresivo", EstadoReina = "Presente", Alzas = 0, MediasAlzas = 0, AlzasTresCuartos = 0 }');
 
     const estados = ["Óptimo", "Alerta", "Crítico"];
     const comportamientos = ["Dócil", "Defensivo", "Agresivo"];
@@ -70,7 +70,11 @@ function generateColmenas() {
         let comp = comportamientos[Math.floor(Math.random() * comportamientos.length)];
         let reina = estadoReina[Math.floor(Math.random() * estadoReina.length)];
 
-        items.push(`new Colmena { Id = ${i}, Identificador = "${ident}", CodigoEscaneo = "${codigo}", ApiarioId = ${apiarioId}, Estado = "${est}", PesoKg = ${peso}, TemperaturaInterna = ${temp}, HumedadInterna = ${hum}, ProduccionMielKg = ${prod}, EsPiloto = ${es_piloto}, EsNucleo = ${es_nucleo}, CantidadAbejas = ${abejas}, UbicacionIntraApiario = "${ubi}", ComportamientoAbejas = "${comp}", EstadoReina = "${reina}" }`);
+        let alzas = Math.floor(Math.random() * 4);
+        let medias = Math.floor(Math.random() * 3);
+        let tresC = Math.floor(Math.random() * 2);
+
+        items.push(`new Colmena { Id = ${i}, Identificador = "${ident}", CodigoEscaneo = "${codigo}", ApiarioId = ${apiarioId}, Estado = "${est}", PesoKg = ${peso}, TemperaturaInterna = ${temp}, HumedadInterna = ${hum}, ProduccionMielKg = ${prod}, EsPiloto = ${es_piloto}, EsNucleo = ${es_nucleo}, CantidadAbejas = ${abejas}, UbicacionIntraApiario = "${ubi}", ComportamientoAbejas = "${comp}", EstadoReina = "${reina}", Alzas = ${alzas}, MediasAlzas = ${medias}, AlzasTresCuartos = ${tresC} }`);
     }
 
     code += "                " + items.join(",\n                ") + "\n            );\n";
@@ -80,17 +84,17 @@ function generateColmenas() {
 function generateNotas() {
     let code = "            // Seed inicial de Notas Tecnicas\n            modelBuilder.Entity<NotaTecnica>().HasData(\n";
     let items = [];
-    items.push('new NotaTecnica { Id = 1, ColmenaId = 1, Detalles = "Revisión general, todo normal.", EstadoReina = "Presente", EstadoColmena = "Óptimo", Fecha = DateTime.Now.AddDays(-10) }');
-    items.push('new NotaTecnica { Id = 2, ColmenaId = 2, Detalles = "Abejas defensivas, observar.", EstadoReina = "Presente", EstadoColmena = "Alerta", Fecha = DateTime.Now.AddDays(-15) }');
-    items.push('new NotaTecnica { Id = 3, ColmenaId = 3, Detalles = "Reina no avistada. Posible enjambrazón.", EstadoReina = "Ausente", EstadoColmena = "Crítico", Fecha = DateTime.Now.AddDays(-2) }');
-    items.push('new NotaTecnica { Id = 4, ColmenaId = 4, Detalles = "Excelente producción.", EstadoReina = "Presente", EstadoColmena = "Óptimo", Fecha = DateTime.Now.AddDays(-5) }');
-    items.push('new NotaTecnica { Id = 5, ColmenaId = 5, Detalles = "Alza agregada.", EstadoReina = "Presente", EstadoColmena = "Óptimo", Fecha = DateTime.Now.AddDays(-7) }');
-    items.push('new NotaTecnica { Id = 6, ColmenaId = 6, Detalles = "Normal.", EstadoReina = "Presente", EstadoColmena = "Óptimo", Fecha = DateTime.Now.AddDays(-20) }');
-    items.push('new NotaTecnica { Id = 7, ColmenaId = 7, Detalles = "Humedad alta.", EstadoReina = "Presente", EstadoColmena = "Crítico", Fecha = DateTime.Now.AddDays(-35) }');
+    items.push('new NotaTecnica { Id = 1, ColmenaId = 1, Detalles = "Revisión general, todo normal.", EstadoReina = "Presente", EstadoColmena = "Óptimo", Fecha = DateTime.Now.AddDays(-10), Temperatura = 34.5, Humedad = 55.0 }');
+    items.push('new NotaTecnica { Id = 2, ColmenaId = 2, Detalles = "Abejas defensivas, observar.", EstadoReina = "Presente", EstadoColmena = "Alerta", Fecha = DateTime.Now.AddDays(-15), Temperatura = 35.0, Humedad = 60.0 }');
+    items.push('new NotaTecnica { Id = 3, ColmenaId = 3, Detalles = "Reina no avistada. Posible enjambrazón.", EstadoReina = "Ausente", EstadoColmena = "Crítico", Fecha = DateTime.Now.AddDays(-2), Temperatura = 33.2, Humedad = 50.0 }');
+    items.push('new NotaTecnica { Id = 4, ColmenaId = 4, Detalles = "Excelente producción.", EstadoReina = "Presente", EstadoColmena = "Óptimo", Fecha = DateTime.Now.AddDays(-5), Temperatura = 34.8, Humedad = 56.0 }');
+    items.push('new NotaTecnica { Id = 5, ColmenaId = 5, Detalles = "Cosecha registrada en masa.", EstadoReina = "Presente", EstadoColmena = "Óptimo", Fecha = DateTime.Now.AddDays(-7), ExtraccionId = 1, AlzasCosechadas = 2, KilosCosechados = 44.0 }');
+    items.push('new NotaTecnica { Id = 6, ColmenaId = 6, Detalles = "Normal.", EstadoReina = "Presente", EstadoColmena = "Óptimo", Fecha = DateTime.Now.AddDays(-20), Temperatura = 35.1, Humedad = 58.0 }');
+    items.push('new NotaTecnica { Id = 7, ColmenaId = 7, Detalles = "Humedad alta.", EstadoReina = "Presente", EstadoColmena = "Crítico", Fecha = DateTime.Now.AddDays(-35), Temperatura = 32.0, Humedad = 80.0 }');
 
     const estados = ["Óptimo", "Alerta", "Crítico"];
     const estadoReina = ["Presente", "Ausente", "Cambiando"];
-    const detallesOpts = ["Revisión de rutina", "Se alimentó", "Se limpió piso", "Alta presencia de zánganos", "Reina joven", "Sin novedades", "Cosecha parcial", "Se agregó cera"];
+    const detallesOpts = ["Revisión de rutina", "Se alimentó", "Se limpió piso", "Alta presencia de zánganos", "Reina joven", "Sin novedades", "Se agregó cera"];
 
     for (let i = 8; i <= 80; i++) {
         let col_id = Math.floor(Math.random() * 50 + 1);
@@ -98,7 +102,9 @@ function generateNotas() {
         let est = estados[Math.floor(Math.random() * estados.length)];
         let det = detallesOpts[Math.floor(Math.random() * detallesOpts.length)];
         let dias = Math.floor(Math.random() * 100 + 1);
-        items.push(`new NotaTecnica { Id = ${i}, ColmenaId = ${col_id}, Detalles = "${det}", EstadoReina = "${reina}", EstadoColmena = "${est}", Fecha = DateTime.Now.AddDays(-${dias}) }`);
+        let temp = (Math.random() * 8 + 30).toFixed(1);
+        let hum = (Math.random() * 30 + 40).toFixed(1);
+        items.push(`new NotaTecnica { Id = ${i}, ColmenaId = ${col_id}, Detalles = "${det}", EstadoReina = "${reina}", EstadoColmena = "${est}", Fecha = DateTime.Now.AddDays(-${dias}), Temperatura = ${temp}, Humedad = ${hum} }`);
     }
 
     code += "                " + items.join(",\n                ") + "\n            );\n";
@@ -159,7 +165,7 @@ function generateMovimientos() {
         let est = estados[Math.floor(Math.random() * estados.length)];
         let salida = Math.floor(Math.random() * 90 + 10);
         let regreso = salida - Math.floor(Math.random() * 40 - 20);
-        items.push(`new Movimiento { Id = ${i}, ColmenaId = ${col}, ApiarioOrigenId = ${orig}, ApiarioDestinoId = ${dest}, Razon = "${raz}", FechaSalida = DateTime.Now.AddDays(-${salida}), FechaRegreso = DateTime.Now.AddDays(-${regreso}), Estado = "${est}" }`);
+        items.push(`new Movimiento { Id = ${i}, ColmenaId = ${col}, ApiarioOrigenId = ${orig}, ApiarioDestinoId = ${dest}, Razon = "${raz}", FechaSalida = DateTime.Now.AddDays(-${salida}), FechaRegreso = DateTime.Now.AddDays(-(${regreso})), Estado = "${est}" }`);
     }
 
     code += "                " + items.join(",\n                ") + "\n            );\n";
@@ -211,7 +217,37 @@ function generateAnalisis() {
     return code;
 }
 
-const fullSeed = generateEquipments() + "\n" + 
+function generateExtracciones() {
+    let code = "            // Seed inicial de Extracciones\n            modelBuilder.Entity<Extraccion>().HasData(\n";
+    let items = [];
+    
+    // Create extractions mapped across the last 6 months
+    let id = 1;
+    for (let i = 0; i <= 5; i++) {
+        let kg = (Math.random() * 300 + 100).toFixed(1);
+        let colmenas = Math.floor(Math.random() * 15 + 5);
+        // Using roughly the 15th of the month
+        items.push(`new Extraccion { Id = ${id}, Fecha = DateTime.Now.AddMonths(-${i}).AddDays(-DateTime.Now.Day + 15), KilosTotales = ${kg}, CantidadColmenasCosechadas = ${colmenas}, Notas = "Cosecha mensual general" }`);
+        id++;
+    }
+
+    code += "                " + items.join(",\n                ") + "\n            );\n";
+    return code;
+}
+
+function generateApiarios() {
+    let code = "            // Seed inicial de Apiarios\n            modelBuilder.Entity<Apiario>().HasData(\n";
+    let items = [];
+    items.push('new Apiario { Id = 1, Nombre = "Apiario Norte", StringIdentificador = "AP-001", UbicacionTexto = "Ruta 5, Km 42.5", UbicacionCoordenadas = "-34.123, -56.456", Responsable = "Benjamin Lopez", NotasEstado = "Acceso en buen estado." }');
+    items.push('new Apiario { Id = 2, Nombre = "Apiario Sur", StringIdentificador = "AP-002", UbicacionTexto = "Camino Vecinal 14", UbicacionCoordenadas = "-34.890, -56.123", Responsable = "Felipe Alvarez", NotasEstado = "Requiere desmalezado." }');
+    items.push('new Apiario { Id = 3, Nombre = "Apiario Este", StringIdentificador = "AP-003", UbicacionTexto = "Estancia La Paz", UbicacionCoordenadas = "-33.567, -55.890", Responsable = "Matías Vergues", NotasEstado = "Todo normal." }');
+    items.push('new Apiario { Id = 4, Nombre = "Apiario Oeste", StringIdentificador = "AP-004", UbicacionTexto = "Ruta 3, Km 112", UbicacionCoordenadas = "-34.456, -57.123", Responsable = "Benjamin Lopez", NotasEstado = "Tranquera rota." }');
+    items.push('new Apiario { Id = 5, Nombre = "Apiario Central", StringIdentificador = "AP-005", UbicacionTexto = "Predio Principal", UbicacionCoordenadas = "-34.567, -56.789", Responsable = "Felipe Alvarez", NotasEstado = "Base operativa." }');
+    code += "                " + items.join(",\n                ") + "\n            );\n\n";
+    return code;
+}
+
+const fullSeed = generateApiarios() + generateEquipments() + "\n" + 
                  "            // Relaciones de Movimiento para evitar ciclos de cascada\n" +
                  "            modelBuilder.Entity<Movimiento>().HasOne(m => m.ApiarioOrigen).WithMany().HasForeignKey(m => m.ApiarioOrigenId).OnDelete(DeleteBehavior.Restrict);\n" +
                  "            modelBuilder.Entity<Movimiento>().HasOne(m => m.ApiarioDestino).WithMany().HasForeignKey(m => m.ApiarioDestinoId).OnDelete(DeleteBehavior.Restrict);\n\n" +
@@ -219,6 +255,7 @@ const fullSeed = generateEquipments() + "\n" +
                  "            modelBuilder.Entity<Inversion>().HasOne(i => i.Analisis).WithMany(a => a.Inversiones).HasForeignKey(i => i.AnalisisId).OnDelete(DeleteBehavior.Cascade);\n" +
                  "            modelBuilder.Entity<Ganancia>().HasOne(g => g.Analisis).WithMany(a => a.Ganancias).HasForeignKey(g => g.AnalisisId).OnDelete(DeleteBehavior.Cascade);\n\n" +
                  generateColmenas() + "\n" + 
+                 generateExtracciones() + "\n" + 
                  generateNotas() + "\n" + 
                  generateTreatments() + "\n" + 
                  generateMovimientos() + "\n" + 
@@ -228,7 +265,10 @@ const file = 'Data/AppDbContext.cs';
 const content = fs.readFileSync(file, 'utf8');
 
 const lines = content.split('\n');
-const start = lines.findIndex(l => l.includes('// Seed inicial de equipamiento'));
+// Ajustar start line para incluir Apiarios si estuviese
+const start = lines.findIndex(l => l.includes('// Seed inicial de Apiarios')) !== -1 
+    ? lines.findIndex(l => l.includes('// Seed inicial de Apiarios'))
+    : lines.findIndex(l => l.includes('// Seed inicial de equipamiento'));
 const end = lines.findIndex(l => l.includes('// Seed inicial de Declaraciones Juradas'));
 
 if (start !== -1 && end !== -1) {

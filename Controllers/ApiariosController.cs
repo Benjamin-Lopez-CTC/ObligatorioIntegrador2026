@@ -17,13 +17,41 @@ namespace ObligatorioIntegrador2026.Controllers
             _context = context;
         }
 
-        // GET: Apiarios
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortBy, bool desc = false, string search = null)
         {
-            var apiarios = await _context.Apiarios
-                .Include(a => a.Colmenas)
-                .ToListAsync();
-                
+            var query = _context.Apiarios.Include(a => a.Colmenas).AsQueryable();
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                var lowerSearch = search.ToLower();
+                query = query.Where(a => a.Nombre.ToLower().Contains(lowerSearch));
+            }
+
+            if (!string.IsNullOrEmpty(sortBy))
+            {
+                switch (sortBy)
+                {
+                    case "produccion":
+                        query = desc ? query.OrderByDescending(a => a.Colmenas.Sum(c => c.ProduccionMielKg)) 
+                                     : query.OrderBy(a => a.Colmenas.Sum(c => c.ProduccionMielKg));
+                        break;
+                    case "fecha":
+                        query = desc ? query.OrderByDescending(a => a.UltimaInspeccion)
+                                     : query.OrderBy(a => a.UltimaInspeccion);
+                        break;
+                    case "colmenas":
+                        query = desc ? query.OrderByDescending(a => a.Colmenas.Count)
+                                     : query.OrderBy(a => a.Colmenas.Count);
+                        break;
+                }
+            }
+
+            var apiarios = await query.ToListAsync();
+            
+            ViewBag.SortBy = sortBy;
+            ViewBag.Desc = desc;
+            ViewBag.SearchTerm = search;
+
             return View(apiarios);
         }
 

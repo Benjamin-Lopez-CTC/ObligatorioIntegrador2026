@@ -194,12 +194,15 @@
                 <!-- Pagination Controls -->
                 <div class="p-4 flex items-center justify-between border-t border-surface-variant">
                     <span class="font-body-sm text-on-surface-variant" id="pageInfo">Mostrando 1-10</span>
-                    <div class="flex gap-2">
-                        <button onclick="changePage(-1)" class="p-1 rounded text-on-surface hover:bg-surface-variant disabled:opacity-50" id="btnPrevPage">
-                            <span class="material-symbols-outlined">chevron_left</span>
+                    <div class="flex items-center gap-1">
+                        <button onclick="changePage(-1)" class="w-8 h-8 flex items-center justify-center border border-outline-variant rounded hover:text-primary-container hover:border-primary-container transition-colors disabled:opacity-50" id="btnPrevPage">
+                            <span class="material-symbols-outlined text-[18px]">chevron_left</span>
                         </button>
-                        <button onclick="changePage(1)" class="p-1 rounded text-on-surface hover:bg-surface-variant disabled:opacity-50" id="btnNextPage">
-                            <span class="material-symbols-outlined">chevron_right</span>
+                        <div id="paginationNumbers" class="flex items-center gap-1">
+                            <!-- Filled by JS -->
+                        </div>
+                        <button onclick="changePage(1)" class="w-8 h-8 flex items-center justify-center border border-outline-variant rounded hover:text-primary-container hover:border-primary-container transition-colors disabled:opacity-50" id="btnNextPage">
+                            <span class="material-symbols-outlined text-[18px]">chevron_right</span>
                         </button>
                     </div>
                 </div>
@@ -602,6 +605,29 @@
         const rowsPerPage = 10;
         const rows = document.querySelectorAll('.history-row');
 
+        function renderPaginationControls(totalPages) {
+            const paginationNumbers = document.getElementById('paginationNumbers');
+            if (!paginationNumbers) return;
+            paginationNumbers.innerHTML = '';
+            
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    const btn = document.createElement('button');
+                    btn.className = `w-8 h-8 flex items-center justify-center border rounded font-body-sm transition-colors ${i === currentPage ? 'bg-primary-container text-on-primary border-primary-container' : 'border-outline-variant text-on-surface hover:text-primary-container hover:border-primary-container'}`;
+                    btn.textContent = i;
+                    btn.addEventListener('click', () => {
+                        showPage(i);
+                    });
+                    paginationNumbers.appendChild(btn);
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    const dots = document.createElement('span');
+                    dots.className = 'w-8 h-8 flex items-center justify-center text-on-surface-variant font-body-sm';
+                    dots.textContent = '...';
+                    paginationNumbers.appendChild(dots);
+                }
+            }
+        }
+
         function showPage(page) {
             const totalPages = Math.ceil(rows.length / rowsPerPage) || 1;
             if (page < 1) page = 1;
@@ -626,6 +652,7 @@
 
             document.getElementById('btnPrevPage').disabled = currentPage === 1;
             document.getElementById('btnNextPage').disabled = currentPage === totalPages;
+            renderPaginationControls(totalPages);
         }
 
         function changePage(delta) {

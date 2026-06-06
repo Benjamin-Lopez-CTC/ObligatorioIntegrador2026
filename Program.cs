@@ -116,6 +116,8 @@ using (var scope = app.Services.CreateScope())
     {
         Console.WriteLine($"[DB SETUP] Error al corregir fechas de inspección futuras: {ex.Message}");
     }
+
+
 }
 
 // Configure the HTTP request pipeline.

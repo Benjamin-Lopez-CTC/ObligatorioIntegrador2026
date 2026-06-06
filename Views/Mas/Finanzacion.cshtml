@@ -174,7 +174,10 @@
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-3">
-                                    <span class="font-body-md text-body-md text-error font-semibold">-$@inv.Precio.ToString("N2")</span>
+                                    <div class="font-body-md text-error font-semibold mr-2">-$@inv.Precio.ToString("N2")</div>
+                                    <button onclick="openEditInversionModal(@inv.Id, '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(inv.Titulo))', '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(inv.Nota ?? ""))', @inv.Precio.ToString(System.Globalization.CultureInfo.InvariantCulture))" class="text-on-surface-variant hover:text-primary-container transition-colors p-1" title="Editar inversión">
+                                        <span class="material-symbols-outlined text-[18px]">edit</span>
+                                    </button>
                                     <button onclick="confirmarEliminarInversion(@inv.Id, '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(inv.Titulo))')" class="text-on-surface-variant hover:text-error transition-colors p-1" title="Eliminar inversión">
                                         <span class="material-symbols-outlined text-[18px]">delete</span>
                                     </button>
@@ -223,7 +226,10 @@
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-3">
-                                    <span class="font-body-md text-body-md text-primary-container font-semibold">+$@gan.Monto.ToString("N2")</span>
+                                    <div class="font-body-md text-primary-container font-semibold mr-2">+$@gan.Monto.ToString("N2")</div>
+                                    <button onclick="openEditGananciaModal(@gan.Id, '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(gan.Titulo))', '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(gan.Descripcion ?? ""))', @gan.Monto.ToString(System.Globalization.CultureInfo.InvariantCulture))" class="text-on-surface-variant hover:text-primary-container transition-colors p-1" title="Editar ganancia">
+                                        <span class="material-symbols-outlined text-[18px]">edit</span>
+                                    </button>
                                     <button onclick="confirmarEliminarGanancia(@gan.Id, '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(gan.Titulo))')" class="text-on-surface-variant hover:text-error transition-colors p-1" title="Eliminar ganancia">
                                         <span class="material-symbols-outlined text-[18px]">delete</span>
                                     </button>
@@ -330,7 +336,7 @@
 <div id="modalInversion" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop bg-black/80 modal-hidden p-4">
     <div class="bg-surface-container border border-outline-variant rounded w-full max-w-md modal-container shadow-2xl flex flex-col max-h-[75vh] md:max-h-[85vh]">
         <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between shrink-0">
-            <h4 class="font-headline-lg text-lg font-bold text-on-surface">Registrar Inversión</h4>
+            <h4 id="modalInversionTitle" class="font-headline-lg text-lg font-bold text-on-surface">Registrar Inversión</h4>
             <button type="button" onclick="closeInversionModal()" class="text-on-surface-variant hover:text-primary-container transition-colors p-1">
                 <span class="material-symbols-outlined">close</span>
             </button>
@@ -338,6 +344,7 @@
         <div class="p-6 overflow-y-auto grow custom-scrollbar">
             <div id="errorBannerInversion" class="hidden bg-error-container/20 border border-error/50 text-error text-sm rounded p-3 space-y-1 mb-4"></div>
             <form id="formInversion" class="flex flex-col gap-4">
+                <input type="hidden" id="invId" value="0" />
                 <div class="flex flex-col gap-2">
                     <label class="font-label-caps text-label-caps text-on-surface">Concepto / Título</label>
                     <input type="text" id="invTitulo" class="bg-surface-container-high border border-outline-variant text-on-surface font-body-md rounded p-3 focus:outline-none focus:border-primary-container w-full" placeholder="Ej: Combustible, Ahumadores..." required maxlength="100" />
@@ -369,7 +376,7 @@
 <div id="modalGanancia" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop bg-black/80 modal-hidden p-4">
     <div class="bg-surface-container border border-outline-variant rounded w-full max-w-md modal-container shadow-2xl flex flex-col max-h-[75vh] md:max-h-[85vh]">
         <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between shrink-0">
-            <h4 class="font-headline-lg text-lg font-bold text-on-surface">Registrar Ganancia</h4>
+            <h4 id="modalGananciaTitle" class="font-headline-lg text-lg font-bold text-on-surface">Registrar Ganancia</h4>
             <button type="button" onclick="closeGananciaModal()" class="text-on-surface-variant hover:text-primary-container transition-colors p-1">
                 <span class="material-symbols-outlined">close</span>
             </button>
@@ -377,6 +384,7 @@
         <div class="p-6 overflow-y-auto grow custom-scrollbar">
             <div id="errorBannerGanancia" class="hidden bg-error-container/20 border border-error/50 text-error text-sm rounded p-3 space-y-1 mb-4"></div>
             <form id="formGanancia" class="flex flex-col gap-4">
+                <input type="hidden" id="ganId" value="0" />
                 <div class="flex flex-col gap-2">
                     <label class="font-label-caps text-label-caps text-on-surface">Concepto / Título</label>
                     <input type="text" id="ganTitulo" class="bg-surface-container-high border border-outline-variant text-on-surface font-body-md rounded p-3 focus:outline-none focus:border-primary-container w-full" placeholder="Ej: Venta de Miel, Venta de Polen..." required maxlength="100" />
@@ -664,11 +672,12 @@
             }
         }
 
-        // Registrar Inversion
+        // Registrar / Editar Inversion
         async function submitInversion() {
             errorBannerInversion.classList.add("hidden");
             errorBannerInversion.innerHTML = "";
 
+            const id = parseInt(document.getElementById("invId").value) || 0;
             const titulo = document.getElementById("invTitulo").value.trim();
             const nota = document.getElementById("invNota").value.trim();
             const precio = parseFloat(document.getElementById("invPrecio").value);
@@ -684,14 +693,18 @@
             }
 
             const btn = document.getElementById("btnSubmitInversion");
+            const originalText = btn.textContent;
             btn.disabled = true;
-            btn.textContent = "Registrando...";
+            btn.textContent = "Guardando...";
+
+            const url = id > 0 ? '/Mas/EditarInversion' : '/Mas/RegistrarInversion';
 
             try {
-                const response = await fetch('/Mas/RegistrarInversion', {
+                const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
+                        Id: id > 0 ? id : undefined,
                         AnalisisId: activeAnalysisId,
                         Titulo: titulo,
                         Nota: nota,
@@ -701,27 +714,28 @@
                 const result = await response.json();
                 if (result.success) {
                     closeInversionModal();
-                    showToast("Egreso registrado con éxito.", "success");
+                    showToast(id > 0 ? "Egreso actualizado con éxito." : "Egreso registrado con éxito.", "success");
                     setTimeout(() => window.location.reload(), 1000);
                 } else {
-                    errorBannerInversion.innerHTML = `<p class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">error</span> ${result.message || "Error al registrar la inversión."}</p>`;
+                    errorBannerInversion.innerHTML = `<p class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">error</span> ${result.message || "Error al procesar la inversión."}</p>`;
                     errorBannerInversion.classList.remove("hidden");
                     btn.disabled = false;
-                    btn.textContent = "Registrar";
+                    btn.textContent = originalText;
                 }
             } catch (err) {
                 errorBannerInversion.innerHTML = `<p class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">error</span> Error de conexión con el servidor.</p>`;
                 errorBannerInversion.classList.remove("hidden");
                 btn.disabled = false;
-                btn.textContent = "Registrar";
+                btn.textContent = originalText;
             }
         }
 
-        // Registrar Ganancia
+        // Registrar / Editar Ganancia
         async function submitGanancia() {
             errorBannerGanancia.classList.add("hidden");
             errorBannerGanancia.innerHTML = "";
 
+            const id = parseInt(document.getElementById("ganId").value) || 0;
             const titulo = document.getElementById("ganTitulo").value.trim();
             const descripcion = document.getElementById("ganDescripcion").value.trim();
             const monto = parseFloat(document.getElementById("ganMonto").value);
@@ -737,14 +751,18 @@
             }
 
             const btn = document.getElementById("btnSubmitGanancia");
+            const originalText = btn.textContent;
             btn.disabled = true;
-            btn.textContent = "Registrando...";
+            btn.textContent = "Guardando...";
+
+            const url = id > 0 ? '/Mas/EditarGanancia' : '/Mas/RegistrarGanancia';
 
             try {
-                const response = await fetch('/Mas/RegistrarGanancia', {
+                const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
+                        Id: id > 0 ? id : undefined,
                         AnalisisId: activeAnalysisId,
                         Titulo: titulo,
                         Descripcion: descripcion,
@@ -754,19 +772,19 @@
                 const result = await response.json();
                 if (result.success) {
                     closeGananciaModal();
-                    showToast("Ingreso registrado con éxito.", "success");
+                    showToast(id > 0 ? "Ingreso actualizado con éxito." : "Ingreso registrado con éxito.", "success");
                     setTimeout(() => window.location.reload(), 1000);
                 } else {
-                    errorBannerGanancia.innerHTML = `<p class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">error</span> ${result.message || "Error al registrar la ganancia."}</p>`;
+                    errorBannerGanancia.innerHTML = `<p class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">error</span> ${result.message || "Error al procesar la ganancia."}</p>`;
                     errorBannerGanancia.classList.remove("hidden");
                     btn.disabled = false;
-                    btn.textContent = "Registrar";
+                    btn.textContent = originalText;
                 }
             } catch (err) {
                 errorBannerGanancia.innerHTML = `<p class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">error</span> Error de conexión con el servidor.</p>`;
                 errorBannerGanancia.classList.remove("hidden");
                 btn.disabled = false;
-                btn.textContent = "Registrar";
+                btn.textContent = originalText;
             }
         }
 
@@ -883,6 +901,20 @@
         // Visual controls (Modals show/hide wrapper)
         function openInversionModal() {
             document.getElementById("formInversion").reset();
+            document.getElementById("invId").value = "0";
+            document.getElementById("modalInversionTitle").innerText = "Registrar Inversión";
+            document.getElementById("btnSubmitInversion").innerText = "Registrar";
+            errorBannerInversion.classList.add("hidden");
+            showModal(modalInversion);
+        }
+        function openEditInversionModal(id, titulo, nota, precio) {
+            document.getElementById("formInversion").reset();
+            document.getElementById("invId").value = id;
+            document.getElementById("invTitulo").value = titulo;
+            document.getElementById("invNota").value = nota;
+            document.getElementById("invPrecio").value = precio;
+            document.getElementById("modalInversionTitle").innerText = "Editar Inversión";
+            document.getElementById("btnSubmitInversion").innerText = "Guardar Cambios";
             errorBannerInversion.classList.add("hidden");
             showModal(modalInversion);
         }
@@ -892,6 +924,20 @@
 
         function openGananciaModal() {
             document.getElementById("formGanancia").reset();
+            document.getElementById("ganId").value = "0";
+            document.getElementById("modalGananciaTitle").innerText = "Registrar Ganancia";
+            document.getElementById("btnSubmitGanancia").innerText = "Registrar";
+            errorBannerGanancia.classList.add("hidden");
+            showModal(modalGanancia);
+        }
+        function openEditGananciaModal(id, titulo, descripcion, monto) {
+            document.getElementById("formGanancia").reset();
+            document.getElementById("ganId").value = id;
+            document.getElementById("ganTitulo").value = titulo;
+            document.getElementById("ganDescripcion").value = descripcion;
+            document.getElementById("ganMonto").value = monto;
+            document.getElementById("modalGananciaTitle").innerText = "Editar Ganancia";
+            document.getElementById("btnSubmitGanancia").innerText = "Guardar Cambios";
             errorBannerGanancia.classList.add("hidden");
             showModal(modalGanancia);
         }

@@ -85,11 +85,16 @@ public class HomeController : Controller
             model.FechaProximaDeclaracion = latestDec.FechaEntrega.AddYears(1);
         }
 
-        // Calcular la tendencia de producción de los últimos 6 meses en base a la producción actual
+        // Calcular la tendencia de producción de los últimos 6 meses en base a las extracciones
         var tendencia = new List<ProduccionMensual>();
         var hoy = DateTime.Now;
         var mesesAbreviados = new[] { "", "Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic" };
-        var perfilProduccion = new[] { 0, 0.30, 0.20, 0.15, 0.05, 0.02, 0.01, 0.01, 0.01, 0.05, 0.10, 0.15, 0.25 };
+        
+        // Fetch extracciones from the last 5 months + current month
+        var fechaLimite = hoy.AddMonths(-5).AddDays(-hoy.Day + 1).Date; // Start of the 6th month back
+        var extracciones = await _context.Extracciones
+            .Where(e => e.Fecha >= fechaLimite)
+            .ToListAsync();
         
         var ultimosMeses = new List<DateTime>();
         for (int i = 5; i >= 0; i--)
@@ -97,16 +102,11 @@ public class HomeController : Controller
             ultimosMeses.Add(hoy.AddMonths(-i));
         }
 
-        double sumaPesos = 0;
         foreach (var mesFecha in ultimosMeses)
         {
-            sumaPesos += perfilProduccion[mesFecha.Month];
-        }
-
-        foreach (var mesFecha in ultimosMeses)
-        {
-            double pesoMes = perfilProduccion[mesFecha.Month];
-            double cantKg = sumaPesos > 0 ? model.TotalProduccionMielKg * (pesoMes / sumaPesos) : 0;
+            double cantKg = extracciones
+                .Where(e => e.Fecha.Month == mesFecha.Month && e.Fecha.Year == mesFecha.Year)
+                .Sum(e => e.KilosTotales);
             
             tendencia.Add(new ProduccionMensual
             {

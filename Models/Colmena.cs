@@ -27,7 +27,11 @@ namespace ObligatorioIntegrador2026.Models
         public bool EsPiloto { get; set; } // Determina si se usa para el promedio de temperatura del apiario
         public bool EsNucleo { get; set; }
 
-        // Nuevas propiedades
+        // Nuevas propiedades de Alzas
+        public int Alzas { get; set; }
+        public int MediasAlzas { get; set; }
+        public int AlzasTresCuartos { get; set; }
+
         public int CantidadAbejas { get; set; }
         public string UbicacionIntraApiario { get; set; }
         public string EstadoReina { get; set; } = "Presente";

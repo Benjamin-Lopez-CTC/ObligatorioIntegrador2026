@@ -17,6 +17,10 @@
         {
             isActive = currentController == "Colmenas" || (currentController == "Mas" && currentAction == "CompararColmenas");
         }
+        else if (controller == "Extracciones")
+        {
+            isActive = currentController == "Extracciones";
+        }
         else if (controller == "Mas" && action == "Movimientos")
         {
             isActive = currentController == "Mas" && currentAction == "Movimientos";
@@ -59,6 +63,10 @@
         else if (controller == "Colmenas")
         {
             isActive = currentController == "Colmenas" || (currentController == "Mas" && currentAction == "CompararColmenas");
+        }
+        else if (controller == "Extracciones")
+        {
+            isActive = currentController == "Extracciones";
         }
         else if (controller == "Mas" && action == "Movimientos")
         {
@@ -228,8 +236,13 @@
         }
         .modal-container {
             transition: transform 0.25s ease-out, opacity 0.25s ease-out;
-            max-height: 90vh;
+            max-height: 75vh;
             overflow-y: auto !important;
+        }
+        @@media (min-width: 768px) {
+            .modal-container {
+                max-height: 85vh;
+            }
         }
         .modal-hidden {
             opacity: 0;
@@ -258,6 +271,9 @@
                     </a>
                     <a asp-controller="Colmenas" asp-action="Index" class="@GetNavClass("Colmenas")">
                         <span class="material-symbols-outlined text-[18px]" style="@GetIconStyle("Colmenas")">hive</span> Colmenas
+                    </a>
+                    <a asp-controller="Extracciones" asp-action="Index" class="@GetNavClass("Extracciones")">
+                        <span class="material-symbols-outlined text-[18px]" style="@GetIconStyle("Extracciones")">agriculture</span> Extracciones
                     </a>
                     <a asp-controller="Mas" asp-action="Movimientos" class="@GetNavClass("Mas", "Movimientos")">
                         <span class="material-symbols-outlined text-[18px]" style="@GetIconStyle("Mas", "Movimientos")">local_shipping</span> Movimientos
@@ -332,6 +348,9 @@
             </a>
             <a asp-controller="Colmenas" asp-action="Index" class="@GetNavClass("Colmenas") py-4">
                 <span class="material-symbols-outlined text-[20px]" style="@GetIconStyle("Colmenas")">hive</span> Colmenas
+            </a>
+            <a asp-controller="Extracciones" asp-action="Index" class="@GetNavClass("Extracciones") py-4">
+                <span class="material-symbols-outlined text-[20px]" style="@GetIconStyle("Extracciones")">agriculture</span> Extracciones
             </a>
             <a asp-controller="Mas" asp-action="Movimientos" class="@GetNavClass("Mas", "Movimientos") py-4">
                 <span class="material-symbols-outlined text-[20px]" style="@GetIconStyle("Mas", "Movimientos")">local_shipping</span> Movimientos

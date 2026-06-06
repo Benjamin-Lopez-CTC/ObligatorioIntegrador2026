@@ -416,6 +416,41 @@
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
+                        <label for="TemperaturaInterna" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Temperatura (°C)</label>
+                        <input type="number" step="0.1" id="TemperaturaInterna" name="TemperaturaInterna" placeholder="35.0" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                    </div>
+                    <div>
+                        <label for="HumedadInterna" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Humedad (%)</label>
+                        <input type="number" step="0.1" id="HumedadInterna" name="HumedadInterna" placeholder="55.0" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                    </div>
+                </div>
+                <div class="bg-surface-container-low border border-outline-variant rounded p-4 mt-2">
+                    <h5 class="font-label-caps text-label-caps text-on-surface-variant mb-3">Configuración de Alzas</h5>
+                    <div class="grid grid-cols-3 gap-3">
+                        <div>
+                            <label for="Alzas" class="font-label-caps text-[10px] text-on-surface-variant mb-1 block">Alzas Enteras</label>
+                            <input type="number" id="Alzas" name="Alzas" value="0" min="0" max="5" class="alza-input w-full bg-background border border-outline-variant px-2 py-1.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                        </div>
+                        <div>
+                            <label for="AlzasTresCuartos" class="font-label-caps text-[10px] text-on-surface-variant mb-1 block">Alzas 3/4</label>
+                            <input type="number" id="AlzasTresCuartos" name="AlzasTresCuartos" value="0" min="0" max="5" class="alza-input w-full bg-background border border-outline-variant px-2 py-1.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                        </div>
+                        <div>
+                            <label for="MediasAlzas" class="font-label-caps text-[10px] text-on-surface-variant mb-1 block">Medias Alzas</label>
+                            <input type="number" id="MediasAlzas" name="MediasAlzas" value="0" min="0" max="5" class="alza-input w-full bg-background border border-outline-variant px-2 py-1.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                        </div>
+                    </div>
+                    <div class="mt-3 flex justify-between items-center bg-background border border-outline-variant px-3 py-2 rounded">
+                        <span class="font-body-sm text-body-sm text-on-surface-variant">Producción Estimada:</span>
+                        <div class="flex items-center gap-1">
+                            <input type="hidden" id="ProduccionMielKg" name="ProduccionMielKg" value="0" />
+                            <span id="displayMielKg" class="font-display text-[18px] text-primary-container font-bold">0.0</span>
+                            <span class="font-label-caps text-[10px] text-primary-container">KG</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
                         <label for="EstadoReina" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Estado Reina</label>
                         <select id="EstadoReina" name="EstadoReina" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
                             <option value="Presente" selected>Presente</option>
@@ -629,5 +664,22 @@
         if (btnOpenRegistrarColmena) btnOpenRegistrarColmena.addEventListener('click', openRegistrarColmenaModal);
         if (btnCancelRegistrarColmena) btnCancelRegistrarColmena.addEventListener('click', closeRegistrarColmenaModal);
         if (btnCancelRegistrarColmenaIcon) btnCancelRegistrarColmenaIcon.addEventListener('click', closeRegistrarColmenaModal);
+
+        // Auto-calculate honey from alzas
+        const inputsAlzas = document.querySelectorAll('.alza-input');
+        const hiddenProduccion = document.getElementById('ProduccionMielKg');
+        const displayProduccion = document.getElementById('displayMielKg');
+        
+        function calculateHoney() {
+            const valAlzas = parseInt(document.getElementById('Alzas').value) || 0;
+            const valAlzas34 = parseInt(document.getElementById('AlzasTresCuartos').value) || 0;
+            const valMedias = parseInt(document.getElementById('MediasAlzas').value) || 0;
+            
+            const total = (valAlzas * 22) + (valAlzas34 * 17) + (valMedias * 12);
+            hiddenProduccion.value = total;
+            displayProduccion.textContent = total.toFixed(1);
+        }
+        
+        inputsAlzas.forEach(inp => inp.addEventListener('input', calculateHoney));
     </script>
 }

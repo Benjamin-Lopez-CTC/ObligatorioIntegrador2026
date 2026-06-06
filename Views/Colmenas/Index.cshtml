@@ -31,11 +31,11 @@
 
         <!-- Filters Panel -->
         <div class="col-span-4 md:col-span-12 bg-surface-container-low border border-outline-variant rounded p-6 mb-gutter">
-            <div class="flex flex-col md:flex-row gap-gutter">
-                <div class="flex-1 flex flex-col gap-2">
+            <div class="flex flex-col md:flex-row flex-wrap gap-gutter">
+                <div class="flex-1 flex flex-col gap-2 min-w-[150px]">
                     <label class="font-label-caps text-label-caps text-on-surface-variant">APIARIO</label>
                     <div class="relative">
-                        <select id="filterApiario" class="w-full bg-background border border-outline-variant text-on-surface font-body-sm text-body-sm rounded p-3 appearance-none focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container transition-colors">
+                        <select id="filterApiario" class="w-full bg-background border border-outline-variant text-on-surface font-body-sm text-body-sm rounded p-3 pr-8 focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container transition-colors">
                             <option value="">Todos los Apiarios</option>
                             @foreach (var apiario in ViewBag.Apiarios)
                             {
@@ -44,10 +44,10 @@
                         </select>
                     </div>
                 </div>
-                <div class="flex-1 flex flex-col gap-2">
+                <div class="flex-1 flex flex-col gap-2 min-w-[150px]">
                     <label class="font-label-caps text-label-caps text-on-surface-variant">ESTADO DE SALUD</label>
                     <div class="relative">
-                        <select id="filterEstado" class="w-full bg-background border border-outline-variant text-on-surface font-body-sm text-body-sm rounded p-3 appearance-none focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container transition-colors">
+                        <select id="filterEstado" class="w-full bg-background border border-outline-variant text-on-surface font-body-sm text-body-sm rounded p-3 pr-8 focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container transition-colors">
                             <option value="">Todos los Estados</option>
                             <option value="Óptimo">Óptimo</option>
                             <option value="Alerta">Alerta</option>
@@ -55,10 +55,10 @@
                         </select>
                     </div>
                 </div>
-                <div class="flex-1 flex flex-col gap-2">
+                <div class="flex-1 flex flex-col gap-2 min-w-[150px]">
                     <label class="font-label-caps text-label-caps text-on-surface-variant">COMPORTAMIENTO</label>
                     <div class="relative">
-                        <select id="filterComportamiento" class="w-full bg-background border border-outline-variant text-on-surface font-body-sm text-body-sm rounded p-3 appearance-none focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container transition-colors">
+                        <select id="filterComportamiento" class="w-full bg-background border border-outline-variant text-on-surface font-body-sm text-body-sm rounded p-3 pr-8 focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container transition-colors">
                             <option value="">Cualquiera</option>
                             <option value="Dócil">Dócil</option>
                             <option value="Defensivo">Defensivo</option>
@@ -66,9 +66,35 @@
                         </select>
                     </div>
                 </div>
-                <div class="flex-1 flex flex-col gap-2">
-                    <label class="font-label-caps text-label-caps text-on-surface-variant">BÚSQUEDA ID</label>
-                    <input id="filterSearch" placeholder="#HIVE-..." class="w-full bg-background border border-outline-variant text-on-surface font-body-sm text-body-sm rounded p-3 focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container transition-colors" type="text"/>
+                <div class="flex-1 flex flex-col gap-2 min-w-[150px]">
+                    <label class="font-label-caps text-label-caps text-on-surface-variant">TIPO</label>
+                    <div class="relative">
+                        <select id="filterTipo" class="w-full bg-background border border-outline-variant text-on-surface font-body-sm text-body-sm rounded p-3 pr-8 focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container transition-colors">
+                            <option value="">Todas</option>
+                            <option value="Piloto">Piloto</option>
+                            <option value="Normal">Normal</option>
+                            <option value="Nucleo">Núcleo</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex-1 flex flex-col gap-2 min-w-[150px]">
+                    <label class="font-label-caps text-label-caps text-on-surface-variant">ORDENAR POR</label>
+                    <div class="flex gap-2">
+                        <div class="relative flex-grow">
+                            <select id="sortField" class="w-full bg-background border border-outline-variant text-on-surface font-body-sm text-body-sm rounded p-3 pr-8 focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container transition-colors">
+                                <option value="id">ID (Por Defecto)</option>
+                                <option value="peso">Peso (Kg)</option>
+                                <option value="temperatura">Temperatura (°C)</option>
+                            </select>
+                        </div>
+                        <button id="btnSortOrder" class="p-3 border border-outline-variant rounded hover:text-primary-container hover:border-primary-container transition-colors flex items-center justify-center bg-background" title="Alternar Orden">
+                            <span class="material-symbols-outlined text-[18px]">arrow_downward</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="flex-1 flex flex-col gap-2 min-w-[150px]">
+                    <label class="font-label-caps text-label-caps text-on-surface-variant">BÚSQUEDA</label>
+                    <input id="filterSearch" placeholder="Buscar..." class="w-full bg-background border border-outline-variant text-on-surface font-body-sm text-body-sm rounded p-3 focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container transition-colors" type="text"/>
                 </div>
             </div>
         </div>
@@ -79,7 +105,7 @@
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="border-b border-surface-container-highest font-label-caps text-label-caps text-on-surface-variant">
-                            <th class="p-4 font-medium">ID COLMENA</th>
+                            <th class="p-4 font-medium">COLMENA</th>
                             <th class="p-4 font-medium">APIARIO DE ORIGEN</th>
                             <th class="p-4 font-medium">ESTADO</th>
                             <th class="p-4 font-medium">PESO (KG)</th>
@@ -95,11 +121,14 @@
             <!-- Pagination -->
             <div class="bg-transparent border-t border-surface-container-highest mt-4 pt-4 flex justify-between items-center text-on-surface-variant font-body-sm text-body-sm">
                 <span id="paginationText">Mostrando 0 de 0 colmenas</span>
-                <div class="flex gap-2">
-                    <button id="btnPrevPage" class="p-1 border border-outline-variant rounded hover:text-primary-container hover:border-primary-container transition-colors disabled:opacity-50">
+                <div class="flex items-center gap-1">
+                    <button id="btnPrevPage" class="w-8 h-8 flex items-center justify-center border border-outline-variant rounded hover:text-primary-container hover:border-primary-container transition-colors disabled:opacity-50">
                         <span class="material-symbols-outlined text-[18px]">chevron_left</span>
                     </button>
-                    <button id="btnNextPage" class="p-1 border border-outline-variant rounded hover:text-primary-container hover:border-primary-container transition-colors disabled:opacity-50">
+                    <div id="paginationNumbers" class="flex items-center gap-1">
+                        <!-- Filled by JS -->
+                    </div>
+                    <button id="btnNextPage" class="w-8 h-8 flex items-center justify-center border border-outline-variant rounded hover:text-primary-container hover:border-primary-container transition-colors disabled:opacity-50">
                         <span class="material-symbols-outlined text-[18px]">chevron_right</span>
                     </button>
                 </div>
@@ -110,7 +139,7 @@
 
 <!-- Registrar Colmena Modal -->
 <div id="registrarModal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
-    <div class="bg-surface-container border border-outline-variant rounded w-full max-w-md modal-container shadow-2xl flex flex-col max-h-[75vh] md:max-h-[85vh]">
+    <div class="bg-surface-container border border-outline-variant rounded w-full max-w-3xl modal-container shadow-2xl flex flex-col max-h-[75vh] md:max-h-[85vh]">
         <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between shrink-0">
             <h4 class="font-headline-lg text-lg font-bold text-on-surface">Registrar Nueva Colmena</h4>
             <button type="button" id="btnCancelRegistrarIcon" class="text-on-surface-variant hover:text-primary-container transition-colors p-1">
@@ -118,67 +147,117 @@
             </button>
         </div>
         <div class="p-6 overflow-y-auto grow custom-scrollbar">
-            <form asp-action="RegistrarNueva" method="post" class="space-y-4">
+            <form asp-action="RegistrarNueva" method="post" class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 @Html.AntiForgeryToken()
-                <div>
-                    <label for="Identificador" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Identificador (Opcional)</label>
-                    <input type="text" id="Identificador" name="Identificador" placeholder="#HIVE-0123" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
-                </div>
-                <div>
-                    <label for="ApiarioId" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Apiario</label>
-                    <select id="ApiarioId" name="ApiarioId" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
-                        @foreach (var apiario in ViewBag.Apiarios)
-                        {
-                            <option value="@apiario.Id">@apiario.Nombre</option>
-                        }
-                    </select>
-                </div>
-                <div>
-                    <label for="CantidadAbejas" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Cantidad de Abejas (Aprox.)</label>
-                    <input type="number" id="CantidadAbejas" name="CantidadAbejas" placeholder="40000" required min="0" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
-                </div>
-                <div>
-                    <label for="UbicacionIntraApiario" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Ubicación (Ej: Fila 1, Pos 3)</label>
-                    <input type="text" id="UbicacionIntraApiario" name="UbicacionIntraApiario" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
-                </div>
-                <div class="grid grid-cols-2 gap-4">
+                
+                <div class="space-y-4">
                     <div>
-                        <label for="EstadoReina" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Estado Reina</label>
-                        <select id="EstadoReina" name="EstadoReina" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
-                            <option value="Presente" selected>Presente</option>
-                            <option value="Ausente">Ausente</option>
+                        <label for="Identificador" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Identificador (Opcional)</label>
+                        <input type="text" id="Identificador" name="Identificador" placeholder="#HIVE-0123" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                    </div>
+                    <div>
+                        <label for="ApiarioId" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Apiario</label>
+                        <select id="ApiarioId" name="ApiarioId" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
+                            @foreach (var apiario in ViewBag.Apiarios)
+                            {
+                                <option value="@apiario.Id">@apiario.Nombre</option>
+                            }
                         </select>
                     </div>
                     <div>
-                        <label for="ComportamientoAbejas" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Comportamiento</label>
-                        <select id="ComportamientoAbejas" name="ComportamientoAbejas" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
-                            <option value="Dócil">Dócil</option>
-                            <option value="Defensivo">Defensivo</option>
-                            <option value="Agresivo">Agresivo</option>
-                        </select>
+                        <label for="CantidadAbejas" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Cantidad de Abejas (Aprox.)</label>
+                        <input type="number" id="CantidadAbejas" name="CantidadAbejas" placeholder="40000" required min="0" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                    </div>
+                    <div>
+                        <label for="UbicacionIntraApiario" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Ubicación (Ej: Fila 1, Pos 3)</label>
+                        <input type="text" id="UbicacionIntraApiario" name="UbicacionIntraApiario" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
                     </div>
                 </div>
-                <div class="flex items-center gap-2 mt-4">
-                    <input type="checkbox" id="EsPiloto" name="EsPiloto" value="true" class="w-4 h-4 text-primary-container bg-background border-outline-variant rounded focus:ring-primary-container focus:ring-2" />
-                    <label for="EsPiloto" class="font-body-md text-body-md text-on-surface">Convertir en Colmena Piloto</label>
+
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="EstadoReina" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Estado Reina</label>
+                            <select id="EstadoReina" name="EstadoReina" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
+                                <option value="Presente" selected>Presente</option>
+                                <option value="Ausente">Ausente</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="ComportamientoAbejas" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Comportamiento</label>
+                            <select id="ComportamientoAbejas" name="ComportamientoAbejas" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
+                                <option value="Dócil">Dócil</option>
+                                <option value="Defensivo">Defensivo</option>
+                                <option value="Agresivo">Agresivo</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div id="sensorFieldsContainer" class="hidden grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="TemperaturaInterna" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Temperatura (°C)</label>
+                            <input type="number" step="0.1" id="TemperaturaInterna" name="TemperaturaInterna" placeholder="35.0" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                        </div>
+                        <div>
+                            <label for="HumedadInterna" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Humedad (%)</label>
+                            <input type="number" step="0.1" id="HumedadInterna" name="HumedadInterna" placeholder="55.0" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                        </div>
+                    </div>
+
+                    <div class="bg-surface-container-low border border-outline-variant rounded p-4">
+                        <h5 class="font-label-caps text-label-caps text-on-surface-variant mb-3">Configuración de Alzas</h5>
+                        <div class="grid grid-cols-3 gap-3">
+                            <div>
+                                <label for="Alzas" class="font-label-caps text-[10px] text-on-surface-variant mb-1 block">Alzas Enteras</label>
+                                <input type="number" id="Alzas" name="Alzas" value="0" min="0" max="5" class="alza-input w-full bg-background border border-outline-variant px-2 py-1.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                            </div>
+                            <div>
+                                <label for="AlzasTresCuartos" class="font-label-caps text-[10px] text-on-surface-variant mb-1 block">Alzas 3/4</label>
+                                <input type="number" id="AlzasTresCuartos" name="AlzasTresCuartos" value="0" min="0" max="5" class="alza-input w-full bg-background border border-outline-variant px-2 py-1.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                            </div>
+                            <div>
+                                <label for="MediasAlzas" class="font-label-caps text-[10px] text-on-surface-variant mb-1 block">Medias Alzas</label>
+                                <input type="number" id="MediasAlzas" name="MediasAlzas" value="0" min="0" max="5" class="alza-input w-full bg-background border border-outline-variant px-2 py-1.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                            </div>
+                        </div>
+                        <div class="mt-3 flex justify-between items-center bg-background border border-outline-variant px-3 py-2 rounded">
+                            <span class="font-body-sm text-body-sm text-on-surface-variant">Producción Estimada:</span>
+                            <div class="flex items-center gap-1">
+                                <input type="hidden" id="ProduccionMielKg" name="ProduccionMielKg" value="0" />
+                                <span id="displayMielKg" class="font-display text-[18px] text-primary-container font-bold">0.0</span>
+                                <span class="font-label-caps text-[10px] text-primary-container">KG</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="flex items-center gap-2 mt-2">
-                    <input type="checkbox" id="EsNucleo" name="EsNucleo" value="true" class="w-4 h-4 text-primary-container bg-background border-outline-variant rounded focus:ring-primary-container focus:ring-2" />
-                    <label for="EsNucleo" class="font-body-md text-body-md text-on-surface">¿Es un Núcleo?</label>
-                </div>
-                <div class="bg-primary-container/10 border border-primary-container rounded p-3 flex items-start gap-3 mt-4">
-                    <span class="material-symbols-outlined text-primary-container text-[20px] shrink-0">info</span>
-                    <p class="font-body-sm text-body-sm text-on-surface text-left">
-                        Al guardar la colmena se generará un <strong class="text-primary-container">código de 6 dígitos</strong>. Debes asegurarte de anotarlo a mano con marcador visible en la colmena física para poder usar el escáner.
-                    </p>
-                </div>
-                <div class="pt-4 border-t border-surface-container-highest flex flex-col sm:flex-row justify-end gap-3 mt-6">
-                    <button type="button" id="btnCancelRegistrar" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex">
-                        Cancelar
-                    </button>
-                    <button type="submit" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex">
-                        Guardar Colmena
-                    </button>
+
+                <div class="sm:col-span-2 space-y-4">
+                    <div class="flex items-center gap-6 mt-2">
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" id="EsPiloto" name="EsPiloto" value="true" class="w-4 h-4 text-primary-container bg-background border-outline-variant rounded focus:ring-primary-container focus:ring-2" />
+                            <label for="EsPiloto" class="font-body-md text-body-md text-on-surface">Convertir en Colmena Piloto</label>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" id="EsNucleo" name="EsNucleo" value="true" class="w-4 h-4 text-primary-container bg-background border-outline-variant rounded focus:ring-primary-container focus:ring-2" />
+                            <label for="EsNucleo" class="font-body-md text-body-md text-on-surface">¿Es un Núcleo?</label>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-primary-container/10 border border-primary-container rounded p-3 flex items-start gap-3">
+                        <span class="material-symbols-outlined text-primary-container text-[20px] shrink-0">info</span>
+                        <p class="font-body-sm text-body-sm text-on-surface text-left">
+                            Al guardar la colmena se generará un <strong class="text-primary-container">código de 6 dígitos</strong>. Debes asegurarte de anotarlo a mano con marcador visible en la colmena física para poder usar el escáner.
+                        </p>
+                    </div>
+
+                    <div class="pt-4 border-t border-surface-container-highest flex flex-col sm:flex-row justify-end gap-3">
+                        <button type="button" id="btnCancelRegistrar" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex">
+                            Guardar Colmena
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -296,36 +375,117 @@
         // DOM Elements
         const tbody = document.getElementById('hiveTableBody');
         const pagText = document.getElementById('paginationText');
-        const btnPrev = document.getElementById('btnPrevPage');
-        const btnNext = document.getElementById('btnNextPage');
+        const btnCancelDeleteIcon = document.getElementById('btnCancelDeleteIcon');
+        const formRegistrar = document.querySelector('form[action="/Colmenas/RegistrarNueva"]');
 
-        const filterApiario = document.getElementById('filterApiario');
+        const esPilotoCheckbox = document.getElementById('EsPiloto');
+        const sensorFieldsContainer = document.getElementById('sensorFieldsContainer');
+        const tempInput = document.getElementById('TemperaturaInterna');
+        const humInput = document.getElementById('HumedadInterna');
+
+        esPilotoCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                sensorFieldsContainer.classList.remove('hidden');
+                tempInput.required = true;
+                humInput.required = true;
+            } else {
+                sensorFieldsContainer.classList.add('hidden');
+                tempInput.required = false;
+                humInput.required = false;
+                tempInput.value = '';
+                humInput.value = '';
+            }
+        });
+
+        // Computed Values
+        // Computed Values
         const filterEstado = document.getElementById('filterEstado');
         const filterComportamiento = document.getElementById('filterComportamiento');
+        const filterApiario = document.getElementById('filterApiario');
+        const filterTipo = document.getElementById('filterTipo');
         const filterSearch = document.getElementById('filterSearch');
+        const sortField = document.getElementById('sortField');
+        const btnSortOrder = document.getElementById('btnSortOrder');
+        const paginationNumbers = document.getElementById('paginationNumbers');
+        const btnPrev = document.getElementById('btnPrevPage');
+        const btnNext = document.getElementById('btnNextPage');
 
         // Pagination State
         const ITEMS_PER_PAGE = 10;
         let currentPage = 1;
+        let isAscending = false; // By default Descending for values
         let filteredColmenas = [...rawColmenas];
+
+        btnSortOrder.addEventListener('click', () => {
+            isAscending = !isAscending;
+            btnSortOrder.innerHTML = isAscending ? '<span class="material-symbols-outlined text-[18px]">arrow_upward</span>' : '<span class="material-symbols-outlined text-[18px]">arrow_downward</span>';
+            applyFilters();
+        });
 
         function applyFilters() {
             const apiarioVal = filterApiario.value;
             const estadoVal = filterEstado.value;
             const comportamientoVal = filterComportamiento.value;
+            const tipoVal = filterTipo.value;
             const searchVal = filterSearch.value.toLowerCase();
+            const sortVal = sortField.value;
 
             filteredColmenas = rawColmenas.filter(c => {
                 const matchApiario = !apiarioVal || c.apiarioNombre === apiarioVal;
                 const matchEstado = !estadoVal || c.estado === estadoVal;
                 const matchComportamiento = !comportamientoVal || c.comportamiento === comportamientoVal;
+                
+                let matchTipo = true;
+                if(tipoVal === "Piloto") matchTipo = c.esPiloto;
+                if(tipoVal === "Normal") matchTipo = !c.esPiloto;
+                if(tipoVal === "Nucleo") matchTipo = c.esNucleo;
+
                 const matchSearch = !searchVal || (c.identificador && c.identificador.toLowerCase().includes(searchVal)) || c.codigoEscaneo.includes(searchVal);
                 
-                return matchApiario && matchEstado && matchComportamiento && matchSearch;
+                return matchApiario && matchEstado && matchComportamiento && matchTipo && matchSearch;
+            });
+
+            // Sorting
+            filteredColmenas.sort((a, b) => {
+                let valA, valB;
+                if(sortVal === 'peso') {
+                    valA = a.peso; valB = b.peso;
+                } else if(sortVal === 'temperatura') {
+                    valA = a.temp; valB = b.temp;
+                } else {
+                    valA = a.id; valB = b.id;
+                }
+                
+                if(valA < valB) return isAscending ? -1 : 1;
+                if(valA > valB) return isAscending ? 1 : -1;
+                return 0;
             });
 
             currentPage = 1;
             renderTable();
+        }
+
+        function renderPaginationControls(totalPages) {
+            paginationNumbers.innerHTML = '';
+            
+            for (let i = 1; i <= totalPages; i++) {
+                // Show first, last, current, and adjacent to current
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    const btn = document.createElement('button');
+                    btn.className = `w-8 h-8 flex items-center justify-center border rounded font-body-sm transition-colors ${i === currentPage ? 'bg-primary-container text-on-primary border-primary-container' : 'border-outline-variant text-on-surface hover:text-primary-container hover:border-primary-container'}`;
+                    btn.textContent = i;
+                    btn.addEventListener('click', () => {
+                        currentPage = i;
+                        renderTable();
+                    });
+                    paginationNumbers.appendChild(btn);
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    const dots = document.createElement('span');
+                    dots.className = 'w-8 h-8 flex items-center justify-center text-on-surface-variant font-body-sm';
+                    dots.textContent = '...';
+                    paginationNumbers.appendChild(dots);
+                }
+            }
         }
 
         function renderTable() {
@@ -394,12 +554,15 @@
             
             btnPrev.disabled = currentPage === 1;
             btnNext.disabled = currentPage === Math.max(1, totalPages);
+            renderPaginationControls(Math.max(1, totalPages));
         }
 
         // Event Listeners for Filters
         filterApiario.addEventListener('change', applyFilters);
         filterEstado.addEventListener('change', applyFilters);
         filterComportamiento.addEventListener('change', applyFilters);
+        filterTipo.addEventListener('change', applyFilters);
+        sortField.addEventListener('change', applyFilters);
         filterSearch.addEventListener('input', applyFilters);
 
         // Pagination Events
@@ -563,6 +726,26 @@
                 videoStream = null;
             }
         }
+
+        // --- CALCULO ALZAS ---
+        const inputsAlzas = document.querySelectorAll('.alza-input');
+        const displayMielKg = document.getElementById('displayMielKg');
+        const inputMielKg = document.getElementById('ProduccionMielKg');
+
+        function calcularProduccion() {
+            const alzas = parseInt(document.getElementById('Alzas').value) || 0;
+            const alzas34 = parseInt(document.getElementById('AlzasTresCuartos').value) || 0;
+            const medias = parseInt(document.getElementById('MediasAlzas').value) || 0;
+
+            const totalKg = (alzas * 22) + (alzas34 * 17) + (medias * 12);
+            
+            displayMielKg.textContent = totalKg.toFixed(1);
+            inputMielKg.value = totalKg;
+        }
+
+        inputsAlzas.forEach(input => {
+            input.addEventListener('input', calcularProduccion);
+        });
 
         btnCapture.addEventListener('click', async () => {
             if(!videoStream) return;

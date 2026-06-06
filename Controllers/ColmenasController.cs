@@ -55,7 +55,7 @@ namespace ObligatorioIntegrador2026.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RegistrarNueva([Bind("Identificador,ApiarioId,CantidadAbejas,UbicacionIntraApiario,EstadoReina,ComportamientoAbejas,EsPiloto,EsNucleo")] Colmena colmena, string? returnUrl = null)
+        public async Task<IActionResult> RegistrarNueva([Bind("Identificador,ApiarioId,CantidadAbejas,UbicacionIntraApiario,EstadoReina,ComportamientoAbejas,EsPiloto,EsNucleo,Alzas,MediasAlzas,AlzasTresCuartos,TemperaturaInterna,HumedadInterna,ProduccionMielKg")] Colmena colmena, string? returnUrl = null)
         {
             ModelState.Remove("Apiario");
             ModelState.Remove("CodigoEscaneo");
@@ -65,10 +65,6 @@ namespace ObligatorioIntegrador2026.Controllers
             {
                 colmena.Estado = "Óptimo"; // Default
                 colmena.PesoKg = 0;
-                // Leave EsPiloto as what the form bound it to (true/false)
-                colmena.TemperaturaInterna = colmena.EsPiloto ? 35.0 : 0; // Default nominal temp if pilot
-                colmena.HumedadInterna = colmena.EsPiloto ? 50.0 : 0;
-                colmena.ProduccionMielKg = 0;
                 
                 // Generate a unique 6 digit code
                 colmena.CodigoEscaneo = new Random().Next(100000, 999999).ToString();
@@ -134,7 +130,7 @@ namespace ObligatorioIntegrador2026.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditarColmena(int id, double? temperatura, double? humedad, double peso, double produccion, string comportamiento)
+        public async Task<IActionResult> EditarColmena(int id, double? temperatura, double? humedad, double peso, double produccion, string comportamiento, bool esNucleo = false)
         {
             var colmena = await _context.Colmenas.Include(c => c.NotasTecnicas).FirstOrDefaultAsync(c => c.Id == id);
             if (colmena == null) return NotFound();
@@ -148,6 +144,7 @@ namespace ObligatorioIntegrador2026.Controllers
             colmena.PesoKg = peso;
             colmena.ProduccionMielKg = produccion;
             colmena.ComportamientoAbejas = comportamiento;
+            colmena.EsNucleo = esNucleo;
 
             ActualizarEstadoAutomatico(colmena);
 
@@ -166,10 +163,12 @@ namespace ObligatorioIntegrador2026.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AñadirNotaTecnica(int id, string detalles, string estadoReina, string estadoColmena)
+        public async Task<IActionResult> AñadirNotaTecnica(int id, string detalles, string estadoReina, string estadoColmena, double? temperatura = null, double? humedad = null, int alzasCosechadas = 0, int mediasAlzasCosechadas = 0, int alzasTresCuartosCosechadas = 0)
         {
             var colmena = await _context.Colmenas.Include(c => c.NotasTecnicas).FirstOrDefaultAsync(c => c.Id == id);
             if (colmena == null) return NotFound();
+
+            double kilosCosechados = (alzasCosechadas * 22.0) + (alzasTresCuartosCosechadas * 17.0) + (mediasAlzasCosechadas * 12.0);
 
             var nuevaNota = new NotaTecnica
             {
@@ -177,15 +176,32 @@ namespace ObligatorioIntegrador2026.Controllers
                 Detalles = detalles,
                 EstadoReina = estadoReina,
                 EstadoColmena = estadoColmena,
-                Fecha = DateTime.Now
+                Fecha = DateTime.Now,
+                Temperatura = temperatura,
+                Humedad = humedad,
+                AlzasCosechadas = alzasCosechadas,
+                MediasAlzasCosechadas = mediasAlzasCosechadas,
+                AlzasTresCuartosCosechadas = alzasTresCuartosCosechadas,
+                KilosCosechados = kilosCosechados
             };
 
             _context.NotasTecnicas.Add(nuevaNota);
             
+            // Subtract harvested alzas
+            colmena.Alzas = Math.Max(0, colmena.Alzas - alzasCosechadas);
+            colmena.AlzasTresCuartos = Math.Max(0, colmena.AlzasTresCuartos - alzasTresCuartosCosechadas);
+            colmena.MediasAlzas = Math.Max(0, colmena.MediasAlzas - mediasAlzasCosechadas);
+
+            // Actualizar la miel estimada en la colmena
+            colmena.ProduccionMielKg = (colmena.Alzas * 22.0) + (colmena.MediasAlzas * 12.0) + (colmena.AlzasTresCuartos * 17.0);
+
             colmena.EstadoReina = estadoReina;
             
             // Allow manual override of state unless automatic rules force it to Alert
             colmena.Estado = estadoColmena;
+
+            if (temperatura.HasValue) colmena.TemperaturaInterna = temperatura.Value;
+            if (humedad.HasValue) colmena.HumedadInterna = humedad.Value;
 
             colmena.NotasTecnicas.Add(nuevaNota);
 

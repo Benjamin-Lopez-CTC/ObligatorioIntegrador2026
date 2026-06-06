@@ -330,6 +330,54 @@ namespace ObligatorioIntegrador2026.Controllers
             return Json(new { success = true });
         }
 
+        [HttpPost]
+        public async Task<IActionResult> EditarInversion([FromBody] InversionInputModel model)
+        {
+            if (model == null || model.Id == null || string.IsNullOrWhiteSpace(model.Titulo) || model.Precio <= 0)
+            {
+                return Json(new { success = false, message = "Datos de inversión inválidos." });
+            }
+
+            var inversion = await _context.Inversiones.FirstOrDefaultAsync(i => i.Id == model.Id);
+            if (inversion == null)
+            {
+                return Json(new { success = false, message = "Inversión no encontrada." });
+            }
+
+            inversion.Titulo = model.Titulo;
+            inversion.Nota = model.Nota ?? string.Empty;
+            inversion.Precio = model.Precio;
+
+            _context.Inversiones.Update(inversion);
+            await _context.SaveChangesAsync();
+
+            return Json(new { success = true });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditarGanancia([FromBody] GananciaInputModel model)
+        {
+            if (model == null || model.Id == null || string.IsNullOrWhiteSpace(model.Titulo) || model.Monto <= 0)
+            {
+                return Json(new { success = false, message = "Datos de ganancia inválidos." });
+            }
+
+            var ganancia = await _context.Ganancias.FirstOrDefaultAsync(g => g.Id == model.Id);
+            if (ganancia == null)
+            {
+                return Json(new { success = false, message = "Ganancia no encontrada." });
+            }
+
+            ganancia.Titulo = model.Titulo;
+            ganancia.Descripcion = model.Descripcion ?? string.Empty;
+            ganancia.Monto = model.Monto;
+
+            _context.Ganancias.Update(ganancia);
+            await _context.SaveChangesAsync();
+
+            return Json(new { success = true });
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAnalisisDetalles(int id)
         {
@@ -482,6 +530,14 @@ namespace ObligatorioIntegrador2026.Controllers
             else if (sortBy == "nameDesc")
             {
                 query = query.OrderByDescending(e => e.Name);
+            }
+            else if (sortBy == "priceAsc")
+            {
+                query = query.OrderBy(e => e.UnitPrice);
+            }
+            else if (sortBy == "priceDesc")
+            {
+                query = query.OrderByDescending(e => e.UnitPrice);
             }
             else if (sortBy == "default")
             {

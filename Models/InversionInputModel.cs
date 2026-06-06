@@ -4,6 +4,8 @@ namespace ObligatorioIntegrador2026.Models
 {
     public class InversionInputModel
     {
+        public int? Id { get; set; }
+
         [Required]
         public int AnalisisId { get; set; }
 

@@ -1,0 +1,406 @@
+@model IEnumerable<ObligatorioIntegrador2026.Models.Extraccion>
+
+@{
+    ViewData["Title"] = "Histórico de Cosechas";
+}
+
+<main class="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-[80px]">
+    <!-- Grid Container -->
+    <div class="grid grid-cols-4 md:grid-cols-12 gap-gutter">
+        <!-- Page Header -->
+        <div class="col-span-4 md:col-span-12 flex flex-col md:flex-row justify-between items-start md:items-center mb-[40px] border-b border-outline-variant pb-gutter">
+            <div>
+                <p class="font-label-caps text-label-caps text-on-surface-variant mb-2">PRODUCCIÓN Y COSECHA</p>
+                <h1 class="font-display text-headline-lg-mobile md:text-display text-on-surface">Histórico de Extracciones</h1>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-unit mt-6 md:mt-0 w-full md:w-auto">
+                <button id="btnOpenCosechaModal" class="flex items-center justify-center gap-2 bg-primary-container text-on-primary px-6 py-3 rounded hover:bg-primary-fixed-dim transition-colors font-label-caps text-label-caps">
+                    <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">add</span>
+                    Realizar Cosecha en Masa
+                </button>
+            </div>
+        </div>
+
+        <!-- Data Table Container -->
+        <div class="col-span-4 md:col-span-12 bg-surface-container-low border border-outline-variant rounded p-4 md:p-6 responsive-table">
+            <div class="overflow-x-auto md:overflow-visible">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-surface-container-highest font-label-caps text-label-caps text-on-surface-variant">
+                            <th class="p-4 font-medium">FECHA</th>
+                            <th class="p-4 font-medium">KILOS TOTALES</th>
+                            <th class="p-4 font-medium">COLMENAS COSECHADAS</th>
+                            <th class="p-4 font-medium">INGRESOS GENERADOS</th>
+                            <th class="p-4 font-medium">NOTAS</th>
+                        </tr>
+                    </thead>
+                    <tbody class="font-body-sm text-body-sm text-on-surface">
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var extraccion in Model)
+                            {
+                                <tr class="border-b border-surface-container-highest hover:bg-surface-container transition-colors">
+                                    <td class="p-4 font-label-caps text-label-caps text-on-surface">@extraccion.Fecha.ToString("dd MMM yyyy")</td>
+                                    <td class="p-4 font-bold text-primary-container">@extraccion.KilosTotales.ToString("0.0") kg</td>
+                                    <td class="p-4">@extraccion.CantidadColmenasCosechadas colmenas</td>
+                                    <td class="p-4">
+                                        @if (extraccion.Ganancia != null)
+                                        {
+                                            <span class="text-on-surface">US$ @extraccion.Ganancia.Monto.ToString("N2")</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-on-surface-variant">Sin vincular</span>
+                                        }
+                                    </td>
+                                    <td class="p-4 text-on-surface-variant truncate max-w-[200px]">@extraccion.Notas</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="p-4 text-center text-on-surface-variant">No hay cosechas registradas.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Cosecha en Masa Modal -->
+<div id="cosechaModal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
+    <div class="bg-surface-container border border-outline-variant rounded w-full max-w-4xl modal-container shadow-2xl flex flex-col max-h-[85vh] md:max-h-[90vh]">
+        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between shrink-0">
+            <h4 class="font-headline-lg text-lg font-bold text-on-surface">Cosecha en Masa</h4>
+            <button type="button" id="btnCancelCosechaIcon" class="text-on-surface-variant hover:text-primary-container transition-colors p-1">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="p-6 overflow-y-auto grow custom-scrollbar">
+            <form id="cosechaForm" class="space-y-6">
+                <!-- Apiario Selection -->
+                <div>
+                    <label for="ApiarioId" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Seleccionar Apiario para Cosechar</label>
+                    <select id="ApiarioId" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
+                        <option value="">Seleccione un Apiario...</option>
+                    </select>
+                </div>
+
+                <!-- Colmenas Dynamic Selection -->
+                <div id="colmenasContainer" class="hidden flex-col gap-4">
+                    <div class="flex justify-between items-center border-b border-surface-container-highest pb-2">
+                        <span class="font-label-caps text-label-caps text-primary-container">Colmenas a Cosechar</span>
+                    </div>
+                    
+                    <div id="colmenasRowsContainer" class="space-y-4">
+                        <!-- Dynamic rows will go here -->
+                    </div>
+                    
+                    <button type="button" id="btnAddColmenaRow" class="mt-3 flex items-center gap-1 text-primary-container hover:text-primary-fixed transition-colors font-label-caps text-label-caps">
+                        <span class="material-symbols-outlined text-[18px]">add</span>
+                        + Agregar colmena
+                    </button>
+                </div>
+
+                <!-- Analisis Financiero Warning -->
+                @if (ViewBag.AnalisisActivoId == null)
+                {
+                    <div class="bg-primary-container/10 border border-primary-container rounded p-4 flex flex-col gap-3">
+                        <div class="flex items-start gap-2 text-primary-container">
+                            <span class="material-symbols-outlined text-[20px]">warning</span>
+                            <span class="font-body-md font-bold">Atención: No hay un análisis financiero activo.</span>
+                        </div>
+                        <p class="font-body-sm text-on-surface-variant ml-7">
+                            La ganancia de esta cosecha debe vincularse a un análisis. Seleccione qué desea hacer:
+                        </p>
+                        <div class="flex flex-col gap-2 ml-7 mt-2">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="analisisAction" value="new" checked class="text-primary-container focus:ring-primary-container bg-background border-outline-variant" />
+                                <span class="font-body-sm text-on-surface">Crear un nuevo análisis financiero activo</span>
+                            </label>
+                            @if (ViewBag.UltimoCerradoId != null)
+                            {
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="analisisAction" value="last" class="text-primary-container focus:ring-primary-container bg-background border-outline-variant" />
+                                    <span class="font-body-sm text-on-surface">Vincular al último análisis cerrado (@ViewBag.UltimoCerradoNombre)</span>
+                                </label>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <div>
+                    <label for="Notas" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Notas de la Cosecha</label>
+                    <textarea id="Notas" rows="3" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors resize-none" placeholder="Observaciones de esta cosecha en masa..."></textarea>
+                </div>
+
+                <div class="pt-4 border-t border-surface-container-highest flex flex-col sm:flex-row justify-end gap-3">
+                    <button type="button" id="btnCancelCosecha" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex">
+                        Cancelar
+                    </button>
+                    <button type="button" id="btnSubmitCosecha" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex">
+                        Confirmar Cosecha
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const apiarios = @Html.Raw(ViewBag.ApiariosJson);
+        const colmenasAll = @Html.Raw(ViewBag.ColmenasJson);
+        const activeAnalisisId = @(ViewBag.AnalisisActivoId?.ToString() ?? "null");
+        const lastAnalisisId = @(ViewBag.UltimoCerradoId?.ToString() ?? "null");
+        
+        const selectApiario = document.getElementById('ApiarioId');
+        const colmenasContainer = document.getElementById('colmenasContainer');
+        const colmenasList = document.getElementById('colmenasList');
+
+        apiarios.forEach(a => {
+            const opt = document.createElement('option');
+            opt.value = a.Id;
+            opt.textContent = a.Nombre;
+            selectApiario.appendChild(opt);
+        });
+
+        let filteredColmenas = [];
+        let rowCounter = 0;
+
+        selectApiario.addEventListener('change', () => {
+            const apiarioId = parseInt(selectApiario.value);
+            if (!apiarioId) {
+                colmenasContainer.classList.add('hidden');
+                document.getElementById('colmenasRowsContainer').innerHTML = '';
+                return;
+            }
+
+            filteredColmenas = colmenasAll.filter(c => c.ApiarioId === apiarioId);
+            
+            if (filteredColmenas.length === 0) {
+                document.getElementById('colmenasRowsContainer').innerHTML = '<div class="text-on-surface-variant text-sm">No hay colmenas con alzas listas para cosechar en este apiario.</div>';
+            } else {
+                createInitialColmenaRow();
+            }
+            
+            colmenasContainer.classList.remove('hidden');
+            colmenasContainer.classList.add('flex');
+        });
+
+        function createInitialColmenaRow() {
+            document.getElementById('colmenasRowsContainer').innerHTML = '';
+            rowCounter = 1;
+            addColmenaRowUI();
+        }
+
+        document.getElementById('btnAddColmenaRow').addEventListener('click', () => {
+            if (filteredColmenas.length === 0) return;
+            rowCounter++;
+            addColmenaRowUI();
+        });
+
+        function addColmenaRowUI() {
+            const container = document.getElementById('colmenasRowsContainer');
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'flex flex-col md:flex-row items-center gap-4 p-3 bg-surface-container-high border border-outline-variant rounded colmena-row relative';
+            
+            // Select Colmena
+            const select = document.createElement('select');
+            select.className = 'w-full md:w-1/3 bg-background border border-outline-variant px-3 py-1.5 rounded text-on-surface text-sm focus:border-primary-container outline-none transition-colors colmena-select';
+            select.innerHTML = '<option value="">Seleccione colmena...</option>';
+            filteredColmenas.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.Id;
+                opt.textContent = c.Identificador || c.CodigoEscaneo;
+                opt.dataset.alzas = c.Alzas;
+                opt.dataset.medias = c.MediasAlzas;
+                opt.dataset.tres = c.AlzasTresCuartos;
+                select.appendChild(opt);
+            });
+
+            // Remove Btn
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'absolute top-1/2 -translate-y-1/2 right-2 text-on-surface-variant hover:text-error transition-colors p-1 flex items-center justify-center';
+            removeBtn.innerHTML = '<span class="material-symbols-outlined text-[20px]">delete</span>';
+            removeBtn.title = 'Quitar';
+            removeBtn.addEventListener('click', () => {
+                rowDiv.remove();
+                updateAvailableColmenas();
+            });
+
+            // Card body for Alzas
+            const cardBody = document.createElement('div');
+            cardBody.className = 'flex items-center justify-around w-full md:w-auto md:ml-auto gap-4 hidden alzas-card pr-8';
+            cardBody.innerHTML = `
+                <div class="flex items-center gap-2">
+                    <span class="font-label-caps text-[10px] text-on-surface-variant w-10 text-right">Alzas</span>
+                    <div class="flex flex-col">
+                        <input type="number" class="w-16 bg-background border border-outline-variant px-2 py-1 rounded text-on-surface focus:border-primary-container outline-none text-center text-sm" min="0" value="0" data-type="alzas" disabled />
+                        <span class="text-[9px] text-on-surface-variant disp-alzas mt-0.5 text-center">Disp: 0</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="font-label-caps text-[10px] text-on-surface-variant w-10 text-right">Medias</span>
+                    <div class="flex flex-col">
+                        <input type="number" class="w-16 bg-background border border-outline-variant px-2 py-1 rounded text-on-surface focus:border-primary-container outline-none text-center text-sm" min="0" value="0" data-type="medias" disabled />
+                        <span class="text-[9px] text-on-surface-variant disp-medias mt-0.5 text-center">Disp: 0</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="font-label-caps text-[10px] text-on-surface-variant w-10 text-right">3/4</span>
+                    <div class="flex flex-col">
+                        <input type="number" class="w-16 bg-background border border-outline-variant px-2 py-1 rounded text-on-surface focus:border-primary-container outline-none text-center text-sm" min="0" value="0" data-type="trescuartos" disabled />
+                        <span class="text-[9px] text-on-surface-variant disp-tres mt-0.5 text-center">Disp: 0</span>
+                    </div>
+                </div>
+            `;
+
+            select.addEventListener('change', () => {
+                const opt = select.options[select.selectedIndex];
+                const alzasInput = cardBody.querySelector('input[data-type="alzas"]');
+                const mediasInput = cardBody.querySelector('input[data-type="medias"]');
+                const tresInput = cardBody.querySelector('input[data-type="trescuartos"]');
+                
+                if (opt.value) {
+                    cardBody.classList.remove('hidden');
+                    
+                    const alzas = parseInt(opt.dataset.alzas) || 0;
+                    const medias = parseInt(opt.dataset.medias) || 0;
+                    const tres = parseInt(opt.dataset.tres) || 0;
+
+                    alzasInput.max = alzas;
+                    alzasInput.disabled = (alzas === 0);
+                    alzasInput.value = 0;
+                    cardBody.querySelector('.disp-alzas').textContent = 'Disp: ' + alzas;
+
+                    mediasInput.max = medias;
+                    mediasInput.disabled = (medias === 0);
+                    mediasInput.value = 0;
+                    cardBody.querySelector('.disp-medias').textContent = 'Disp: ' + medias;
+
+                    tresInput.max = tres;
+                    tresInput.disabled = (tres === 0);
+                    tresInput.value = 0;
+                    cardBody.querySelector('.disp-tres').textContent = 'Disp: ' + tres;
+                } else {
+                    cardBody.classList.add('hidden');
+                }
+                updateAvailableColmenas();
+            });
+
+            rowDiv.appendChild(select);
+            rowDiv.appendChild(removeBtn);
+            rowDiv.appendChild(cardBody);
+            container.appendChild(rowDiv);
+            
+            updateAvailableColmenas();
+        }
+
+        function updateAvailableColmenas() {
+            const selectedValues = Array.from(document.querySelectorAll('.colmena-select'))
+                .map(sel => sel.value)
+                .filter(val => val !== '');
+                
+            document.querySelectorAll('.colmena-select').forEach(currentSelect => {
+                const currentValue = currentSelect.value;
+                currentSelect.querySelectorAll('option').forEach(option => {
+                    if (option.value !== '') {
+                        option.disabled = selectedValues.includes(option.value) && option.value !== currentValue;
+                    }
+                });
+            });
+        }
+
+        // Modal Logic
+        const cosechaModal = document.getElementById('cosechaModal');
+        const btnOpenCosecha = document.getElementById('btnOpenCosechaModal');
+        const btnCancel = document.getElementById('btnCancelCosecha');
+        const btnCancelIcon = document.getElementById('btnCancelCosechaIcon');
+        
+        function openModal() { cosechaModal.classList.remove('modal-hidden'); }
+        function closeModal() { cosechaModal.classList.add('modal-hidden'); document.getElementById('cosechaForm').reset(); colmenasContainer.classList.add('hidden'); }
+
+        btnOpenCosecha.addEventListener('click', openModal);
+        btnCancel.addEventListener('click', closeModal);
+        btnCancelIcon.addEventListener('click', closeModal);
+
+        // Submit Logic
+        document.getElementById('btnSubmitCosecha').addEventListener('click', async () => {
+            const rows = document.querySelectorAll('.colmena-row');
+            let dataList = [];
+            
+            rows.forEach(r => {
+                const select = r.querySelector('.colmena-select');
+                if (!select || !select.value) return;
+                
+                const id = parseInt(select.value);
+                const alzas = parseInt(r.querySelector('input[data-type="alzas"]').value) || 0;
+                const medias = parseInt(r.querySelector('input[data-type="medias"]').value) || 0;
+                const trescuartos = parseInt(r.querySelector('input[data-type="trescuartos"]').value) || 0;
+
+                if (alzas > 0 || medias > 0 || trescuartos > 0) {
+                    dataList.push({
+                        ColmenaId: id,
+                        AlzasCosechadas: alzas,
+                        MediasAlzasCosechadas: medias,
+                        AlzasTresCuartosCosechadas: trescuartos
+                    });
+                }
+            });
+
+            if (dataList.length === 0) {
+                alert("Debe seleccionar al menos un alza para cosechar.");
+                return;
+            }
+
+            let createNewAnalisis = false;
+            let finalAnalisisId = activeAnalisisId;
+
+            if (!activeAnalisisId) {
+                const actionElement = document.querySelector('input[name="analisisAction"]:checked');
+                if (actionElement) {
+                    if (actionElement.value === 'new') {
+                        createNewAnalisis = true;
+                    } else if (actionElement.value === 'last') {
+                        finalAnalisisId = lastAnalisisId;
+                    }
+                }
+            }
+
+            const payload = {
+                Colmenas: dataList,
+                AnalisisId: finalAnalisisId,
+                CreateNewAnalisis: createNewAnalisis,
+                Notas: document.getElementById('Notas').value
+            };
+
+            const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+
+            try {
+                const response = await fetch('/Extracciones/RegistrarCosechaMasa', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': token
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const res = await response.json();
+                if (res.success) {
+                    window.location.reload();
+                } else {
+                    alert(res.message);
+                }
+            } catch(e) {
+                console.error(e);
+                alert("Error al procesar la cosecha.");
+            }
+        });
+    </script>
+}
