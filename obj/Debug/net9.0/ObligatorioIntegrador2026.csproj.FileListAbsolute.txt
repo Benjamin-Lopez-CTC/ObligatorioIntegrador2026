@@ -366,7 +366,6 @@ C:\Users\Usuario\Desktop\Cosas de Benja\Prog\Antigravity\ObligatorioIntegrador20
 C:\Users\Usuario\Desktop\Cosas de Benja\Prog\Antigravity\ObligatorioIntegrador2026\obj\Debug\net9.0\scopedcss\projectbundle\ObligatorioIntegrador2026.bundle.scp.css
 C:\Users\Usuario\Desktop\Cosas de Benja\Prog\Antigravity\ObligatorioIntegrador2026\obj\Debug\net9.0\compressed\238rz6ukxe-{0}-b9sayid5wm-b9sayid5wm.gz
 C:\Users\Usuario\Desktop\Cosas de Benja\Prog\Antigravity\ObligatorioIntegrador2026\obj\Debug\net9.0\compressed\mmk6ppzeq3-{0}-9esk1cyi57-9esk1cyi57.gz
-C:\Users\Usuario\Desktop\Cosas de Benja\Prog\Antigravity\ObligatorioIntegrador2026\obj\Debug\net9.0\compressed\srs3ubs8w9-{0}-xtxxf3hu2r-xtxxf3hu2r.gz
 C:\Users\Usuario\Desktop\Cosas de Benja\Prog\Antigravity\ObligatorioIntegrador2026\obj\Debug\net9.0\compressed\f4wvtpirhi-{0}-t1cqhe9u97-t1cqhe9u97.gz
 C:\Users\Usuario\Desktop\Cosas de Benja\Prog\Antigravity\ObligatorioIntegrador2026\obj\Debug\net9.0\compressed\m1kn5frgi2-{0}-c2jlpeoesf-c2jlpeoesf.gz
 C:\Users\Usuario\Desktop\Cosas de Benja\Prog\Antigravity\ObligatorioIntegrador2026\obj\Debug\net9.0\compressed\fyyv12003g-{0}-sejl45xvog-sejl45xvog.gz
@@ -523,3 +522,15 @@ C:\Users\Felipe\Desktop\ObligatorioIntegrador2026\bin\Debug\net9.0\runtimes\win-
 C:\Users\Felipe\Desktop\ObligatorioIntegrador2026\bin\Debug\net9.0\runtimes\win-x86\native\libwinpthread-1.dll
 C:\Users\Felipe\Desktop\ObligatorioIntegrador2026\bin\Debug\net9.0\runtimes\win-x86\native\qpdf.dll
 C:\Users\Felipe\Desktop\ObligatorioIntegrador2026\bin\Debug\net9.0\runtimes\win-x86\native\zlib1.dll
+C:\Users\Usuario\Desktop\Cosas de Benja\Prog\Antigravity\ObligatorioIntegrador2026\obj\Debug\net9.0\compressed\e6t01maejd-{0}-d53clz6zm5-d53clz6zm5.gz
+C:\Users\Usuario\Desktop\Cosas de Benja\Prog\Antigravity\ObligatorioIntegrador2026\obj\Debug\net9.0\compressed\7z171ltabx-{0}-f5v5uejk71-f5v5uejk71.gz
+C:\Users\Usuario\Desktop\Cosas de Benja\Prog\Antigravity\ObligatorioIntegrador2026\obj\Debug\net9.0\compressed\67ztc8j8eg-{0}-as8xlfnfir-as8xlfnfir.gz
+C:\Users\Usuario\Desktop\Cosas de Benja\Prog\Antigravity\ObligatorioIntegrador2026\obj\Debug\net9.0\compressed\381ljrmmyo-{0}-9mnawvzl4u-9mnawvzl4u.gz
+C:\Users\Usuario\Desktop\Cosas de Benja\Prog\Antigravity\ObligatorioIntegrador2026\bin\Debug\net9.0\frontend-build\package-lock.json
+C:\Users\Usuario\Desktop\Cosas de Benja\Prog\Antigravity\ObligatorioIntegrador2026\bin\Debug\net9.0\frontend-build\package.json
+C:\Users\Usuario\Desktop\Cosas de Benja\Prog\Antigravity\ObligatorioIntegrador2026\obj\Debug\net9.0\compressed\r9h33dbiwv-{0}-6hb2fbqhd5-6hb2fbqhd5.gz
+C:\Users\Usuario\Desktop\Cosas de Benja\Prog\Antigravity\ObligatorioIntegrador2026\obj\Debug\net9.0\compressed\jwnapwhauz-{0}-tpmhinsji5-tpmhinsji5.gz
+C:\Users\Usuario\Desktop\Cosas de Benja\Prog\Antigravity\ObligatorioIntegrador2026\obj\Debug\net9.0\compressed\iki2dri3r6-{0}-8s1b1rbj66-8s1b1rbj66.gz
+C:\Users\Usuario\Desktop\Cosas de Benja\Prog\Antigravity\ObligatorioIntegrador2026\obj\Debug\net9.0\compressed\06fhuvwxt8-{0}-8fe47tfwxb-8fe47tfwxb.gz
+C:\Users\Usuario\Desktop\Cosas de Benja\Prog\Antigravity\ObligatorioIntegrador2026\obj\Debug\net9.0\compressed\mtipcvk8mq-{0}-211yr77o69-211yr77o69.gz
+C:\Users\Usuario\Desktop\Cosas de Benja\Prog\Antigravity\ObligatorioIntegrador2026\obj\Debug\net9.0\compressed\srs3ubs8w9-{0}-xtvppkfhih-xtvppkfhih.gz

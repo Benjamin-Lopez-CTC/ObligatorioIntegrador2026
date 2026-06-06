@@ -192,6 +192,30 @@ public class HomeController : Controller
         return File(pdfBytes, "application/pdf", $"ReporteGlobal_Zanganos_{DateTime.Now:yyyyMMdd}.pdf");
     }
 
+    [HttpGet]
+    public async Task<IActionResult> GetAllOfflineUrls()
+    {
+        var urls = new List<string>
+        {
+            "/Colmenas",
+            "/Apiarios"
+        };
+
+        var colmenas = await _context.Colmenas.Select(c => c.Id).ToListAsync();
+        foreach (var id in colmenas)
+        {
+            urls.Add($"/Colmenas/Detalles/{id}");
+        }
+
+        var apiarios = await _context.Apiarios.Select(a => a.Id).ToListAsync();
+        foreach (var id in apiarios)
+        {
+            urls.Add($"/Apiarios/Detalles/{id}");
+        }
+
+        return Json(urls);
+    }
+
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {

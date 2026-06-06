@@ -1,0 +1,817 @@
+@model IEnumerable<ObligatorioIntegrador2026.Models.Colmena>
+
+@{
+    ViewData["Title"] = "Gestión Global de Colmenas";
+}
+
+<main class="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-[80px]">
+    <!-- Grid Container -->
+    <div class="grid grid-cols-4 md:grid-cols-12 gap-gutter">
+        <!-- Page Header -->
+        <div class="col-span-4 md:col-span-12 flex flex-col md:flex-row justify-between items-start md:items-center mb-[40px] border-b border-outline-variant pb-gutter">
+            <div>
+                <p class="font-label-caps text-label-caps text-on-surface-variant mb-2">INVENTARIO TÉCNICO</p>
+                <h1 class="font-display text-headline-lg-mobile md:text-display text-on-surface">Gestión Global de Colmenas</h1>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-unit mt-6 md:mt-0 w-full md:w-auto">
+                <a asp-controller="Mas" asp-action="CompararColmenas" class="border border-outline text-on-surface font-label-caps text-label-caps px-6 py-3 rounded hover:bg-surface-container-high transition-colors flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined text-[18px]">compare_arrows</span>
+                    Comparar Colmenas
+                </a>
+                <button id="btnScanCode" class="flex items-center justify-center gap-2 border border-primary-container text-primary-container px-4 py-3 rounded hover:bg-surface-container-high transition-colors font-label-caps text-label-caps">
+                    <span class="material-symbols-outlined text-[16px]">document_scanner</span>
+                    Escanear Código ID
+                </button>
+                <button id="btnOpenRegistrar" class="flex items-center justify-center gap-2 bg-primary-container text-on-primary px-6 py-3 rounded hover:bg-primary-fixed-dim transition-colors font-label-caps text-label-caps">
+                    <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">add</span>
+                    Registrar Nueva Colmena
+                </button>
+            </div>
+        </div>
+
+        <!-- Filters Panel -->
+        <div class="col-span-4 md:col-span-12 bg-surface-container-low border border-outline-variant rounded p-6 mb-gutter">
+            <div class="flex flex-col md:flex-row flex-wrap gap-gutter">
+                <div class="flex-1 flex flex-col gap-2 min-w-[150px]">
+                    <label class="font-label-caps text-label-caps text-on-surface-variant">APIARIO</label>
+                    <div class="relative">
+                        <select id="filterApiario" class="w-full bg-background border border-outline-variant text-on-surface font-body-sm text-body-sm rounded p-3 pr-8 focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container transition-colors">
+                            <option value="">Todos los Apiarios</option>
+                            @foreach (var apiario in ViewBag.Apiarios)
+                            {
+                                <option value="@apiario.Nombre">@apiario.Nombre</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="flex-1 flex flex-col gap-2 min-w-[150px]">
+                    <label class="font-label-caps text-label-caps text-on-surface-variant">ESTADO DE SALUD</label>
+                    <div class="relative">
+                        <select id="filterEstado" class="w-full bg-background border border-outline-variant text-on-surface font-body-sm text-body-sm rounded p-3 pr-8 focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container transition-colors">
+                            <option value="">Todos los Estados</option>
+                            <option value="Óptimo">Óptimo</option>
+                            <option value="Alerta">Alerta</option>
+                            <option value="Crítico">Crítico</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex-1 flex flex-col gap-2 min-w-[150px]">
+                    <label class="font-label-caps text-label-caps text-on-surface-variant">COMPORTAMIENTO</label>
+                    <div class="relative">
+                        <select id="filterComportamiento" class="w-full bg-background border border-outline-variant text-on-surface font-body-sm text-body-sm rounded p-3 pr-8 focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container transition-colors">
+                            <option value="">Cualquiera</option>
+                            <option value="Dócil">Dócil</option>
+                            <option value="Defensivo">Defensivo</option>
+                            <option value="Agresivo">Agresivo</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex-1 flex flex-col gap-2 min-w-[150px]">
+                    <label class="font-label-caps text-label-caps text-on-surface-variant">TIPO</label>
+                    <div class="relative">
+                        <select id="filterTipo" class="w-full bg-background border border-outline-variant text-on-surface font-body-sm text-body-sm rounded p-3 pr-8 focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container transition-colors">
+                            <option value="">Todas</option>
+                            <option value="Piloto">Piloto</option>
+                            <option value="Normal">Normal</option>
+                            <option value="Nucleo">Núcleo</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex-1 flex flex-col gap-2 min-w-[150px]">
+                    <label class="font-label-caps text-label-caps text-on-surface-variant">ORDENAR POR</label>
+                    <div class="flex gap-2">
+                        <div class="relative flex-grow">
+                            <select id="sortField" class="w-full bg-background border border-outline-variant text-on-surface font-body-sm text-body-sm rounded p-3 pr-8 focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container transition-colors">
+                                <option value="id">ID (Por Defecto)</option>
+                                <option value="nombre">Nombre</option>
+                                <option value="peso">Peso (Kg)</option>
+                                <option value="temperatura">Temperatura (°C)</option>
+                            </select>
+                        </div>
+                        <button id="btnSortOrder" class="p-3 border border-outline-variant rounded hover:text-primary-container hover:border-primary-container transition-colors flex items-center justify-center bg-background" title="Alternar Orden">
+                            <span class="material-symbols-outlined text-[18px]">arrow_downward</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="flex-1 flex flex-col gap-2 min-w-[150px]">
+                    <label class="font-label-caps text-label-caps text-on-surface-variant">BÚSQUEDA</label>
+                    <input id="filterSearch" placeholder="Buscar..." class="w-full bg-background border border-outline-variant text-on-surface font-body-sm text-body-sm rounded p-3 focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container transition-colors" type="text"/>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Table Container -->
+        <div class="col-span-4 md:col-span-12 bg-surface-container-low border border-outline-variant rounded p-4 md:p-6 responsive-table">
+            <div class="overflow-x-auto md:overflow-visible">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-surface-container-highest font-label-caps text-label-caps text-on-surface-variant">
+                            <th class="p-4 font-medium">COLMENA</th>
+                            <th class="p-4 font-medium">APIARIO DE ORIGEN</th>
+                            <th class="p-4 font-medium">ESTADO</th>
+                            <th class="p-4 font-medium">PESO (KG)</th>
+                            <th class="p-4 font-medium">TEMP. INT.</th>
+                            <th class="p-4 font-medium text-right">ACCIÓN</th>
+                        </tr>
+                    </thead>
+                    <tbody id="hiveTableBody" class="font-body-sm text-body-sm text-on-surface">
+                        <!-- Filled by JS -->
+                    </tbody>
+                </table>
+            </div>
+            <!-- Pagination -->
+            <div class="bg-transparent border-t border-surface-container-highest mt-4 pt-4 flex justify-between items-center text-on-surface-variant font-body-sm text-body-sm">
+                <span id="paginationText">Mostrando 0 de 0 colmenas</span>
+                <div class="flex items-center gap-1">
+                    <button id="btnPrevPage" class="w-8 h-8 flex items-center justify-center border border-outline-variant rounded hover:text-primary-container hover:border-primary-container transition-colors disabled:opacity-50">
+                        <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+                    </button>
+                    <div id="paginationNumbers" class="flex items-center gap-1">
+                        <!-- Filled by JS -->
+                    </div>
+                    <button id="btnNextPage" class="w-8 h-8 flex items-center justify-center border border-outline-variant rounded hover:text-primary-container hover:border-primary-container transition-colors disabled:opacity-50">
+                        <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Registrar Colmena Modal -->
+<div id="registrarModal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
+    <div class="bg-surface-container border border-outline-variant rounded w-full max-w-3xl modal-container shadow-2xl flex flex-col max-h-[75vh] md:max-h-[85vh]">
+        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between shrink-0">
+            <h4 class="font-headline-lg text-lg font-bold text-on-surface">Registrar Nueva Colmena</h4>
+            <button type="button" id="btnCancelRegistrarIcon" class="text-on-surface-variant hover:text-primary-container transition-colors p-1">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="p-6 overflow-y-auto grow custom-scrollbar">
+            <form asp-action="RegistrarNueva" method="post" class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                @Html.AntiForgeryToken()
+                
+                <div class="space-y-4">
+                    <div>
+                        <label for="Identificador" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Identificador (Opcional)</label>
+                        <input type="text" id="Identificador" name="Identificador" placeholder="#HIVE-0123" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                    </div>
+                    <div>
+                        <label for="ApiarioId" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Apiario</label>
+                        <select id="ApiarioId" name="ApiarioId" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
+                            @foreach (var apiario in ViewBag.Apiarios)
+                            {
+                                <option value="@apiario.Id">@apiario.Nombre</option>
+                            }
+                        </select>
+                    </div>
+                    <div>
+                        <label for="CantidadAbejas" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Cantidad de Abejas (Aprox.)</label>
+                        <input type="number" id="CantidadAbejas" name="CantidadAbejas" placeholder="40000" required min="0" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                    </div>
+                    <div>
+                        <label for="UbicacionIntraApiario" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Ubicación (Ej: Fila 1, Pos 3)</label>
+                        <input type="text" id="UbicacionIntraApiario" name="UbicacionIntraApiario" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="EstadoReina" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Estado Reina</label>
+                            <select id="EstadoReina" name="EstadoReina" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
+                                <option value="Presente" selected>Presente</option>
+                                <option value="Ausente">Ausente</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="ComportamientoAbejas" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Comportamiento</label>
+                            <select id="ComportamientoAbejas" name="ComportamientoAbejas" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
+                                <option value="Dócil">Dócil</option>
+                                <option value="Defensivo">Defensivo</option>
+                                <option value="Agresivo">Agresivo</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div id="sensorFieldsContainer" class="hidden grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="TemperaturaInterna" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Temperatura (°C)</label>
+                            <input type="number" step="0.1" id="TemperaturaInterna" name="TemperaturaInterna" placeholder="35.0" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                        </div>
+                        <div>
+                            <label for="HumedadInterna" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Humedad (%)</label>
+                            <input type="number" step="0.1" id="HumedadInterna" name="HumedadInterna" placeholder="55.0" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                        </div>
+                    </div>
+
+                    <div class="bg-surface-container-low border border-outline-variant rounded p-4">
+                        <h5 class="font-label-caps text-label-caps text-on-surface-variant mb-3">Configuración de Alzas</h5>
+                        <div class="grid grid-cols-3 gap-3">
+                            <div>
+                                <label for="Alzas" class="font-label-caps text-[10px] text-on-surface-variant mb-1 block">Alzas Enteras</label>
+                                <input type="number" id="Alzas" name="Alzas" value="0" min="0" max="5" class="alza-input w-full bg-background border border-outline-variant px-2 py-1.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                            </div>
+                            <div>
+                                <label for="AlzasTresCuartos" class="font-label-caps text-[10px] text-on-surface-variant mb-1 block">Alzas 3/4</label>
+                                <input type="number" id="AlzasTresCuartos" name="AlzasTresCuartos" value="0" min="0" max="5" class="alza-input w-full bg-background border border-outline-variant px-2 py-1.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                            </div>
+                            <div>
+                                <label for="MediasAlzas" class="font-label-caps text-[10px] text-on-surface-variant mb-1 block">Medias Alzas</label>
+                                <input type="number" id="MediasAlzas" name="MediasAlzas" value="0" min="0" max="5" class="alza-input w-full bg-background border border-outline-variant px-2 py-1.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                            </div>
+                        </div>
+                        <div class="mt-3 flex justify-between items-center bg-background border border-outline-variant px-3 py-2 rounded">
+                            <span class="font-body-sm text-body-sm text-on-surface-variant">Producción Estimada:</span>
+                            <div class="flex items-center gap-1">
+                                <input type="hidden" id="ProduccionMielKg" name="ProduccionMielKg" value="0" />
+                                <span id="displayMielKg" class="font-display text-[18px] text-primary-container font-bold">0.0</span>
+                                <span class="font-label-caps text-[10px] text-primary-container">KG</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sm:col-span-2 space-y-4">
+                    <div class="flex items-center gap-6 mt-2">
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" id="EsPiloto" name="EsPiloto" value="true" class="w-4 h-4 text-primary-container bg-background border-outline-variant rounded focus:ring-primary-container focus:ring-2" />
+                            <label for="EsPiloto" class="font-body-md text-body-md text-on-surface">Convertir en Colmena Piloto</label>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" id="EsNucleo" name="EsNucleo" value="true" class="w-4 h-4 text-primary-container bg-background border-outline-variant rounded focus:ring-primary-container focus:ring-2" />
+                            <label for="EsNucleo" class="font-body-md text-body-md text-on-surface">¿Es un Núcleo?</label>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-primary-container/10 border border-primary-container rounded p-3 flex items-start gap-3">
+                        <span class="material-symbols-outlined text-primary-container text-[20px] shrink-0">info</span>
+                        <p class="font-body-sm text-body-sm text-on-surface text-left">
+                            Al guardar la colmena se generará un <strong class="text-primary-container">código de 6 dígitos</strong>. Debes asegurarte de anotarlo a mano con marcador visible en la colmena física para poder usar el escáner.
+                        </p>
+                    </div>
+
+                    <div class="pt-4 border-t border-surface-container-highest flex flex-col sm:flex-row justify-end gap-3">
+                        <button type="button" id="btnCancelRegistrar" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex">
+                            Guardar Colmena
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div id="deleteModal" class="fixed inset-0 z-[60] flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
+    <div class="bg-surface-container border border-outline-variant rounded w-full max-w-md modal-container shadow-2xl flex flex-col max-h-[75vh] md:max-h-[85vh]">
+        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between shrink-0">
+            <h4 class="font-headline-lg text-lg font-bold text-error flex items-center gap-2">
+                <span class="material-symbols-outlined text-[20px]">delete_forever</span> ¿Eliminar Colmena?
+            </h4>
+            <button type="button" id="btnCancelDeleteIcon" class="text-on-surface-variant hover:text-primary-container transition-colors p-1">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="p-6 overflow-y-auto grow custom-scrollbar space-y-4 text-center">
+            <p class="font-body-md text-body-md text-on-surface-variant">
+                ¿Está seguro de que desea eliminar la colmena <span id="deleteColmenaName" class="text-error font-semibold"></span>?
+            </p>
+            <p class="text-sm text-error/80 font-medium">
+                Esta acción es irreversible y los datos se perderán.
+            </p>
+            <div class="pt-4 border-t border-surface-container-highest flex flex-col sm:flex-row justify-center gap-3 mt-4">
+                <button type="button" id="btnCancelDelete" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex">
+                    Cancelar
+                </button>
+                <form asp-action="Eliminar" method="post" id="deleteForm" class="m-0 w-full sm:w-auto flex">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" id="deleteColmenaId" value="" />
+                    <button type="submit" class="bg-error-container/30 border border-error text-error hover:bg-error/20 transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps w-full text-center justify-center flex">
+                        Sí, eliminarla
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scanner Modal (Desktop - Manual Input) -->
+<div id="scannerModalDesktop" class="fixed inset-0 z-[60] flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
+    <div class="bg-surface-container border border-outline-variant rounded w-full max-w-md modal-container shadow-2xl flex flex-col max-h-[75vh] md:max-h-[85vh]">
+        <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between shrink-0">
+            <h4 class="font-headline-lg text-lg font-bold text-on-surface">Ingresar Código ID</h4>
+            <button type="button" id="btnCloseScannerDesktop" class="text-on-surface-variant hover:text-primary-container transition-colors p-1">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="p-6 overflow-y-auto grow custom-scrollbar space-y-4">
+            <p class="font-body-md text-body-md text-on-surface-variant text-left">
+                Ingrese el código numérico de 6 dígitos de la colmena física.
+            </p>
+            <input type="text" id="manualScanInput" maxlength="6" pattern="\d*" placeholder="000000" class="w-full bg-background border border-outline-variant px-4 py-3 rounded text-on-surface text-center font-display text-2xl tracking-widest focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+            <div id="manualScanError" class="text-error font-body-sm text-body-sm text-left hidden">Código no encontrado o inválido.</div>
+            <div class="pt-4 border-t border-surface-container-highest flex flex-col sm:flex-row justify-end mt-4">
+                <button type="button" id="btnSearchManualScan" class="w-full bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined text-[18px]">search</span>
+                    Buscar Colmena
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scanner Modal (Mobile - Camera) -->
+<div id="scannerModalMobile" class="fixed inset-0 z-[60] flex modal-backdrop modal-hidden items-center justify-center bg-black p-0 m-0 w-full h-full">
+    <div class="w-full h-full relative flex flex-col modal-container">
+        <!-- Header Overlay -->
+        <div class="absolute top-0 left-0 w-full p-4 flex justify-between items-center z-20 bg-gradient-to-b from-black/80 to-transparent">
+            <h4 class="font-label-caps text-label-caps text-white font-bold">Escanear ID</h4>
+            <div class="flex gap-3">
+                <button id="btnSwitchCamera" class="hidden text-white hover:text-primary-container transition-colors bg-black/50 p-2 rounded backdrop-blur-sm flex" title="Cambiar Cámara">
+                    <span class="material-symbols-outlined">cameraswitch</span>
+                </button>
+                <button id="btnCloseScannerMobile" class="text-white hover:text-primary-container transition-colors bg-black/50 p-2 rounded backdrop-blur-sm flex">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Video Feed -->
+        <video id="scannerVideo" class="w-full h-full object-cover" autoplay playsinline></video>
+
+        <!-- Scanning Overlay Guides -->
+        <div class="absolute inset-0 z-10 pointer-events-none flex flex-col">
+            <div class="flex-grow bg-black/60"></div>
+            <div class="flex h-[120px] w-full">
+                <div class="w-1/6 bg-black/60"></div>
+                <div class="w-4/6 border-2 border-primary-container relative box-border flex items-center justify-center">
+                    <span class="absolute -top-6 text-white font-label-caps text-[10px] bg-primary-container/80 px-2 py-0.5 rounded-sm">Enfoque los 6 dígitos aquí</span>
+                </div>
+                <div class="w-1/6 bg-black/60"></div>
+            </div>
+            <div class="flex-grow bg-black/60"></div>
+        </div>
+
+        <!-- Feedback & Capture Button Overlay -->
+        <div class="absolute bottom-0 left-0 w-full p-6 z-20 bg-gradient-to-t from-black/90 via-black/70 to-transparent flex flex-col items-center gap-4 pb-10">
+            <div id="scanStatusMobile" class="font-body-md text-white text-center min-h-[24px]">Posiciona el código y presiona capturar</div>
+            <button type="button" id="btnCaptureScan" class="bg-primary-container text-on-primary w-16 h-16 rounded flex items-center justify-center shadow-lg border-4 border-white/20 hover:scale-105 transition-transform">
+                <span class="material-symbols-outlined text-[28px]">camera_alt</span>
+            </button>
+        </div>
+        
+        <!-- Hidden Canvas for OCR processing -->
+        <canvas id="scannerCanvas" class="hidden"></canvas>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const rawColmenas = @Html.Raw(ViewBag.ColmenasJson);
+        
+        // DOM Elements
+        const tbody = document.getElementById('hiveTableBody');
+        const pagText = document.getElementById('paginationText');
+        const btnCancelDeleteIcon = document.getElementById('btnCancelDeleteIcon');
+        const formRegistrar = document.querySelector('form[action="/Colmenas/RegistrarNueva"]');
+
+        const esPilotoCheckbox = document.getElementById('EsPiloto');
+        const sensorFieldsContainer = document.getElementById('sensorFieldsContainer');
+        const tempInput = document.getElementById('TemperaturaInterna');
+        const humInput = document.getElementById('HumedadInterna');
+
+        esPilotoCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                sensorFieldsContainer.classList.remove('hidden');
+                tempInput.required = true;
+                humInput.required = true;
+            } else {
+                sensorFieldsContainer.classList.add('hidden');
+                tempInput.required = false;
+                humInput.required = false;
+                tempInput.value = '';
+                humInput.value = '';
+            }
+        });
+
+        // Computed Values
+        // Computed Values
+        const filterEstado = document.getElementById('filterEstado');
+        const filterComportamiento = document.getElementById('filterComportamiento');
+        const filterApiario = document.getElementById('filterApiario');
+        const filterTipo = document.getElementById('filterTipo');
+        const filterSearch = document.getElementById('filterSearch');
+        const sortField = document.getElementById('sortField');
+        const btnSortOrder = document.getElementById('btnSortOrder');
+        const paginationNumbers = document.getElementById('paginationNumbers');
+        const btnPrev = document.getElementById('btnPrevPage');
+        const btnNext = document.getElementById('btnNextPage');
+
+        // Pagination State
+        const ITEMS_PER_PAGE = 10;
+        let currentPage = 1;
+        let isAscending = false; // By default Descending for values
+        let filteredColmenas = [...rawColmenas];
+
+        btnSortOrder.addEventListener('click', () => {
+            isAscending = !isAscending;
+            btnSortOrder.innerHTML = isAscending ? '<span class="material-symbols-outlined text-[18px]">arrow_upward</span>' : '<span class="material-symbols-outlined text-[18px]">arrow_downward</span>';
+            applyFilters();
+        });
+
+        function applyFilters() {
+            const apiarioVal = filterApiario.value;
+            const estadoVal = filterEstado.value;
+            const comportamientoVal = filterComportamiento.value;
+            const tipoVal = filterTipo.value;
+            const searchVal = filterSearch.value.toLowerCase();
+            const sortVal = sortField.value;
+
+            filteredColmenas = rawColmenas.filter(c => {
+                const matchApiario = !apiarioVal || c.apiarioNombre === apiarioVal;
+                const matchEstado = !estadoVal || c.estado === estadoVal;
+                const matchComportamiento = !comportamientoVal || c.comportamiento === comportamientoVal;
+                
+                let matchTipo = true;
+                if(tipoVal === "Piloto") matchTipo = c.esPiloto;
+                if(tipoVal === "Normal") matchTipo = !c.esPiloto;
+                if(tipoVal === "Nucleo") matchTipo = c.esNucleo;
+
+                const matchSearch = !searchVal || (c.identificador && c.identificador.toLowerCase().includes(searchVal)) || c.codigoEscaneo.includes(searchVal);
+                
+                return matchApiario && matchEstado && matchComportamiento && matchTipo && matchSearch;
+            });
+
+            // Sorting
+            filteredColmenas.sort((a, b) => {
+                let valA, valB;
+                if(sortVal === 'peso') {
+                    valA = parseFloat(a.peso); valB = parseFloat(b.peso);
+                } else if(sortVal === 'temperatura') {
+                    valA = parseFloat(a.temp); valB = parseFloat(b.temp);
+                } else if(sortVal === 'nombre') {
+                    valA = (a.identificador || '').toLowerCase(); valB = (b.identificador || '').toLowerCase();
+                } else {
+                    valA = a.id; valB = b.id;
+                }
+                
+                if(valA < valB) return isAscending ? -1 : 1;
+                if(valA > valB) return isAscending ? 1 : -1;
+                return 0;
+            });
+
+            currentPage = 1;
+            renderTable();
+        }
+
+        function renderPaginationControls(totalPages) {
+            paginationNumbers.innerHTML = '';
+            
+            for (let i = 1; i <= totalPages; i++) {
+                // Show first, last, current, and adjacent to current
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    const btn = document.createElement('button');
+                    btn.className = `w-8 h-8 flex items-center justify-center border rounded font-body-sm transition-colors ${i === currentPage ? 'bg-primary-container text-on-primary border-primary-container' : 'border-outline-variant text-on-surface hover:text-primary-container hover:border-primary-container'}`;
+                    btn.textContent = i;
+                    btn.addEventListener('click', () => {
+                        currentPage = i;
+                        renderTable();
+                    });
+                    paginationNumbers.appendChild(btn);
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    const dots = document.createElement('span');
+                    dots.className = 'w-8 h-8 flex items-center justify-center text-on-surface-variant font-body-sm';
+                    dots.textContent = '...';
+                    paginationNumbers.appendChild(dots);
+                }
+            }
+        }
+
+        function renderTable() {
+            tbody.innerHTML = '';
+            const totalPages = Math.ceil(filteredColmenas.length / ITEMS_PER_PAGE);
+            
+            const start = (currentPage - 1) * ITEMS_PER_PAGE;
+            const end = Math.min(start + ITEMS_PER_PAGE, filteredColmenas.length);
+            const currentItems = filteredColmenas.slice(start, end);
+
+            if(currentItems.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-on-surface-variant font-label-caps tracking-widest">NO HAY COLMENAS</td></tr>';
+            }
+
+            currentItems.forEach(c => {
+                let statusHtml = '';
+                let bgClass = 'hover:bg-surface-container transition-colors';
+                let iconArrow = '';
+                let weightClass = '';
+                let tempClass = '';
+                
+                if(c.estado === 'Óptimo') {
+                    statusHtml = `<div class="inline-flex items-center gap-1.5 px-2 py-1 border border-[#4CAF50] rounded bg-[#4CAF50]/10 text-[#4CAF50] font-label-caps text-label-caps"><span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>Óptimo</div>`;
+                } else if(c.estado === 'Alerta') {
+                    statusHtml = `<div class="inline-flex items-center gap-1.5 px-2 py-1 border border-primary-container rounded bg-primary-container/10 text-primary-container font-label-caps text-label-caps"><span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">info</span>Alerta</div>`;
+                    tempClass = 'text-primary-container';
+                    iconArrow = '<span class="material-symbols-outlined text-[14px] align-middle">arrow_upward</span>';
+                } else if(c.estado === 'Crítico') {
+                    statusHtml = `<div class="inline-flex items-center gap-1.5 px-2 py-1 border border-error rounded bg-error/10 text-error font-label-caps text-label-caps"><span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">warning</span>Crítico</div>`;
+                    bgClass += ' bg-error-container/5';
+                    weightClass = 'text-error';
+                    iconArrow = '<span class="material-symbols-outlined text-[14px] align-middle">arrow_downward</span>';
+                }
+
+                const tr = document.createElement('tr');
+                tr.className = 'border-b border-surface-container-highest ' + bgClass;
+                tr.innerHTML = `
+                    <td data-label="ID COLMENA" class="p-4 border-b border-surface-container-highest md:border-none font-label-caps text-label-caps text-primary-container">
+                        <div class="flex items-center gap-3">
+                            <div class="flex flex-col justify-center text-right md:text-left">
+                                <span>${c.identificador || 'S/N'}</span>
+                                <span class="text-[10px] text-on-surface-variant mt-0.5 leading-none">ID: ${c.codigoEscaneo}</span>
+                            </div>
+                            ${c.esPiloto ? '<div class="w-6 h-6 shrink-0 flex items-center justify-center border border-outline-variant bg-surface-container-high rounded text-on-surface font-label-caps text-[12px]" title="Colmena Piloto">P</div>' : ''}
+                        </div>
+                    </td>
+                    <td data-label="APIARIO" class="p-4 border-b border-surface-container-highest md:border-none">${c.apiarioNombre || 'Desconocido'}</td>
+                    <td data-label="ESTADO" class="p-4 border-b border-surface-container-highest md:border-none">${statusHtml}</td>
+                    <td data-label="PESO (KG)" class="p-4 border-b border-surface-container-highest md:border-none ${weightClass}">${c.peso} ${weightClass ? iconArrow : ''}</td>
+                    <td data-label="TEMP." class="p-4 border-b border-surface-container-highest md:border-none ${tempClass}">${c.esPiloto ? c.temp + '°C ' + (tempClass ? iconArrow : '') : '<span class="text-on-surface-variant/50">N/A</span>'}</td>
+                    <td data-label="ACCIÓN" class="p-4 md:border-none text-right">
+                        <div class="flex items-center justify-end gap-3 pr-2">
+                            <a href="/Colmenas/Detalles/${c.id}" class="text-on-surface-variant hover:text-primary-container transition-colors flex items-center justify-center" title="Ver Detalles">
+                                <span class="material-symbols-outlined text-[20px]">visibility</span>
+                            </a>
+                            <button onclick="openDeleteModal(${c.id}, '${c.identificador || c.codigoEscaneo}')" class="text-on-surface-variant hover:text-error transition-colors flex items-center justify-center" title="Eliminar Colmena">
+                                <span class="material-symbols-outlined text-[20px]">delete</span>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            pagText.textContent = `Mostrando ${filteredColmenas.length === 0 ? 0 : start + 1} a ${end} de ${filteredColmenas.length} colmenas`;
+            
+            btnPrev.disabled = currentPage === 1;
+            btnNext.disabled = currentPage === Math.max(1, totalPages);
+            renderPaginationControls(Math.max(1, totalPages));
+        }
+
+        // Event Listeners for Filters
+        filterApiario.addEventListener('change', applyFilters);
+        filterEstado.addEventListener('change', applyFilters);
+        filterComportamiento.addEventListener('change', applyFilters);
+        filterTipo.addEventListener('change', applyFilters);
+        sortField.addEventListener('change', applyFilters);
+        filterSearch.addEventListener('input', applyFilters);
+
+        // Pagination Events
+        btnPrev.addEventListener('click', () => {
+            if(currentPage > 1) {
+                currentPage--;
+                renderTable();
+            }
+        });
+
+        btnNext.addEventListener('click', () => {
+            const totalPages = Math.ceil(filteredColmenas.length / ITEMS_PER_PAGE);
+            if(currentPage < totalPages) {
+                currentPage++;
+                renderTable();
+            }
+        });
+
+        // Initialize Table
+        renderTable();
+
+        // Modal Logic
+        const modal = document.getElementById('registrarModal');
+        
+        function openModal() {
+            modal.classList.remove('modal-hidden');
+        }
+        function closeModal() {
+            modal.classList.add('modal-hidden');
+        }
+
+        document.getElementById('btnOpenRegistrar').addEventListener('click', openModal);
+        document.getElementById('btnCancelRegistrar').addEventListener('click', closeModal);
+        document.getElementById('btnCancelRegistrarIcon').addEventListener('click', closeModal);
+
+        // Delete Modal Logic
+        const deleteModal = document.getElementById('deleteModal');
+        const deleteColmenaId = document.getElementById('deleteColmenaId');
+        const deleteColmenaName = document.getElementById('deleteColmenaName');
+
+        window.openDeleteModal = function(id, name) {
+            deleteColmenaId.value = id;
+            deleteColmenaName.textContent = name;
+            deleteModal.classList.remove('modal-hidden');
+        };
+
+        document.getElementById('btnCancelDelete').addEventListener('click', () => {
+            deleteModal.classList.add('modal-hidden');
+        });
+
+        // --- SCANNER LOGIC ---
+        const btnScanCode = document.getElementById('btnScanCode');
+        const modalDesktop = document.getElementById('scannerModalDesktop');
+        const modalMobile = document.getElementById('scannerModalMobile');
+        
+        btnScanCode.addEventListener('click', () => {
+            if(window.innerWidth < 768 || /Mobi|Android/i.test(navigator.userAgent)) {
+                openMobileScanner();
+            } else {
+                modalDesktop.classList.remove('modal-hidden');
+                setTimeout(() => document.getElementById('manualScanInput').focus(), 100);
+            }
+        });
+
+        document.getElementById('btnCloseScannerDesktop').addEventListener('click', () => {
+            modalDesktop.classList.add('modal-hidden');
+            document.getElementById('manualScanError').classList.add('hidden');
+            document.getElementById('manualScanInput').value = '';
+        });
+
+        document.getElementById('btnSearchManualScan').addEventListener('click', () => {
+            const inputVal = document.getElementById('manualScanInput').value;
+            if(inputVal.length === 6) {
+                const found = rawColmenas.find(c => c.codigoEscaneo === inputVal);
+                if(found) {
+                    window.location.href = `/Colmenas/Detalles/${found.id}`;
+                } else {
+                    document.getElementById('manualScanError').classList.remove('hidden');
+                }
+            } else {
+                document.getElementById('manualScanError').classList.remove('hidden');
+            }
+        });
+
+        // Tesseract Mobile Logic
+        let videoStream = null;
+        let videoDevices = [];
+        let currentDeviceIndex = 0;
+        const video = document.getElementById('scannerVideo');
+        const canvas = document.getElementById('scannerCanvas');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        const statusText = document.getElementById('scanStatusMobile');
+        const btnCapture = document.getElementById('btnCaptureScan');
+        const btnSwitchCamera = document.getElementById('btnSwitchCamera');
+
+        async function initCamera(deviceId = null) {
+            if(videoStream) {
+                videoStream.getTracks().forEach(track => track.stop());
+            }
+            
+            const constraints = {
+                video: {
+                    width: { ideal: 1920 },
+                    height: { ideal: 1080 },
+                    advanced: [{ focusMode: "continuous" }]
+                }
+            };
+            
+            if (deviceId) {
+                constraints.video.deviceId = { exact: deviceId };
+            } else {
+                constraints.video.facingMode = "environment";
+            }
+
+            try {
+                videoStream = await navigator.mediaDevices.getUserMedia(constraints);
+                video.srcObject = videoStream;
+                
+                // Enumerate devices after permission is granted to get labels
+                if (videoDevices.length === 0) {
+                    const devices = await navigator.mediaDevices.enumerateDevices();
+                    videoDevices = devices.filter(device => device.kind === 'videoinput');
+                    if (videoDevices.length > 1) {
+                        btnSwitchCamera.classList.remove('hidden');
+                    }
+                }
+                
+                statusText.textContent = "Posiciona el código y presiona capturar";
+                btnCapture.disabled = false;
+            } catch (err) {
+                statusText.textContent = "Error al acceder a la cámara";
+                console.error(err);
+            }
+        }
+
+        async function openMobileScanner() {
+            modalMobile.classList.remove('modal-hidden');
+            statusText.textContent = "Iniciando cámara...";
+            btnCapture.disabled = true;
+            await initCamera();
+        }
+
+        btnSwitchCamera.addEventListener('click', () => {
+            if (videoDevices.length > 1) {
+                currentDeviceIndex = (currentDeviceIndex + 1) % videoDevices.length;
+                const nextDevice = videoDevices[currentDeviceIndex];
+                statusText.textContent = "Cambiando cámara...";
+                btnCapture.disabled = true;
+                initCamera(nextDevice.deviceId);
+            }
+        });
+
+        document.getElementById('btnCloseScannerMobile').addEventListener('click', () => {
+            closeMobileScanner();
+        });
+
+        function closeMobileScanner() {
+            modalMobile.classList.add('modal-hidden');
+            if(videoStream) {
+                videoStream.getTracks().forEach(track => track.stop());
+                videoStream = null;
+            }
+        }
+
+        // --- CALCULO ALZAS ---
+        const inputsAlzas = document.querySelectorAll('.alza-input');
+        const displayMielKg = document.getElementById('displayMielKg');
+        const inputMielKg = document.getElementById('ProduccionMielKg');
+
+        function calcularProduccion() {
+            const alzas = parseInt(document.getElementById('Alzas').value) || 0;
+            const alzas34 = parseInt(document.getElementById('AlzasTresCuartos').value) || 0;
+            const medias = parseInt(document.getElementById('MediasAlzas').value) || 0;
+
+            const totalKg = (alzas * 22) + (alzas34 * 17) + (medias * 12);
+            
+            displayMielKg.textContent = totalKg.toFixed(1);
+            inputMielKg.value = totalKg;
+        }
+
+        inputsAlzas.forEach(input => {
+            input.addEventListener('input', calcularProduccion);
+        });
+
+        btnCapture.addEventListener('click', async () => {
+            if(!videoStream) return;
+            statusText.textContent = "Analizando imagen...";
+            btnCapture.disabled = true;
+            
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            const targetY = canvas.height * 0.3;
+            const targetH = canvas.height * 0.4;
+            const targetX = canvas.width * 0.1;
+            const targetW = canvas.width * 0.8;
+            
+            const imageData = ctx.getImageData(targetX, targetY, targetW, targetH);
+            const cropCanvas = document.createElement('canvas');
+            cropCanvas.width = targetW;
+            cropCanvas.height = targetH;
+            const cropCtx = cropCanvas.getContext('2d');
+            cropCtx.putImageData(imageData, 0, 0);
+
+            try {
+                const base64Data = cropCanvas.toDataURL('image/jpeg', 0.8);
+                
+                const response = await fetch('/Colmenas/RecognizeCode', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ base64Image: base64Data })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.statusText}`);
+                }
+
+                const result = await response.json();
+                
+                if (result.success && result.digits && result.digits.length >= 6) {
+                    const code = result.digits.substring(0, 6);
+                    const found = rawColmenas.find(c => c.codigoEscaneo === code);
+                    if(found) {
+                        statusText.innerHTML = `<span class="text-[#4CAF50] font-bold">¡Éxito! Redirigiendo a ID: ${code}</span>`;
+                        setTimeout(() => {
+                            window.location.href = `/Colmenas/Detalles/${found.id}`;
+                        }, 1000);
+                    } else {
+                        statusText.innerHTML = `<span class="text-error font-bold">Código ${code} no encontrado.</span>`;
+                        setTimeout(() => {
+                            statusText.textContent = "Intenta de nuevo.";
+                            btnCapture.disabled = false;
+                        }, 2000);
+                    }
+                } else {
+                    statusText.textContent = "No se detectaron 6 dígitos. Intenta de nuevo.";
+                    btnCapture.disabled = false;
+                }
+            } catch(e) {
+                statusText.textContent = "Error en análisis OCR.";
+                console.error(e);
+                btnCapture.disabled = false;
+            }
+        });
+    </script>
+}

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sin Conexión - Zánganos S.A.</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&family=Inter:wght@400;500&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface": "#121414",
+                        "on-surface": "#e3e2e2",
+                        "on-surface-variant": "#cfc6ab",
+                        "primary-container": "#ffd900",
+                        "on-primary-container": "#715f00",
+                        "surface-container": "#1e2020",
+                        "surface-container-high": "#292a2a",
+                        "outline-variant": "#4c4732"
+                    },
+                    fontFamily: {
+                        "display": ["Hanken Grotesk"],
+                        "body-md": ["Inter"],
+                        "label-caps": ["JetBrains Mono"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #1E1E1E; color: #e3e2e2; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="font-body-md antialiased bg-surface min-h-screen flex items-center justify-center p-6">
+    <div class="max-w-md w-full bg-surface-container border border-outline-variant rounded-xl p-8 text-center flex flex-col items-center gap-6">
+        <span class="material-symbols-outlined text-primary-container text-[64px]">wifi_off</span>
+        <div>
+            <h1 class="font-display text-2xl font-bold text-on-surface mb-2">Sin Conexión a Internet</h1>
+            <p class="text-on-surface-variant">Estás en un área sin cobertura y esta página no está en tu caché local.</p>
+        </div>
+        <div class="bg-surface-container-high border border-outline-variant rounded-lg p-4 w-full text-left">
+            <h3 class="font-label-caps text-xs text-primary-container mb-2">QUÉ PUEDES HACER</h3>
+            <ul class="text-sm text-on-surface space-y-2 list-disc pl-4">
+                <li>Regresar a una colmena que ya hayas visitado.</li>
+                <li>Esperar a recuperar la señal de red para acceder a este contenido específico.</li>
+            </ul>
+        </div>
+        <button onclick="window.history.back()" class="bg-primary-container text-on-primary-container font-label-caps font-bold px-6 py-3 rounded hover:bg-primary-container/90 transition-colors w-full flex items-center justify-center gap-2">
+            <span class="material-symbols-outlined">arrow_back</span> Regresar
+        </button>
+    </div>
+</body>
+</html>

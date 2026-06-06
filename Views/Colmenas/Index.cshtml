@@ -120,9 +120,9 @@
                 </table>
             </div>
             <!-- Pagination -->
-            <div class="bg-transparent border-t border-surface-container-highest mt-4 pt-4 flex justify-between items-center text-on-surface-variant font-body-sm text-body-sm">
+            <div class="bg-transparent border-t border-surface-container-highest mt-4 pt-4 flex flex-col sm:flex-row justify-between items-center gap-4 text-on-surface-variant font-body-sm text-body-sm text-center sm:text-left">
                 <span id="paginationText">Mostrando 0 de 0 colmenas</span>
-                <div class="flex items-center gap-1">
+                <div class="flex items-center gap-1 justify-center w-full sm:w-auto">
                     <button id="btnPrevPage" class="w-8 h-8 flex items-center justify-center border border-outline-variant rounded hover:text-primary-container hover:border-primary-container transition-colors disabled:opacity-50">
                         <span class="material-symbols-outlined text-[18px]">chevron_left</span>
                     </button>
@@ -370,6 +370,7 @@
 </div>
 
 @section Scripts {
+    <script src="~/js/paddle-ocr.js"></script>
     <script>
         const rawColmenas = @Html.Raw(ViewBag.ColmenasJson);
         
@@ -750,6 +751,30 @@
             input.addEventListener('input', calcularProduccion);
         });
 
+        // --- PADDLE OCR (ONNX) OFFLINE LOGIC ---
+        let ocrService = null;
+        let lastOcrError = "";
+        async function loadOcrModel() {
+            if (!ocrService) {
+                statusText.textContent = "Cargando IA de lectura...";
+                try {
+                    ocrService = new window.PaddleOcrService();
+                    await ocrService.initialize();
+                } catch(e) {
+                    console.error("Error cargando PaddleOCR", e);
+                    lastOcrError = e.message;
+                    ocrService = null;
+                }
+            }
+        }
+        
+        // Precargar en segundo plano cuando hay internet
+        window.addEventListener('load', () => {
+            if (navigator.onLine) {
+                setTimeout(loadOcrModel, 2000);
+            }
+        });
+
         btnCapture.addEventListener('click', async () => {
             if(!videoStream) return;
             statusText.textContent = "Analizando imagen...";
@@ -772,46 +797,72 @@
             cropCtx.putImageData(imageData, 0, 0);
 
             try {
-                const base64Data = cropCanvas.toDataURL('image/jpeg', 0.8);
-                
-                const response = await fetch('/Colmenas/RecognizeCode', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ base64Image: base64Data })
-                });
+                if (navigator.onLine) {
+                    // MODO ONLINE (Gemini Backend)
+                    const base64Data = cropCanvas.toDataURL('image/jpeg', 0.8);
+                    
+                    const response = await fetch('/Colmenas/RecognizeCode', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ base64Image: base64Data })
+                    });
 
-                if (!response.ok) {
-                    throw new Error(`Server error: ${response.statusText}`);
-                }
+                    if (!response.ok) {
+                        throw new Error(`Server error: ${response.statusText}`);
+                    }
 
-                const result = await response.json();
-                
-                if (result.success && result.digits && result.digits.length >= 6) {
-                    const code = result.digits.substring(0, 6);
-                    const found = rawColmenas.find(c => c.codigoEscaneo === code);
-                    if(found) {
-                        statusText.innerHTML = `<span class="text-[#4CAF50] font-bold">¡Éxito! Redirigiendo a ID: ${code}</span>`;
-                        setTimeout(() => {
-                            window.location.href = `/Colmenas/Detalles/${found.id}`;
-                        }, 1000);
+                    const result = await response.json();
+                    if (result.success && result.digits && result.digits.length >= 6) {
+                        procesarEscaneo(result.digits.substring(0, 6));
                     } else {
-                        statusText.innerHTML = `<span class="text-error font-bold">Código ${code} no encontrado.</span>`;
-                        setTimeout(() => {
-                            statusText.textContent = "Intenta de nuevo.";
-                            btnCapture.disabled = false;
-                        }, 2000);
+                        throw new Error("No se detectaron 6 dígitos. Intenta de nuevo.");
                     }
                 } else {
-                    statusText.textContent = "No se detectaron 6 dígitos. Intenta de nuevo.";
-                    btnCapture.disabled = false;
+                    // MODO OFFLINE (PaddleOCR Web)
+                    await loadOcrModel();
+                    if (!ocrService) throw new Error("Fallo modelo local: " + lastOcrError);
+                    
+                    // Pasar el canvas al reconocedor de PaddleOCR
+                    const ocrResult = await ocrService.recognize(cropCanvas, { flatten: true });
+                    
+                    if (ocrResult && ocrResult.text) {
+                        // Extraer solo números de la respuesta
+                        const cleanDigits = ocrResult.text.replace(/\D/g, '');
+                        if (cleanDigits.length >= 6) {
+                            procesarEscaneo(cleanDigits.substring(0, 6));
+                        } else {
+                            throw new Error(`Números incompletos leídos offline: ${cleanDigits}`);
+                        }
+                    } else {
+                        throw new Error("No se pudo leer ningún número offline.");
+                    }
                 }
             } catch(e) {
-                statusText.textContent = "Error en análisis OCR.";
+                statusText.textContent = e.message || "Error en análisis OCR.";
                 console.error(e);
-                btnCapture.disabled = false;
+                setTimeout(() => {
+                    statusText.textContent = "Intenta de nuevo.";
+                    btnCapture.disabled = false;
+                }, 2000);
             }
         });
+        
+        function procesarEscaneo(code) {
+            const found = rawColmenas.find(c => c.codigoEscaneo === code);
+            if(found) {
+                statusText.innerHTML = `<span class="text-[#4CAF50] font-bold">¡Éxito! Redirigiendo a ID: ${code}</span>`;
+                setTimeout(() => {
+                    window.location.href = `/Colmenas/Detalles/${found.id}`;
+                }, 1000);
+            } else {
+                statusText.innerHTML = `<span class="text-error font-bold">Código ${code} no encontrado.</span>`;
+                setTimeout(() => {
+                    statusText.textContent = "Intenta de nuevo.";
+                    btnCapture.disabled = false;
+                }, 2000);
+            }
+        }
     </script>
 }

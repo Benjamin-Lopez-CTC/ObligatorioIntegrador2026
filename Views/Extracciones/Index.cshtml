@@ -40,20 +40,46 @@
                             foreach (var extraccion in Model)
                             {
                                 <tr class="border-b border-surface-container-highest hover:bg-surface-container transition-colors">
-                                    <td class="p-4 font-label-caps text-label-caps text-on-surface">@extraccion.Fecha.ToString("dd MMM yyyy")</td>
-                                    <td class="p-4 font-bold text-primary-container">@extraccion.KilosTotales.ToString("0.0") kg</td>
-                                    <td class="p-4">@extraccion.CantidadColmenasCosechadas colmenas</td>
+                                    <td class="p-4 font-label-caps text-label-caps text-on-surface">
+                                        <div class="flex items-center gap-2">
+                                            <span class="material-symbols-outlined text-[18px] text-on-surface-variant">calendar_month</span>
+                                            @extraccion.Fecha.ToString("dd MMM yyyy")
+                                        </div>
+                                    </td>
+                                    <td class="p-4 font-bold text-primary-container">
+                                        <div class="bg-primary-container/10 px-2 py-1 rounded inline-flex items-center gap-1 border border-primary-container/20">
+                                            <span class="material-symbols-outlined text-[16px]">scale</span>
+                                            @extraccion.KilosTotales.ToString("0.0") kg
+                                        </div>
+                                    </td>
+                                    <td class="p-4">
+                                        <div class="flex items-center gap-2">
+                                            <span class="material-symbols-outlined text-[18px] text-on-surface-variant">hive</span>
+                                            @extraccion.CantidadColmenasCosechadas colmenas
+                                        </div>
+                                    </td>
                                     <td class="p-4">
                                         @if (extraccion.Ganancia != null)
                                         {
-                                            <span class="text-on-surface">US$ @extraccion.Ganancia.Monto.ToString("N2")</span>
+                                            <div class="flex items-center gap-2 text-on-surface">
+                                                <span class="material-symbols-outlined text-[18px] text-[#4CAF50]">payments</span>
+                                                US$ @extraccion.Ganancia.Monto.ToString("N2")
+                                            </div>
                                         }
                                         else
                                         {
-                                            <span class="text-on-surface-variant">Sin vincular</span>
+                                            <div class="flex items-center gap-2 text-on-surface-variant">
+                                                <span class="material-symbols-outlined text-[18px]">account_balance_wallet</span>
+                                                Sin vincular
+                                            </div>
                                         }
                                     </td>
-                                    <td class="p-4 text-on-surface-variant truncate max-w-[200px]">@extraccion.Notas</td>
+                                    <td class="p-4 text-on-surface-variant truncate max-w-[200px]">
+                                        <div class="flex items-center gap-2">
+                                            <span class="material-symbols-outlined text-[18px]">description</span>
+                                            @(string.IsNullOrEmpty(extraccion.Notas) ? "Sin observaciones adicionales." : extraccion.Notas)
+                                        </div>
+                                    </td>
                                 </tr>
                             }
                         }
@@ -101,7 +127,7 @@
                     
                     <button type="button" id="btnAddColmenaRow" class="mt-3 flex items-center gap-1 text-primary-container hover:text-primary-fixed transition-colors font-label-caps text-label-caps">
                         <span class="material-symbols-outlined text-[18px]">add</span>
-                        + Agregar colmena
+                        Agregar colmena
                     </button>
                 </div>
 
@@ -206,7 +232,7 @@
         function addColmenaRowUI() {
             const container = document.getElementById('colmenasRowsContainer');
             const rowDiv = document.createElement('div');
-            rowDiv.className = 'flex flex-col md:flex-row items-center gap-4 p-3 bg-surface-container-high border border-outline-variant rounded colmena-row relative';
+            rowDiv.className = 'flex flex-col md:flex-row items-center gap-4 p-3 bg-surface-container-high border border-outline-variant rounded colmena-row';
             
             // Select Colmena
             const select = document.createElement('select');
@@ -222,10 +248,37 @@
                 select.appendChild(opt);
             });
 
+            // Card body for Alzas
+            const cardBody = document.createElement('div');
+            cardBody.className = 'flex items-center justify-around flex-grow md:flex-grow-0 hidden alzas-card gap-2 md:gap-4';
+            cardBody.innerHTML = `
+                <div class="flex flex-col items-center gap-1">
+                    <span class="font-label-caps text-[10px] text-on-surface-variant text-center">Alzas</span>
+                    <div class="flex flex-col">
+                        <input type="number" class="w-14 sm:w-16 bg-background border border-outline-variant px-1 sm:px-2 py-1 rounded text-on-surface focus:border-primary-container outline-none text-center text-sm" min="0" value="0" data-type="alzas" disabled />
+                        <span class="text-[9px] text-on-surface-variant disp-alzas mt-0.5 text-center">Disp: 0</span>
+                    </div>
+                </div>
+                <div class="flex flex-col items-center gap-1">
+                    <span class="font-label-caps text-[10px] text-on-surface-variant text-center">Medias</span>
+                    <div class="flex flex-col">
+                        <input type="number" class="w-14 sm:w-16 bg-background border border-outline-variant px-1 sm:px-2 py-1 rounded text-on-surface focus:border-primary-container outline-none text-center text-sm" min="0" value="0" data-type="medias" disabled />
+                        <span class="text-[9px] text-on-surface-variant disp-medias mt-0.5 text-center">Disp: 0</span>
+                    </div>
+                </div>
+                <div class="flex flex-col items-center gap-1">
+                    <span class="font-label-caps text-[10px] text-on-surface-variant text-center">3/4</span>
+                    <div class="flex flex-col">
+                        <input type="number" class="w-14 sm:w-16 bg-background border border-outline-variant px-1 sm:px-2 py-1 rounded text-on-surface focus:border-primary-container outline-none text-center text-sm" min="0" value="0" data-type="trescuartos" disabled />
+                        <span class="text-[9px] text-on-surface-variant disp-tres mt-0.5 text-center">Disp: 0</span>
+                    </div>
+                </div>
+            `;
+
             // Remove Btn
             const removeBtn = document.createElement('button');
             removeBtn.type = 'button';
-            removeBtn.className = 'absolute top-1/2 -translate-y-1/2 right-2 text-on-surface-variant hover:text-error transition-colors p-1 flex items-center justify-center';
+            removeBtn.className = 'text-on-surface-variant hover:text-error transition-colors p-2 flex items-center justify-center shrink-0 bg-surface-container border border-outline-variant rounded';
             removeBtn.innerHTML = '<span class="material-symbols-outlined text-[20px]">delete</span>';
             removeBtn.title = 'Quitar';
             removeBtn.addEventListener('click', () => {
@@ -233,32 +286,11 @@
                 updateAvailableColmenas();
             });
 
-            // Card body for Alzas
-            const cardBody = document.createElement('div');
-            cardBody.className = 'flex items-center justify-around w-full md:w-auto md:ml-auto gap-4 hidden alzas-card pr-8';
-            cardBody.innerHTML = `
-                <div class="flex flex-col items-center gap-1">
-                    <span class="font-label-caps text-[10px] text-on-surface-variant text-center">Alzas</span>
-                    <div class="flex flex-col">
-                        <input type="number" class="w-16 bg-background border border-outline-variant px-2 py-1 rounded text-on-surface focus:border-primary-container outline-none text-center text-sm" min="0" value="0" data-type="alzas" disabled />
-                        <span class="text-[9px] text-on-surface-variant disp-alzas mt-0.5 text-center">Disp: 0</span>
-                    </div>
-                </div>
-                <div class="flex flex-col items-center gap-1">
-                    <span class="font-label-caps text-[10px] text-on-surface-variant text-center">Medias</span>
-                    <div class="flex flex-col">
-                        <input type="number" class="w-16 bg-background border border-outline-variant px-2 py-1 rounded text-on-surface focus:border-primary-container outline-none text-center text-sm" min="0" value="0" data-type="medias" disabled />
-                        <span class="text-[9px] text-on-surface-variant disp-medias mt-0.5 text-center">Disp: 0</span>
-                    </div>
-                </div>
-                <div class="flex flex-col items-center gap-1">
-                    <span class="font-label-caps text-[10px] text-on-surface-variant text-center">3/4</span>
-                    <div class="flex flex-col">
-                        <input type="number" class="w-16 bg-background border border-outline-variant px-2 py-1 rounded text-on-surface focus:border-primary-container outline-none text-center text-sm" min="0" value="0" data-type="trescuartos" disabled />
-                        <span class="text-[9px] text-on-surface-variant disp-tres mt-0.5 text-center">Disp: 0</span>
-                    </div>
-                </div>
-            `;
+            // Container for cardBody and removeBtn
+            const bottomRow = document.createElement('div');
+            bottomRow.className = 'flex w-full md:w-auto md:flex-grow items-center justify-end gap-2 md:gap-4';
+            bottomRow.appendChild(cardBody);
+            bottomRow.appendChild(removeBtn);
 
             select.addEventListener('change', () => {
                 const opt = select.options[select.selectedIndex];
@@ -294,8 +326,7 @@
             });
 
             rowDiv.appendChild(select);
-            rowDiv.appendChild(removeBtn);
-            rowDiv.appendChild(cardBody);
+            rowDiv.appendChild(bottomRow);
             container.appendChild(rowDiv);
             
             updateAvailableColmenas();
