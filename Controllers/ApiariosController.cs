@@ -17,20 +17,20 @@ namespace ObligatorioIntegrador2026.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index(string sortBy, bool desc = false, string search = null)
+        public async Task<IActionResult> Index(string sortBy, bool desc = true, string search = null)
         {
             var query = _context.Apiarios.Include(a => a.Colmenas).AsQueryable();
 
-            if (!string.IsNullOrEmpty(search))
-            {
-                var lowerSearch = search.ToLower();
-                query = query.Where(a => a.Nombre.ToLower().Contains(lowerSearch));
-            }
+
 
             if (!string.IsNullOrEmpty(sortBy))
             {
                 switch (sortBy)
                 {
+                    case "nombre":
+                        query = desc ? query.OrderBy(a => a.Nombre)
+                                     : query.OrderByDescending(a => a.Nombre);
+                        break;
                     case "produccion":
                         query = desc ? query.OrderByDescending(a => a.Colmenas.Sum(c => c.ProduccionMielKg)) 
                                      : query.OrderBy(a => a.Colmenas.Sum(c => c.ProduccionMielKg));

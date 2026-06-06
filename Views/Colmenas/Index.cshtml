@@ -83,6 +83,7 @@
                         <div class="relative flex-grow">
                             <select id="sortField" class="w-full bg-background border border-outline-variant text-on-surface font-body-sm text-body-sm rounded p-3 pr-8 focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container transition-colors">
                                 <option value="id">ID (Por Defecto)</option>
+                                <option value="nombre">Nombre</option>
                                 <option value="peso">Peso (Kg)</option>
                                 <option value="temperatura">Temperatura (°C)</option>
                             </select>
@@ -449,9 +450,11 @@
             filteredColmenas.sort((a, b) => {
                 let valA, valB;
                 if(sortVal === 'peso') {
-                    valA = a.peso; valB = b.peso;
+                    valA = parseFloat(a.peso); valB = parseFloat(b.peso);
                 } else if(sortVal === 'temperatura') {
-                    valA = a.temp; valB = b.temp;
+                    valA = parseFloat(a.temp); valB = parseFloat(b.temp);
+                } else if(sortVal === 'nombre') {
+                    valA = (a.identificador || '').toLowerCase(); valB = (b.identificador || '').toLowerCase();
                 } else {
                     valA = a.id; valB = b.id;
                 }

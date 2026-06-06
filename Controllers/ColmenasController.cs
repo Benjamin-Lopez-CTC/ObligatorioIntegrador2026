@@ -44,7 +44,8 @@ namespace ObligatorioIntegrador2026.Controllers
                 peso = c.PesoKg.ToString("0.0"),
                 temp = c.TemperaturaInterna.ToString("0.0"),
                 comportamiento = c.ComportamientoAbejas,
-                esPiloto = c.EsPiloto
+                esPiloto = c.EsPiloto,
+                esNucleo = c.EsNucleo
             }), options);
 
             ViewBag.ColmenasJson = colmenasJson;
@@ -61,10 +62,16 @@ namespace ObligatorioIntegrador2026.Controllers
             ModelState.Remove("CodigoEscaneo");
             ModelState.Remove("Estado");
 
+            if (!colmena.EsPiloto)
+            {
+                ModelState.Remove("TemperaturaInterna");
+                ModelState.Remove("HumedadInterna");
+            }
+
             if (ModelState.IsValid)
             {
                 colmena.Estado = "Óptimo"; // Default
-                colmena.PesoKg = 0;
+                colmena.PesoKg = 40.0; // Valor normal estándar en lugar de 0
                 
                 // Generate a unique 6 digit code
                 colmena.CodigoEscaneo = new Random().Next(100000, 999999).ToString();
@@ -142,7 +149,10 @@ namespace ObligatorioIntegrador2026.Controllers
             }
 
             colmena.PesoKg = peso;
-            colmena.ProduccionMielKg = produccion;
+            
+            double maxMiel = (colmena.Alzas * 22.0) + (colmena.MediasAlzas * 12.0) + (colmena.AlzasTresCuartos * 17.0);
+            colmena.ProduccionMielKg = Math.Min(produccion, maxMiel);
+            
             colmena.ComportamientoAbejas = comportamiento;
             colmena.EsNucleo = esNucleo;
 
@@ -167,8 +177,8 @@ namespace ObligatorioIntegrador2026.Controllers
         {
             var colmena = await _context.Colmenas.Include(c => c.NotasTecnicas).FirstOrDefaultAsync(c => c.Id == id);
             if (colmena == null) return NotFound();
-
             double kilosCosechados = (alzasCosechadas * 22.0) + (alzasTresCuartosCosechadas * 17.0) + (mediasAlzasCosechadas * 12.0);
+            kilosCosechados = Math.Min(kilosCosechados, colmena.ProduccionMielKg);
 
             var nuevaNota = new NotaTecnica
             {
@@ -187,13 +197,8 @@ namespace ObligatorioIntegrador2026.Controllers
 
             _context.NotasTecnicas.Add(nuevaNota);
             
-            // Subtract harvested alzas
-            colmena.Alzas = Math.Max(0, colmena.Alzas - alzasCosechadas);
-            colmena.AlzasTresCuartos = Math.Max(0, colmena.AlzasTresCuartos - alzasTresCuartosCosechadas);
-            colmena.MediasAlzas = Math.Max(0, colmena.MediasAlzas - mediasAlzasCosechadas);
-
-            // Actualizar la miel estimada en la colmena
-            colmena.ProduccionMielKg = (colmena.Alzas * 22.0) + (colmena.MediasAlzas * 12.0) + (colmena.AlzasTresCuartos * 17.0);
+            // No se restan las alzas físicas, solo se descuenta la miel producida
+            colmena.ProduccionMielKg = Math.Max(0, colmena.ProduccionMielKg - kilosCosechados);
 
             colmena.EstadoReina = estadoReina;
             

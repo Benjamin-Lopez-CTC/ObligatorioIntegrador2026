@@ -21,8 +21,8 @@
     double precioPorKg = ObligatorioIntegrador2026.Models.GlobalSettings.PrecioMielActual;
     double valorTotal = Model.ProduccionMielKg * precioPorKg;
 
-    double maxMielPorAlza = 22.0; // Cambiado a 22kg de acuerdo con la conversión aprobada
-    double prodPercent = Math.Min(100, Math.Round((Model.ProduccionMielKg / maxMielPorAlza) * 100));
+    double maxMielTotal = (Model.Alzas * 22.0) + (Model.AlzasTresCuartos * 17.0) + (Model.MediasAlzas * 12.0);
+    double prodPercent = maxMielTotal > 0 ? Math.Min(100, Math.Round((Model.ProduccionMielKg / maxMielTotal) * 100)) : 0;
 
     var notasSorted = Model.NotasTecnicas?.OrderByDescending(n => n.Fecha).ToList() ?? new List<ObligatorioIntegrador2026.Models.NotaTecnica>();
     var ultimaNotaObj = notasSorted.FirstOrDefault();
@@ -163,7 +163,7 @@
             <div>
                 <div class="font-display text-[32px] font-bold text-on-surface">@Model.ProduccionMielKg.ToString("0.0") kg</div>
                 <div class="font-body-sm text-body-sm text-on-surface-variant mt-2 flex items-center gap-2">
-                    <span class="">Alza completada al @prodPercent%</span>
+                    <span class="">Capacidad completada al @prodPercent%</span>
                 </div>
                 <div class="w-full h-1 bg-[#333333] mt-3 rounded-full overflow-hidden">
                     <div class="h-full bg-primary-container" style="width: @prodPercent%"></div>
@@ -307,9 +307,11 @@
                             @ultimaNotaObj.Detalles
                         </p>
                     </div>
-                    <div class="flex flex-col items-end gap-1 text-on-surface-variant text-[10px] font-label-caps border-l border-surface-container-highest pl-4 hidden md:flex">
+                    <div class="flex flex-col items-end gap-1 text-on-surface-variant text-[10px] font-label-caps border-l border-surface-container-highest pl-4 hidden md:flex min-w-[120px]">
                         <span>Reina: @ultimaNotaObj.EstadoReina</span>
-                        <span class="material-symbols-outlined text-[16px] text-primary-container mt-1">description</span>
+                        @if (ultimaNotaObj.Temperatura.HasValue) { <span>Temp: @ultimaNotaObj.Temperatura.Value.ToString("0.0")°C</span> }
+                        @if (ultimaNotaObj.Humedad.HasValue) { <span>Hum: @ultimaNotaObj.Humedad.Value.ToString("0.0")%</span> }
+                        @if (ultimaNotaObj.KilosCosechados > 0) { <span class="text-primary-container">Cosechó @ultimaNotaObj.KilosCosechados kg</span> }
                     </div>
                 </div>
 
@@ -332,6 +334,12 @@
                                     <p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">
                                         @nota.Detalles
                                     </p>
+                                </div>
+                                <div class="flex flex-col items-end gap-1 text-on-surface-variant text-[10px] font-label-caps border-l border-surface-container-highest pl-4 hidden md:flex min-w-[120px]">
+                                    <span>Reina: @nota.EstadoReina</span>
+                                    @if (nota.Temperatura.HasValue) { <span>Temp: @nota.Temperatura.Value.ToString("0.0")°C</span> }
+                                    @if (nota.Humedad.HasValue) { <span>Hum: @nota.Humedad.Value.ToString("0.0")%</span> }
+                                    @if (nota.KilosCosechados > 0) { <span class="text-primary-container">Cosechó @nota.KilosCosechados kg</span> }
                                 </div>
                             </div>
                         }
@@ -409,31 +417,34 @@
                     <textarea id="detalles" name="detalles" rows="4" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors resize-none" placeholder="Observaciones generales..."></textarea>
                 </div>
                 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label for="temperatura" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Temperatura (°C)</label>
-                        <input type="number" step="0.1" id="temperatura" name="temperatura" value="@Model.TemperaturaInterna" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                @if (Model.EsPiloto)
+                {
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="temperatura" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Temperatura (°C)</label>
+                            <input type="number" step="0.1" id="temperatura" name="temperatura" value="@Model.TemperaturaInterna" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                        </div>
+                        <div>
+                            <label for="humedad" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Humedad (%)</label>
+                            <input type="number" step="0.1" id="humedad" name="humedad" value="@Model.HumedadInterna" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                        </div>
                     </div>
-                    <div>
-                        <label for="humedad" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Humedad (%)</label>
-                        <input type="number" step="0.1" id="humedad" name="humedad" value="@Model.HumedadInterna" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
-                    </div>
-                </div>
+                }
 
                 <div class="bg-surface-container-low border border-outline-variant rounded p-4">
                     <h5 class="font-label-caps text-label-caps text-on-surface-variant mb-3">Registro de Cosecha (Opcional)</h5>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
                         <div>
                             <label for="alzasCosechadas" class="font-label-caps text-[10px] text-on-surface-variant mb-1 block truncate">Alzas Enteras</label>
-                            <input type="number" id="alzasCosechadas" name="alzasCosechadas" value="0" min="0" class="w-full bg-background border border-outline-variant px-2 py-1.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                            <input type="number" id="alzasCosechadas" name="alzasCosechadas" value="0" min="0" max="@Model.Alzas" class="w-full bg-background border border-outline-variant px-2 py-1.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
                         </div>
                         <div>
                             <label for="alzasTresCuartosCosechadas" class="font-label-caps text-[10px] text-on-surface-variant mb-1 block truncate">Alzas 3/4</label>
-                            <input type="number" id="alzasTresCuartosCosechadas" name="alzasTresCuartosCosechadas" value="0" min="0" class="w-full bg-background border border-outline-variant px-2 py-1.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                            <input type="number" id="alzasTresCuartosCosechadas" name="alzasTresCuartosCosechadas" value="0" min="0" max="@Model.AlzasTresCuartos" class="w-full bg-background border border-outline-variant px-2 py-1.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
                         </div>
                         <div>
                             <label for="mediasAlzasCosechadas" class="font-label-caps text-[10px] text-on-surface-variant mb-1 block truncate">Medias Alzas</label>
-                            <input type="number" id="mediasAlzasCosechadas" name="mediasAlzasCosechadas" value="0" min="0" class="w-full bg-background border border-outline-variant px-2 py-1.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                            <input type="number" id="mediasAlzasCosechadas" name="mediasAlzasCosechadas" value="0" min="0" max="@Model.MediasAlzas" class="w-full bg-background border border-outline-variant px-2 py-1.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
                         </div>
                     </div>
                 </div>

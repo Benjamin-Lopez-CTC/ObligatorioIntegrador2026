@@ -99,11 +99,8 @@ namespace ObligatorioIntegrador2026.Controllers
                     double kilos = (alzas * 22.0) + (tresCuartos * 17.0) + (medias * 12.0);
                     totalKilos += kilos;
 
-                    colmena.Alzas -= alzas;
-                    colmena.MediasAlzas -= medias;
-                    colmena.AlzasTresCuartos -= tresCuartos;
-                    
-                    colmena.ProduccionMielKg = (colmena.Alzas * 22.0) + (colmena.MediasAlzas * 12.0) + (colmena.AlzasTresCuartos * 17.0);
+                    // No se restan las alzas físicas, solo se descuenta la miel
+                    colmena.ProduccionMielKg = Math.Max(0, colmena.ProduccionMielKg - kilos);
                     
                     var nota = new NotaTecnica
                     {

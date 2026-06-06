@@ -187,6 +187,7 @@ namespace ObligatorioIntegrador2026.Controllers
                 temperaturaInterna = c.TemperaturaInterna,
                 humedadInterna = c.HumedadInterna,
                 produccionMielKg = c.ProduccionMielKg,
+                mielCosechadaKg = c.NotasTecnicas.Sum(n => n.KilosCosechados),
                 esPiloto = c.EsPiloto,
                 cantidadAbejas = c.CantidadAbejas,
                 comportamientoAbejas = c.ComportamientoAbejas,
@@ -514,39 +515,7 @@ namespace ObligatorioIntegrador2026.Controllers
                 }
             }
 
-            // Sorting
-            if (sortBy == "stockAsc")
-            {
-                query = query.OrderBy(e => e.Stock);
-            }
-            else if (sortBy == "stockDesc")
-            {
-                query = query.OrderByDescending(e => e.Stock);
-            }
-            else if (sortBy == "nameAsc")
-            {
-                query = query.OrderBy(e => e.Name);
-            }
-            else if (sortBy == "nameDesc")
-            {
-                query = query.OrderByDescending(e => e.Name);
-            }
-            else if (sortBy == "priceAsc")
-            {
-                query = query.OrderBy(e => e.UnitPrice);
-            }
-            else if (sortBy == "priceDesc")
-            {
-                query = query.OrderByDescending(e => e.UnitPrice);
-            }
-            else if (sortBy == "default")
-            {
-                query = query.OrderBy(e => e.DisplayOrder);
-            }
-            else
-            {
-                query = query.OrderBy(e => e.Id);
-            }
+
 
             var list = await query.ToListAsync();
 
@@ -567,6 +536,16 @@ namespace ObligatorioIntegrador2026.Controllers
                 .Distinct()
                 .OrderBy(t => t)
                 .ToListAsync();
+
+            // Sorting in memory
+            if (sortBy == "stockAsc") list = list.OrderBy(e => e.Stock).ToList();
+            else if (sortBy == "stockDesc") list = list.OrderByDescending(e => e.Stock).ToList();
+            else if (sortBy == "nameAsc") list = list.OrderBy(e => RemoveAccents(e.Name)).ToList();
+            else if (sortBy == "nameDesc") list = list.OrderByDescending(e => RemoveAccents(e.Name)).ToList();
+            else if (sortBy == "priceAsc") list = list.OrderBy(e => e.Currency == "USD" ? e.UnitPrice * 40.0 : e.UnitPrice).ToList();
+            else if (sortBy == "priceDesc") list = list.OrderByDescending(e => e.Currency == "USD" ? e.UnitPrice * 40.0 : e.UnitPrice).ToList();
+            else if (sortBy == "default") list = list.OrderBy(e => e.DisplayOrder).ToList();
+            else list = list.OrderBy(e => e.Id).ToList();
 
             return Json(new { success = true, data = list, types = allTypes });
         }
