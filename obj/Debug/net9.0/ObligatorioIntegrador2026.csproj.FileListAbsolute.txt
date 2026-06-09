@@ -146,7 +146,6 @@ C:\Users\Felipe\Desktop\ObligatorioIntegrador2026\obj\Debug\net9.0\scopedcss\bun
 C:\Users\Felipe\Desktop\ObligatorioIntegrador2026\obj\Debug\net9.0\scopedcss\projectbundle\ObligatorioIntegrador2026.bundle.scp.css
 C:\Users\Felipe\Desktop\ObligatorioIntegrador2026\obj\Debug\net9.0\compressed\1ln5jw3hnk-b9sayid5wm.gz
 C:\Users\Felipe\Desktop\ObligatorioIntegrador2026\obj\Debug\net9.0\compressed\5eobrmo28k-9esk1cyi57.gz
-C:\Users\Felipe\Desktop\ObligatorioIntegrador2026\obj\Debug\net9.0\compressed\hyf0m61hv8-xtxxf3hu2r.gz
 C:\Users\Felipe\Desktop\ObligatorioIntegrador2026\obj\Debug\net9.0\compressed\bot1hyuu4t-t1cqhe9u97.gz
 C:\Users\Felipe\Desktop\ObligatorioIntegrador2026\obj\Debug\net9.0\compressed\ns2zatt20p-c2jlpeoesf.gz
 C:\Users\Felipe\Desktop\ObligatorioIntegrador2026\obj\Debug\net9.0\compressed\89425jt89w-sejl45xvog.gz
@@ -534,3 +533,15 @@ C:\Users\Usuario\Desktop\Cosas de Benja\Prog\Antigravity\ObligatorioIntegrador20
 C:\Users\Usuario\Desktop\Cosas de Benja\Prog\Antigravity\ObligatorioIntegrador2026\obj\Debug\net9.0\compressed\06fhuvwxt8-{0}-8fe47tfwxb-8fe47tfwxb.gz
 C:\Users\Usuario\Desktop\Cosas de Benja\Prog\Antigravity\ObligatorioIntegrador2026\obj\Debug\net9.0\compressed\mtipcvk8mq-{0}-211yr77o69-211yr77o69.gz
 C:\Users\Usuario\Desktop\Cosas de Benja\Prog\Antigravity\ObligatorioIntegrador2026\obj\Debug\net9.0\compressed\srs3ubs8w9-{0}-xtvppkfhih-xtvppkfhih.gz
+C:\Users\Felipe\Desktop\ObligatorioIntegrador2026\bin\Debug\net9.0\frontend-build\package-lock.json
+C:\Users\Felipe\Desktop\ObligatorioIntegrador2026\bin\Debug\net9.0\frontend-build\package.json
+C:\Users\Felipe\Desktop\ObligatorioIntegrador2026\obj\Debug\net9.0\compressed\dxl8tvkd8w-f5juepkah2.gz
+C:\Users\Felipe\Desktop\ObligatorioIntegrador2026\obj\Debug\net9.0\compressed\kyaybjstkh-6hb2fbqhd5.gz
+C:\Users\Felipe\Desktop\ObligatorioIntegrador2026\obj\Debug\net9.0\compressed\m1mm5e912y-tpmhinsji5.gz
+C:\Users\Felipe\Desktop\ObligatorioIntegrador2026\obj\Debug\net9.0\compressed\5gfgn1sukn-8s1b1rbj66.gz
+C:\Users\Felipe\Desktop\ObligatorioIntegrador2026\obj\Debug\net9.0\compressed\x1edm9qtd5-8fe47tfwxb.gz
+C:\Users\Felipe\Desktop\ObligatorioIntegrador2026\obj\Debug\net9.0\compressed\qswd133v0t-kcbhzl60o3.gz
+C:\Users\Felipe\Desktop\ObligatorioIntegrador2026\obj\Debug\net9.0\compressed\hyf0m61hv8-6nau0p9y50.gz
+C:\Users\Felipe\Desktop\ObligatorioIntegrador2026\obj\Debug\net9.0\compressed\hixltj40iq-tjlfd1baqu.gz
+C:\Users\Felipe\Desktop\ObligatorioIntegrador2026\obj\Debug\net9.0\compressed\s474vhznbi-s0r48j2cu6.gz
+C:\Users\Felipe\Desktop\ObligatorioIntegrador2026\obj\Debug\net9.0\compressed\ui4czvp19l-we5nb9lsks.gz

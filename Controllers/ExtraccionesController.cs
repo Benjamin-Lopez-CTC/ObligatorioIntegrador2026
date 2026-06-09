@@ -142,6 +142,42 @@ namespace ObligatorioIntegrador2026.Controllers
 
             return Json(new { success = true, message = "Cosecha registrada con éxito." });
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetDetails(int id)
+        {
+            var extraccion = await _context.Extracciones
+                .Include(e => e.Ganancia)
+                .Include(e => e.NotasTecnicas)
+                    .ThenInclude(n => n.Colmena)
+                .FirstOrDefaultAsync(e => e.Id == id);
+
+            if (extraccion == null)
+            {
+                return Json(new { success = false, message = "Extracción no encontrada." });
+            }
+
+            var data = new
+            {
+                id = extraccion.Id,
+                fecha = extraccion.Fecha.ToString("dd/MM/yyyy HH:mm"),
+                kilosTotales = extraccion.KilosTotales,
+                cantidadColmenasCosechadas = extraccion.CantidadColmenasCosechadas,
+                notas = string.IsNullOrWhiteSpace(extraccion.Notas) ? "Sin observaciones adicionales." : extraccion.Notas,
+                gananciaMonto = extraccion.Ganancia?.Monto,
+                detallesColmenas = extraccion.NotasTecnicas.Select(n => new
+                {
+                    colmenaId = n.ColmenaId,
+                    identificador = string.IsNullOrEmpty(n.Colmena?.Identificador) ? n.Colmena?.CodigoEscaneo : n.Colmena.Identificador,
+                    alzas = n.AlzasCosechadas,
+                    medias = n.MediasAlzasCosechadas,
+                    trescuartos = n.AlzasTresCuartosCosechadas,
+                    kilos = n.KilosCosechados
+                }).ToList()
+            };
+
+            return Json(new { success = true, data = data });
+        }
     }
 
     public class CosechaMasaDto

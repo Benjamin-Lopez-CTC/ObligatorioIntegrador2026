@@ -82,10 +82,15 @@
                     <div class="flex gap-2">
                         <div class="relative flex-grow">
                             <select id="sortField" class="w-full bg-background border border-outline-variant text-on-surface font-body-sm text-body-sm rounded p-3 pr-8 focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container transition-colors">
-                                <option value="id">ID (Por Defecto)</option>
-                                <option value="nombre">Nombre</option>
-                                <option value="peso">Peso (Kg)</option>
-                                <option value="temperatura">Temperatura (°C)</option>
+                                 <option value="id">ID (Por Defecto)</option>
+                                 <option value="nombre">Nombre</option>
+                                 <option value="peso">Peso (Kg)</option>
+                                 <option value="temperatura">Temperatura (°C)</option>
+                                 <option value="fechaTratamiento">Fecha de Último Tratamiento</option>
+                                 <option value="fechaNotaTecnica">Fecha de Última Nota Técnica</option>
+                                 <option value="mielProducida">Miel Producida</option>
+                                 <option value="cantTratamientos">Cantidad de Tratamientos</option>
+                                 <option value="cantNotasTecnicas">Cantidad de Notas Técnicas</option>
                             </select>
                         </div>
                         <button id="btnSortOrder" class="p-3 border border-outline-variant rounded hover:text-primary-container hover:border-primary-container transition-colors flex items-center justify-center bg-background" title="Alternar Orden">
@@ -451,11 +456,23 @@
             filteredColmenas.sort((a, b) => {
                 let valA, valB;
                 if(sortVal === 'peso') {
-                    valA = parseFloat(a.peso); valB = parseFloat(b.peso);
+                    valA = a.pesoVal; valB = b.pesoVal;
                 } else if(sortVal === 'temperatura') {
-                    valA = parseFloat(a.temp); valB = parseFloat(b.temp);
+                    valA = a.tempVal; valB = b.tempVal;
                 } else if(sortVal === 'nombre') {
                     valA = (a.identificador || '').toLowerCase(); valB = (b.identificador || '').toLowerCase();
+                } else if(sortVal === 'fechaTratamiento') {
+                    valA = a.fechaUltimoTratamiento ? new Date(a.fechaUltimoTratamiento).getTime() : 0;
+                    valB = b.fechaUltimoTratamiento ? new Date(b.fechaUltimoTratamiento).getTime() : 0;
+                } else if(sortVal === 'fechaNotaTecnica') {
+                    valA = a.fechaUltimaNotaTecnica ? new Date(a.fechaUltimaNotaTecnica).getTime() : 0;
+                    valB = b.fechaUltimaNotaTecnica ? new Date(b.fechaUltimaNotaTecnica).getTime() : 0;
+                } else if(sortVal === 'mielProducida') {
+                    valA = a.produccionMiel; valB = b.produccionMiel;
+                } else if(sortVal === 'cantTratamientos') {
+                    valA = a.cantidadTratamientos; valB = b.cantidadTratamientos;
+                } else if(sortVal === 'cantNotasTecnicas') {
+                    valA = a.cantidadNotasTecnicas; valB = b.cantidadNotasTecnicas;
                 } else {
                     valA = a.id; valB = b.id;
                 }

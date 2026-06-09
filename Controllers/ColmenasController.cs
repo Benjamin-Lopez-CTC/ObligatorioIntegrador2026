@@ -25,8 +25,21 @@ namespace ObligatorioIntegrador2026.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var colmenas = await _context.Colmenas.Include(c => c.Apiario).ToListAsync();
+            var colmenas = await _context.Colmenas
+                .Include(c => c.Apiario)
+                .Include(c => c.NotasTecnicas)
+                .ToListAsync();
+
             var apiarios = await _context.Apiarios.ToListAsync();
+
+            var treatmentsGrouped = await _context.Treatments
+                .GroupBy(t => t.ColmenaId)
+                .Select(g => new {
+                    ColmenaId = g.Key,
+                    LatestDate = (DateTime?)g.Max(t => t.Fecha),
+                    Count = g.Count()
+                })
+                .ToDictionaryAsync(t => t.ColmenaId);
 
             var options = new JsonSerializerOptions
             {
@@ -34,19 +47,42 @@ namespace ObligatorioIntegrador2026.Controllers
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
 
-            var colmenasJson = JsonSerializer.Serialize(colmenas.Select(c => new {
-                id = c.Id,
-                identificador = c.Identificador,
-                codigoEscaneo = c.CodigoEscaneo,
-                apiarioNombre = c.Apiario?.Nombre,
-                apiarioId = c.ApiarioId,
-                estado = c.Estado,
-                peso = c.PesoKg.ToString("0.0"),
-                temp = c.TemperaturaInterna.ToString("0.0"),
-                comportamiento = c.ComportamientoAbejas,
-                esPiloto = c.EsPiloto,
-                esNucleo = c.EsNucleo
-            }), options);
+            var colmenasDto = colmenas.Select(c => {
+                var hasTreatments = treatmentsGrouped.TryGetValue(c.Id, out var tInfo);
+                var latestTreatmentDate = hasTreatments ? tInfo.LatestDate : null;
+                var treatmentCount = hasTreatments ? tInfo.Count : 0;
+
+                var latestNoteDate = c.NotasTecnicas.Any() ? (DateTime?)c.NotasTecnicas.Max(n => n.Fecha) : null;
+                var noteCount = c.NotasTecnicas.Count;
+
+                return new {
+                    id = c.Id,
+                    identificador = c.Identificador,
+                    codigoEscaneo = c.CodigoEscaneo,
+                    apiarioNombre = c.Apiario?.Nombre,
+                    apiarioId = c.ApiarioId,
+                    estado = c.Estado,
+                    peso = c.PesoKg.ToString("0.0"),
+                    pesoVal = c.PesoKg,
+                    temp = c.TemperaturaInterna.ToString("0.0"),
+                    tempVal = c.TemperaturaInterna,
+                    comportamiento = c.ComportamientoAbejas,
+                    esPiloto = c.EsPiloto,
+                    esNucleo = c.EsNucleo,
+                    produccionMiel = c.ProduccionMielKg,
+                    
+                    fechaUltimoTratamiento = latestTreatmentDate,
+                    fechaUltimoTratamientoDisplay = latestTreatmentDate?.ToString("dd/MM/yyyy HH:mm") ?? "N/A",
+                    
+                    fechaUltimaNotaTecnica = latestNoteDate,
+                    fechaUltimaNotaTecnicaDisplay = latestNoteDate?.ToString("dd/MM/yyyy HH:mm") ?? "N/A",
+                    
+                    cantidadTratamientos = treatmentCount,
+                    cantidadNotasTecnicas = noteCount
+                };
+            }).ToList();
+
+            var colmenasJson = JsonSerializer.Serialize(colmenasDto, options);
 
             ViewBag.ColmenasJson = colmenasJson;
             ViewBag.Apiarios = apiarios;

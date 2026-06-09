@@ -483,8 +483,15 @@ namespace ObligatorioIntegrador2026.Controllers
             return Json(new { success = true });
         }
 
-        public IActionResult Inventario()
+        public async Task<IActionResult> Inventario()
         {
+            var analisisActivo = await _context.Analisis.FirstOrDefaultAsync(a => a.FechaFin == null);
+            var ultimoCerrado = await _context.Analisis.Where(a => a.FechaFin != null).OrderByDescending(a => a.FechaFin).FirstOrDefaultAsync();
+
+            ViewBag.AnalisisActivoId = analisisActivo?.Id;
+            ViewBag.UltimoCerradoId = ultimoCerrado?.Id;
+            ViewBag.UltimoCerradoNombre = ultimoCerrado != null ? $"Cierre: {ultimoCerrado.FechaFin?.ToString("dd/MM/yyyy")}" : null;
+
             return View();
         }
 
@@ -562,7 +569,7 @@ namespace ObligatorioIntegrador2026.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateEquipment([FromBody] Equipment model)
+        public async Task<IActionResult> CreateEquipment([FromBody] EquipmentRegistrationDto model)
         {
             if (model == null)
             {
@@ -620,35 +627,66 @@ namespace ObligatorioIntegrador2026.Controllers
 
             // Calculate display order
             int maxOrder = await _context.Equipments.AnyAsync() ? await _context.Equipments.MaxAsync(e => e.DisplayOrder) : 0;
-            model.DisplayOrder = maxOrder + 1;
+            
+            var equipment = new Equipment
+            {
+                Name = model.Name,
+                Type = model.Type,
+                Stock = model.Stock,
+                Category = model.Category,
+                LowThreshold = model.LowThreshold,
+                MediumThreshold = model.MediumThreshold,
+                DisplayOrder = maxOrder + 1,
+                UnitPrice = model.UnitPrice,
+                Currency = model.Currency
+            };
 
-            _context.Equipments.Add(model);
+            _context.Equipments.Add(equipment);
             await _context.SaveChangesAsync();
 
-            // Registrar inversión automática si hay un análisis activo y el stock inicial es mayor a 0
-            if (model.Stock > 0)
+            // Registrar inversión automática si el stock inicial es mayor a 0
+            if (equipment.Stock > 0)
             {
-                var activeAnalysis = await _context.Analisis.FirstOrDefaultAsync(a => a.FechaFin == null);
-                if (activeAnalysis != null)
+                int? analisisDestinoId = model.AnalisisId;
+                if (!analisisDestinoId.HasValue)
                 {
-                    double unitPriceUYU = model.Currency == "USD" ? model.UnitPrice * 40.0 : model.UnitPrice;
+                    var activeAnalysis = await _context.Analisis.FirstOrDefaultAsync(a => a.FechaFin == null);
+                    if (activeAnalysis != null)
+                    {
+                        analisisDestinoId = activeAnalysis.Id;
+                    }
+                    else if (model.CreateNewAnalisis)
+                    {
+                        var newAnalisis = new Analisis
+                        {
+                            FechaInicio = DateTime.Now
+                        };
+                        _context.Analisis.Add(newAnalisis);
+                        await _context.SaveChangesAsync();
+                        analisisDestinoId = newAnalisis.Id;
+                    }
+                }
+
+                if (analisisDestinoId.HasValue)
+                {
+                    double unitPriceUYU = equipment.Currency == "USD" ? equipment.UnitPrice * 40.0 : equipment.UnitPrice;
                     var inversion = new Inversion
                     {
-                        AnalisisId = activeAnalysis.Id,
-                        Titulo = $"Compra inicial: {model.Name}",
-                        Nota = $"Adquisición de {model.Stock} unidades en inventario" + (model.Currency == "USD" ? $" (US$ {model.UnitPrice} c/u, cotiz. $40)" : ""),
-                        Precio = model.Stock * unitPriceUYU
+                        AnalisisId = analisisDestinoId.Value,
+                        Titulo = $"Compra inicial: {equipment.Name}",
+                        Nota = $"Adquisición de {equipment.Stock} unidades en inventario" + (equipment.Currency == "USD" ? $" (US$ {equipment.UnitPrice} c/u, cotiz. $40)" : ""),
+                        Precio = equipment.Stock * unitPriceUYU
                     };
                     _context.Inversiones.Add(inversion);
                     await _context.SaveChangesAsync();
                 }
             }
 
-            return Json(new { success = true, data = model });
+            return Json(new { success = true, data = equipment });
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditEquipment([FromBody] Equipment model)
+        public async Task<IActionResult> EditEquipment([FromBody] EquipmentRegistrationDto model)
         {
             if (model == null)
             {
@@ -724,17 +762,36 @@ namespace ObligatorioIntegrador2026.Controllers
             _context.Equipments.Update(item);
             await _context.SaveChangesAsync();
 
-            // Registrar inversión automática si hay un análisis activo y el stock aumentó
+            // Registrar inversión automática si el stock aumentó
             if (model.Stock > oldStock)
             {
-                var activeAnalysis = await _context.Analisis.FirstOrDefaultAsync(a => a.FechaFin == null);
-                if (activeAnalysis != null)
+                int? analisisDestinoId = model.AnalisisId;
+                if (!analisisDestinoId.HasValue)
+                {
+                    var activeAnalysis = await _context.Analisis.FirstOrDefaultAsync(a => a.FechaFin == null);
+                    if (activeAnalysis != null)
+                    {
+                        analisisDestinoId = activeAnalysis.Id;
+                    }
+                    else if (model.CreateNewAnalisis)
+                    {
+                        var newAnalisis = new Analisis
+                        {
+                            FechaInicio = DateTime.Now
+                        };
+                        _context.Analisis.Add(newAnalisis);
+                        await _context.SaveChangesAsync();
+                        analisisDestinoId = newAnalisis.Id;
+                    }
+                }
+
+                if (analisisDestinoId.HasValue)
                 {
                     int diff = model.Stock - oldStock;
                     double unitPriceUYU = model.Currency == "USD" ? model.UnitPrice * 40.0 : model.UnitPrice;
                     var inversion = new Inversion
                     {
-                        AnalisisId = activeAnalysis.Id,
+                        AnalisisId = analisisDestinoId.Value,
                         Titulo = $"Adquisición de stock: {item.Name}",
                         Nota = $"Reposición de {diff} unidades en inventario" + (model.Currency == "USD" ? $" (US$ {model.UnitPrice} c/u, cotiz. $40)" : ""),
                         Precio = diff * unitPriceUYU
