@@ -117,7 +117,32 @@ using (var scope = app.Services.CreateScope())
         Console.WriteLine($"[DB SETUP] Error al corregir fechas de inspección futuras: {ex.Message}");
     }
 
-
+    // Proactive password hashing update on database setup
+    try
+    {
+        var users = context.Users.ToList();
+        var hasher = new Microsoft.AspNetCore.Identity.PasswordHasher<ObligatorioIntegrador2026.Models.User>();
+        bool anyChanged = false;
+        foreach (var u in users)
+        {
+            if (!u.Password.StartsWith("AQAAAA"))
+            {
+                u.Password = hasher.HashPassword(u, u.Password);
+                context.Users.Update(u);
+                anyChanged = true;
+                Console.WriteLine($"[SECURITY] Migrando contraseña de usuario '{u.Username}' a hash seguro...");
+            }
+        }
+        if (anyChanged)
+        {
+            context.SaveChanges();
+            Console.WriteLine("[SECURITY] Migración de contraseñas a hashes segura completada.");
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"[SECURITY ERROR] Error al migrar contraseñas existentes: {ex.Message}");
+    }
 }
 
 // Configure the HTTP request pipeline.

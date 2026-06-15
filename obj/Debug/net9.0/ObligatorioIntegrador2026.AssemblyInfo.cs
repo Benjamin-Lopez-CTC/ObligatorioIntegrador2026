@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ObligatorioIntegrador2026")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+de2ed2c414218ea43cf2e6e896db050b4aa80a4b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a9c33dd724686a56f4b9729445b56f169d27922a")]
 [assembly: System.Reflection.AssemblyProductAttribute("ObligatorioIntegrador2026")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ObligatorioIntegrador2026")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

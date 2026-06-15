@@ -33,9 +33,36 @@ namespace ObligatorioIntegrador2026.Controllers
             if (ModelState.IsValid)
             {
                 var user = await _context.Users
-                    .FirstOrDefaultAsync(u => u.Username == model.Username && u.Password == model.Password);
+                    .FirstOrDefaultAsync(u => u.Username == model.Username);
 
+                bool isPasswordValid = false;
                 if (user != null)
+                {
+                    var hasher = new Microsoft.AspNetCore.Identity.PasswordHasher<ObligatorioIntegrador2026.Models.User>();
+                    var verificationResult = hasher.VerifyHashedPassword(user, user.Password, model.Password);
+                    
+                    if (verificationResult == Microsoft.AspNetCore.Identity.PasswordVerificationResult.Success)
+                    {
+                        isPasswordValid = true;
+                    }
+                    else if (user.Password == model.Password)
+                    {
+                        // Fallback y migración diferida para contraseñas antiguas en texto plano
+                        isPasswordValid = true;
+                        try
+                        {
+                            user.Password = hasher.HashPassword(user, model.Password);
+                            _context.Users.Update(user);
+                            await _context.SaveChangesAsync();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"[SECURITY] No se pudo migrar la contraseña del usuario {user.Username} a hash: {ex.Message}");
+                        }
+                    }
+                }
+
+                if (isPasswordValid && user != null)
                 {
                     await RecordLoginAttempt(model.Username, true);
 
