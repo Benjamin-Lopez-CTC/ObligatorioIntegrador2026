@@ -589,7 +589,7 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label for="estadoReina" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Estado de la Reina</label>
                         <select id="estadoReina" name="estadoReina" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
@@ -597,7 +597,14 @@
                             <option value="Ausente" selected="@(Model.EstadoReina == "Ausente")">Ausente</option>
                         </select>
                     </div>
-                    <input type="hidden" name="estadoColmena" value="@Model.Estado" />
+                    <div>
+                        <label for="estadoColmena" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Estado General de la Colmena</label>
+                        <select id="estadoColmena" name="estadoColmena" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
+                            <option value="Óptimo" selected="@(Model.Estado == "Óptimo")">Óptimo</option>
+                            <option value="Alerta" selected="@(Model.Estado == "Alerta")">Alerta</option>
+                            <option value="Crítico" selected="@(Model.Estado == "Crítico")">Crítico</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="pt-4 border-t border-surface-container-highest flex flex-col sm:flex-row justify-end gap-3 mt-6">

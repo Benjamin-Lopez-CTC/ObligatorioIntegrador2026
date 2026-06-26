@@ -1,5 +1,5 @@
 # Presentación del Cliente
-Nuestro cliente es Matías Vergues, dueño de la empresa Zánganos SA, una productora apícola la cual se encarga de gestionar alrededor de 800 colmenas distribuidas en varios apiarios, incluyendo la producción de miel, la cual posteriormente es procesada y exportada.
+Nuestro cliente es Matías Verges, dueño de la empresa Zánganos SA, una productora apícola la cual se encarga de gestionar alrededor de 800 colmenas distribuidas en varios apiarios, incluyendo la producción de miel, la cual posteriormente es procesada y exportada.
 Matías es el dueño y unico trabajador de la empresa, lo que implica que debe encargarse de llevar el control de sus colmenas y producción de miel, guardar dicha información, transportar todo el producto y entregarlo en su debido tiempo, además de completar manualmente las fichas del ministerio, labor que es muy dificil para una sola persona sin ayuda de ningun servicio.
 
 # Presentación del Problema

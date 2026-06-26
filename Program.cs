@@ -120,6 +120,35 @@ using (var scope = app.Services.CreateScope())
         Console.WriteLine($"[DB SETUP] Error al corregir fechas de inspección futuras: {ex.Message}");
     }
 
+    // Fix "Vergues" spelling in existing database
+    try
+    {
+        var userVergues = context.Users.FirstOrDefault(u => u.Username == "m.vergues");
+        if (userVergues != null)
+        {
+            Console.WriteLine("[DB SETUP] Corrigiendo usuario m.vergues -> m.verges...");
+            userVergues.Username = "m.verges";
+            userVergues.FullName = "Matías Verges";
+            context.Users.Update(userVergues);
+        }
+
+        var apiariosVergues = context.Apiarios.Where(a => a.Responsable == "Matías Vergues").ToList();
+        if (apiariosVergues.Any())
+        {
+            Console.WriteLine($"[DB SETUP] Corrigiendo responsable en {apiariosVergues.Count} apiarios...");
+            foreach (var apiario in apiariosVergues)
+            {
+                apiario.Responsable = "Matías Verges";
+                context.Apiarios.Update(apiario);
+            }
+        }
+        context.SaveChanges();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"[DB SETUP] Error al corregir ortografía Vergues: {ex.Message}");
+    }
+
     // Proactive password hashing update on database setup
     try
     {

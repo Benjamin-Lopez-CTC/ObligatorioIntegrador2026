@@ -52,7 +52,7 @@
 
                     var barColor = isOverdue ? "bg-error" : "bg-primary-container";
 
-                    <article class="bg-surface-container border @(isOverdue ? "border-error" : "border-surface-variant") rounded p-6 flex flex-col gap-6 relative overflow-hidden group hover:border-outline transition-colors">
+                    <article class="bg-surface-container border @(isOverdue ? "border-error" : "border-surface-variant") rounded-lg p-6 flex flex-col gap-6 relative overflow-hidden group hover:border-outline transition-colors">
                         @if(isOverdue)
                         {
                             <div class="absolute top-0 left-0 w-full h-1 bg-error"></div>
@@ -92,7 +92,7 @@
                             </div>
                         </div>
 
-                        <div class="flex items-center gap-4 bg-surface-container-highest p-4 rounded border border-outline-variant">
+                        <div class="flex items-center gap-4 bg-surface-container-highest p-4 rounded-lg border border-outline-variant">
                             <div class="flex-1 flex flex-col">
                                 <span class="font-label-caps text-label-caps text-on-surface-variant mb-1">ORIGEN</span>
                                 <span class="font-body-md text-body-md text-on-surface">@mov.ApiarioOrigen.Nombre</span>
@@ -304,20 +304,24 @@
 
 <!-- Modal de Confirmación Genérico / Alerta -->
 <div id="modalConfirmacion" class="fixed inset-0 z-[60] flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
-    <div class="bg-surface-container border border-outline-variant rounded w-full max-w-sm modal-container shadow-2xl flex flex-col max-h-[75vh] md:max-h-[85vh]">
+    <div class="bg-surface-container border border-outline-variant rounded w-full max-w-md modal-container shadow-2xl flex flex-col max-h-[75vh] md:max-h-[85vh]">
         <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between shrink-0">
-            <h4 id="confirmTitle" class="font-headline-lg text-lg font-bold text-on-surface">Confirmación</h4>
+            <h4 id="confirmTitle" class="font-headline-lg text-lg font-bold text-on-surface flex items-center gap-2">
+                <span id="confirmIcon" class="material-symbols-outlined text-[20px]">warning</span>
+                <span id="confirmTitleText">Confirmación</span>
+            </h4>
             <button type="button" onclick="closeConfirmModal()" class="text-on-surface-variant hover:text-primary-container transition-colors p-1">
                 <span class="material-symbols-outlined">close</span>
             </button>
         </div>
-        <div class="p-6 overflow-y-auto grow custom-scrollbar">
-            <p id="confirmMessage" class="font-body-md text-on-surface-variant">¿Estás seguro?</p>
-            <div class="pt-4 border-t border-surface-container-highest flex flex-col sm:flex-row justify-end gap-3 mt-6">
-                <button type="button" id="btnCancelConfirm" onclick="closeConfirmModal()" class="border border-outline text-on-surface hover:bg-surface-container-high px-5 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex transition-colors">
+        <div class="p-6 overflow-y-auto grow custom-scrollbar space-y-4 text-center">
+            <p id="confirmMessage" class="font-body-md text-body-md text-on-surface-variant">¿Estás seguro?</p>
+            <p id="confirmSubMessage" class="text-sm font-medium hidden"></p>
+            <div class="pt-4 border-t border-surface-container-highest flex flex-col sm:flex-row justify-center gap-3 mt-4">
+                <button type="button" id="btnCancelConfirm" onclick="closeConfirmModal()" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex">
                     Cancelar
                 </button>
-                <button type="button" id="btnConfirmAction" class="bg-primary-container text-on-primary hover:bg-primary-fixed px-6 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex transition-colors">
+                <button type="button" id="btnConfirmAction" class="transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex">
                     Confirmar
                 </button>
             </div>
@@ -332,36 +336,43 @@
 
         // Modal Visual Controls are now loaded globally from _Layout.cshtml
 
-        function showCustomAlert(title, message, isError = false) {
-            document.getElementById('confirmTitle').textContent = title;
-            document.getElementById('confirmMessage').textContent = message;
-            
-            const btnConfirm = document.getElementById('btnConfirmAction');
-            btnConfirm.textContent = "Aceptar";
-            btnConfirm.className = isError 
-                ? "bg-error-container text-on-error-container font-label-caps text-label-caps px-4 py-2 rounded hover:bg-error transition-colors"
-                : "bg-primary-container text-on-primary font-label-caps text-label-caps px-4 py-2 rounded hover:bg-primary-fixed transition-colors";
-            
-            document.getElementById('btnCancelConfirm').classList.add('hidden'); // Hide cancel for alerts
-            
-            confirmCallback = null;
-
-            const modal = document.getElementById('modalConfirmacion');
-            showModal(modal);
-        }
-
         function showConfirm(title, message, confirmText, isDestructive, onConfirm) {
-            document.getElementById('confirmTitle').textContent = title;
-            document.getElementById('confirmMessage').textContent = message;
-            
+            const titleTextEl = document.getElementById('confirmTitleText');
+            const titleEl = titleTextEl.parentElement;
+            const iconEl = document.getElementById('confirmIcon');
+            const messageEl = document.getElementById('confirmMessage');
+            const subMessageEl = document.getElementById('confirmSubMessage');
             const btnConfirm = document.getElementById('btnConfirmAction');
-            btnConfirm.textContent = confirmText;
-            btnConfirm.className = isDestructive 
-                ? "bg-error-container text-on-error-container font-label-caps text-label-caps px-4 py-2 rounded hover:bg-error transition-colors"
-                : "bg-primary-container text-on-primary font-label-caps text-label-caps px-4 py-2 rounded hover:bg-primary-fixed transition-colors";
-            
-            document.getElementById('btnCancelConfirm').classList.remove('hidden'); // Show cancel for confirms
-            
+            const btnCancel = document.getElementById('btnCancelConfirm');
+
+            titleTextEl.textContent = title;
+            messageEl.textContent = message;
+
+            if (isDestructive) {
+                // Style as destructive (error/red)
+                titleEl.className = "font-headline-lg text-lg font-bold text-error flex items-center gap-2";
+                iconEl.textContent = "warning";
+                iconEl.className = "material-symbols-outlined text-[20px] text-error";
+                
+                subMessageEl.textContent = "Esta acción no se puede deshacer.";
+                subMessageEl.className = "text-sm text-error/80 font-medium block";
+                subMessageEl.classList.remove('hidden');
+
+                btnConfirm.textContent = confirmText;
+                btnConfirm.className = "bg-error-container/30 border border-error text-error hover:bg-error/20 transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex";
+            } else {
+                // Style as constructive (primary/yellow)
+                titleEl.className = "font-headline-lg text-lg font-bold text-on-surface flex items-center gap-2";
+                iconEl.textContent = "check_circle";
+                iconEl.className = "material-symbols-outlined text-[20px] text-primary-container";
+                
+                subMessageEl.classList.add('hidden');
+
+                btnConfirm.textContent = confirmText;
+                btnConfirm.className = "bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex";
+            }
+
+            btnCancel.classList.remove('hidden'); // Always show cancel for confirmation
             confirmCallback = onConfirm;
 
             const modal = document.getElementById('modalConfirmacion');
@@ -500,7 +511,7 @@
             const fecha = document.getElementById('fechaRegresoInput').value;
 
             if (!origen || !colmena || !destino || !razon || !fecha) {
-                showCustomAlert('Datos incompletos', 'Por favor complete todos los campos obligatorios.', true);
+                showToast('Por favor complete todos los campos obligatorios.', 'error');
                 return;
             }
 
@@ -525,12 +536,12 @@
                 if (data.success) {
                     window.location.reload();
                 } else {
-                    showCustomAlert('Error', data.message || 'Error al guardar el movimiento.', true);
+                    showToast(data.message || 'Error al guardar el movimiento.', 'error');
                     btn.disabled = false;
                     btn.textContent = 'Registrar';
                 }
             } catch (err) {
-                showCustomAlert('Error de Conexión', 'Hubo un problema al intentar comunicarse con el servidor.', true);
+                showToast('Hubo un problema al intentar comunicarse con el servidor.', 'error');
                 btn.disabled = false;
                 btn.textContent = 'Registrar';
             }
@@ -552,10 +563,10 @@
                     if (data.success) {
                         window.location.reload();
                     } else {
-                        showCustomAlert('Error', data.message || 'Error al actualizar el estado.', true);
+                        showToast(data.message || 'Error al actualizar el estado.', 'error');
                     }
                 } catch (err) {
-                    showCustomAlert('Error de Conexión', 'No se pudo contactar al servidor.', true);
+                    showToast('No se pudo contactar al servidor.', 'error');
                 }
             });
         }
@@ -573,7 +584,7 @@
             const fecha = document.getElementById('editFechaInput').value;
 
             if (!fecha) {
-                showCustomAlert('Datos incompletos', 'Seleccione una fecha de retorno válida.', true);
+                showToast('Seleccione una fecha de retorno válida.', 'error');
                 return;
             }
 
@@ -589,12 +600,12 @@
                 if (data.success) {
                     window.location.reload();
                 } else {
-                    showCustomAlert('Error', data.message || 'Error al actualizar la fecha.', true);
+                    showToast(data.message || 'Error al actualizar la fecha.', 'error');
                     btn.disabled = false;
                     btn.textContent = 'Guardar';
                 }
             } catch (err) {
-                showCustomAlert('Error de Conexión', 'Hubo un error al guardar la nueva fecha.', true);
+                showToast('Hubo un error al guardar la nueva fecha.', 'error');
                 btn.disabled = false;
                 btn.textContent = 'Guardar';
             }

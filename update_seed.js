@@ -240,7 +240,7 @@ function generateApiarios() {
     let items = [];
     items.push('new Apiario { Id = 1, Nombre = "Apiario Norte", StringIdentificador = "AP-001", UbicacionTexto = "Ruta 5, Km 42.5", UbicacionCoordenadas = "-34.123, -56.456", Responsable = "Benjamin Lopez", NotasEstado = "Acceso en buen estado." }');
     items.push('new Apiario { Id = 2, Nombre = "Apiario Sur", StringIdentificador = "AP-002", UbicacionTexto = "Camino Vecinal 14", UbicacionCoordenadas = "-34.890, -56.123", Responsable = "Felipe Alvarez", NotasEstado = "Requiere desmalezado." }');
-    items.push('new Apiario { Id = 3, Nombre = "Apiario Este", StringIdentificador = "AP-003", UbicacionTexto = "Estancia La Paz", UbicacionCoordenadas = "-33.567, -55.890", Responsable = "Matías Vergues", NotasEstado = "Todo normal." }');
+    items.push('new Apiario { Id = 3, Nombre = "Apiario Este", StringIdentificador = "AP-003", UbicacionTexto = "Estancia La Paz", UbicacionCoordenadas = "-33.567, -55.890", Responsable = "Matías Verges", NotasEstado = "Todo normal." }');
     items.push('new Apiario { Id = 4, Nombre = "Apiario Oeste", StringIdentificador = "AP-004", UbicacionTexto = "Ruta 3, Km 112", UbicacionCoordenadas = "-34.456, -57.123", Responsable = "Benjamin Lopez", NotasEstado = "Tranquera rota." }');
     items.push('new Apiario { Id = 5, Nombre = "Apiario Central", StringIdentificador = "AP-005", UbicacionTexto = "Predio Principal", UbicacionCoordenadas = "-34.567, -56.789", Responsable = "Felipe Alvarez", NotasEstado = "Base operativa." }');
     code += "                " + items.join(",\n                ") + "\n            );\n\n";
