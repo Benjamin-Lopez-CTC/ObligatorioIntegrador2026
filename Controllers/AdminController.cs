@@ -48,7 +48,6 @@ namespace ObligatorioIntegrador2026.Controllers
 
             ViewBag.TotalHoy = totalStatsQuery.Count(r => r.AttemptDate.Date == today);
             ViewBag.Fallidos = totalStatsQuery.Count(r => !r.IsSuccess);
-            ViewBag.IpsActivas = totalStatsQuery.Select(r => r.IpAddress).Distinct().Count();
 
             ViewBag.CurrentFilter = filter;
             ViewBag.CurrentSearch = search;

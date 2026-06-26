@@ -147,8 +147,8 @@ namespace ObligatorioIntegrador2026.Services
 
                 column.Item().PaddingVertical(10).LineHorizontal(1).LineColor(Colors.Grey.Lighten3);
 
-                // Movimientos Activos
-                column.Item().PaddingBottom(5).Text("Movimientos Activos").FontSize(14).SemiBold().FontColor(Colors.Black);
+                // Movimientos Pendientes de Retorno
+                column.Item().PaddingBottom(5).Text("Movimientos Pendientes de Retorno").FontSize(14).SemiBold().FontColor(Colors.Black);
                 if (movimientos.Any())
                 {
                     column.Item().Table(table =>
@@ -180,7 +180,7 @@ namespace ObligatorioIntegrador2026.Services
                 }
                 else
                 {
-                    column.Item().Text("No hay movimientos activos actualmente.").Italic().FontColor(Colors.Grey.Medium);
+                    column.Item().Text("No hay movimientos pendientes de retorno actualmente.").Italic().FontColor(Colors.Grey.Medium);
                 }
 
                 column.Item().PaddingVertical(10).LineHorizontal(1).LineColor(Colors.Grey.Lighten3);

@@ -88,7 +88,8 @@
                                  <option value="temperatura">Temperatura (°C)</option>
                                  <option value="fechaTratamiento">Fecha de Último Tratamiento</option>
                                  <option value="fechaNotaTecnica">Fecha de Última Nota Técnica</option>
-                                 <option value="mielProducida">Miel Producida</option>
+                                 <option value="mielProducida">Miel Actual</option>
+                                 <option value="mielHistorica">Miel producida</option>
                                  <option value="cantTratamientos">Cantidad de Tratamientos</option>
                                  <option value="cantNotasTecnicas">Cantidad de Notas Técnicas</option>
                             </select>
@@ -210,7 +211,7 @@
                         </div>
                     </div>
 
-                    <div class="bg-surface-container-low border border-outline-variant rounded p-4">
+                    <div id="alzasConfigContainer" class="bg-surface-container-low border border-outline-variant rounded p-4">
                         <h5 class="font-label-caps text-label-caps text-on-surface-variant mb-3">Configuración de Alzas</h5>
                         <div class="grid grid-cols-3 gap-3">
                             <div>
@@ -238,15 +239,15 @@
                 </div>
 
                 <div class="sm:col-span-2 space-y-4">
-                    <div class="flex items-center gap-6 mt-2">
-                        <div class="flex items-center gap-2">
-                            <input type="checkbox" id="EsPiloto" name="EsPiloto" value="true" class="w-4 h-4 text-primary-container bg-background border-outline-variant rounded focus:ring-primary-container focus:ring-2" />
-                            <label for="EsPiloto" class="font-body-md text-body-md text-on-surface">Convertir en Colmena Piloto</label>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <input type="checkbox" id="EsNucleo" name="EsNucleo" value="true" class="w-4 h-4 text-primary-container bg-background border-outline-variant rounded focus:ring-primary-container focus:ring-2" />
-                            <label for="EsNucleo" class="font-body-md text-body-md text-on-surface">¿Es un Núcleo?</label>
-                        </div>
+                    <div class="space-y-2 mt-2">
+                        <label for="TipoColmena" class="font-label-caps text-label-caps text-on-surface-variant block">Tipo de Colmena</label>
+                        <select id="TipoColmena" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
+                            <option value="Normal">Normal</option>
+                            <option value="Nucleo">Núcleo</option>
+                            <option value="Piloto">Piloto</option>
+                        </select>
+                        <input type="hidden" id="EsPiloto" name="EsPiloto" value="false" />
+                        <input type="hidden" id="EsNucleo" name="EsNucleo" value="false" />
                     </div>
                     
                     <div class="bg-primary-container/10 border border-primary-container rounded p-3 flex items-start gap-3">
@@ -385,24 +386,60 @@
         const btnCancelDeleteIcon = document.getElementById('btnCancelDeleteIcon');
         const formRegistrar = document.querySelector('form[action="/Colmenas/RegistrarNueva"]');
 
-        const esPilotoCheckbox = document.getElementById('EsPiloto');
+        const tipoColmenaSelect = document.getElementById('TipoColmena');
+        const esPilotoHidden = document.getElementById('EsPiloto');
+        const esNucleoHidden = document.getElementById('EsNucleo');
         const sensorFieldsContainer = document.getElementById('sensorFieldsContainer');
+        const alzasConfigContainer = document.getElementById('alzasConfigContainer');
         const tempInput = document.getElementById('TemperaturaInterna');
         const humInput = document.getElementById('HumedadInterna');
 
-        esPilotoCheckbox.addEventListener('change', function() {
-            if (this.checked) {
-                sensorFieldsContainer.classList.remove('hidden');
-                tempInput.required = true;
-                humInput.required = true;
-            } else {
+        function updateFormConstraints() {
+            const val = tipoColmenaSelect.value;
+            if (val === 'Nucleo') {
+                esNucleoHidden.value = 'true';
+                esPilotoHidden.value = 'false';
+
+                // Nucleo: hide alzas and hide sensors
+                alzasConfigContainer.classList.add('hidden');
                 sensorFieldsContainer.classList.add('hidden');
+                
+                tempInput.required = false;
+                humInput.required = false;
+                tempInput.value = '';
+                humInput.value = '';
+
+                // Reset and calculate
+                inputsAlzas.forEach(input => {
+                    input.value = 0;
+                });
+                calcularProduccion();
+            } else if (val === 'Piloto') {
+                esNucleoHidden.value = 'false';
+                esPilotoHidden.value = 'true';
+
+                // Piloto: show alzas and show sensors
+                alzasConfigContainer.classList.remove('hidden');
+                sensorFieldsContainer.classList.remove('hidden');
+
+                tempInput.required = false;
+                humInput.required = false;
+            } else {
+                // Normal: show alzas and hide sensors
+                esNucleoHidden.value = 'false';
+                esPilotoHidden.value = 'false';
+
+                alzasConfigContainer.classList.remove('hidden');
+                sensorFieldsContainer.classList.add('hidden');
+
                 tempInput.required = false;
                 humInput.required = false;
                 tempInput.value = '';
                 humInput.value = '';
             }
-        });
+        }
+
+        tipoColmenaSelect.addEventListener('change', updateFormConstraints);
 
         // Computed Values
         // Computed Values
@@ -469,6 +506,8 @@
                     valB = b.fechaUltimaNotaTecnica ? new Date(b.fechaUltimaNotaTecnica).getTime() : 0;
                 } else if(sortVal === 'mielProducida') {
                     valA = a.produccionMiel; valB = b.produccionMiel;
+                } else if(sortVal === 'mielHistorica') {
+                    valA = a.mielHistorica; valB = b.mielHistorica;
                 } else if(sortVal === 'cantTratamientos') {
                     valA = a.cantidadTratamientos; valB = b.cantidadTratamientos;
                 } else if(sortVal === 'cantNotasTecnicas') {
@@ -553,7 +592,17 @@
                             ${c.esPiloto ? '<div class="w-6 h-6 shrink-0 flex items-center justify-center border border-outline-variant bg-surface-container-high rounded text-on-surface font-label-caps text-[12px]" title="Colmena Piloto">P</div>' : ''}
                         </div>
                     </td>
-                    <td data-label="APIARIO" class="p-4 border-b border-surface-container-highest md:border-none">${c.apiarioNombre || 'Desconocido'}</td>
+                    <td data-label="APIARIO" class="p-4 border-b border-surface-container-highest md:border-none">
+                        <div>
+                            <span>${c.apiarioNombre || 'Desconocido'}</span>
+                            ${c.esTemporal ? `
+                                <div class="mt-1 flex items-center gap-1 text-[10px] text-primary-container font-semibold bg-primary-container/10 px-2 py-0.5 border border-primary-container/30 rounded w-fit uppercase" title="Ubicada temporalmente por un movimiento. Su origen es: ${c.apiarioOrigenNombre}">
+                                    <span class="material-symbols-outlined text-[12px]">local_shipping</span>
+                                    Temporal
+                                </div>
+                            ` : ''}
+                        </div>
+                    </td>
                     <td data-label="ESTADO" class="p-4 border-b border-surface-container-highest md:border-none">${statusHtml}</td>
                     <td data-label="PESO (KG)" class="p-4 border-b border-surface-container-highest md:border-none ${weightClass}">${c.peso} ${weightClass ? iconArrow : ''}</td>
                     <td data-label="TEMP." class="p-4 border-b border-surface-container-highest md:border-none ${tempClass}">${c.esPiloto ? c.temp + '°C ' + (tempClass ? iconArrow : '') : '<span class="text-on-surface-variant/50">N/A</span>'}</td>

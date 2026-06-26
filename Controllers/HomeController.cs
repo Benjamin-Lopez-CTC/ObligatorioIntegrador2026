@@ -43,7 +43,7 @@ public class HomeController : Controller
             .Include(m => m.Colmena)
             .Include(m => m.ApiarioOrigen)
             .Include(m => m.ApiarioDestino)
-            .Where(m => m.Estado == "Vigente")
+            .Where(m => m.Estado == "Vigente" && m.FechaRegreso < DateTime.Now)
             .OrderBy(m => m.FechaRegreso)
             .Take(5)
             .ToListAsync();
@@ -153,7 +153,7 @@ public class HomeController : Controller
             .Include(m => m.Colmena)
             .Include(m => m.ApiarioOrigen)
             .Include(m => m.ApiarioDestino)
-            .Where(m => m.Estado == "Vigente")
+            .Where(m => m.Estado == "Vigente" && m.FechaRegreso < DateTime.Now)
             .OrderBy(m => m.FechaRegreso)
             .ToListAsync();
 

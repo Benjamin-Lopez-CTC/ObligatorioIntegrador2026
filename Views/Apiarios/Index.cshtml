@@ -124,10 +124,12 @@
                 <div>
                     <label for="Nombre" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Nombre *</label>
                     <input type="text" id="Nombre" name="Nombre" required placeholder="Ej. Apiario Central" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                    <span id="errorNombre" class="text-error text-xs font-body-sm mt-1 hidden"></span>
                 </div>
                 <div>
                     <label for="StringIdentificador" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Identificador (Opcional)</label>
                     <input type="text" id="StringIdentificador" name="StringIdentificador" placeholder="Ej. 004" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                    <span id="errorIdentificador" class="text-error text-xs font-body-sm mt-1 hidden"></span>
                 </div>
                 <div>
                     <label for="UbicacionTexto" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Ubicación *</label>
@@ -159,7 +161,7 @@
                     <button type="button" id="btnCancelRegistrar" class="border border-outline text-on-surface hover:bg-surface-container-high px-5 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex transition-colors">
                         Cancelar
                     </button>
-                    <button type="submit" class="bg-primary-container text-on-primary hover:bg-primary-fixed px-6 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex transition-colors">
+                    <button type="submit" id="btnSubmitRegistrar" class="bg-primary-container text-on-primary hover:bg-primary-fixed px-6 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex transition-colors">
                         Registrar Apiario
                     </button>
                 </div>
@@ -181,10 +183,85 @@
 
         function closeModal() {
             modal.classList.add('modal-hidden');
+            // Clear errors on close
+            document.getElementById('Nombre').classList.remove('border-error');
+            document.getElementById('StringIdentificador').classList.remove('border-error');
+            document.getElementById('errorNombre').classList.add('hidden');
+            document.getElementById('errorIdentificador').classList.add('hidden');
+            document.getElementById('btnSubmitRegistrar').disabled = false;
+            document.getElementById('btnSubmitRegistrar').classList.remove('opacity-50', 'cursor-not-allowed');
         }
 
         btnOpen.addEventListener('click', openModal);
         btnCancel1.addEventListener('click', closeModal);
         btnCancel2.addEventListener('click', closeModal);
+
+        // AJAX validation for duplicates
+        const nombreInput = document.getElementById('Nombre');
+        const idInput = document.getElementById('StringIdentificador');
+        const errorNombre = document.getElementById('errorNombre');
+        const errorIdentificador = document.getElementById('errorIdentificador');
+        const submitBtn = document.getElementById('btnSubmitRegistrar');
+
+        let debounceTimeout;
+
+        async function checkDuplicates() {
+            const nombre = nombreInput.value.trim();
+            const idVal = idInput.value.trim();
+
+            if (!nombre && !idVal) {
+                errorNombre.classList.add('hidden');
+                nombreInput.classList.remove('border-error');
+                errorIdentificador.classList.add('hidden');
+                idInput.classList.remove('border-error');
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/Apiarios/CheckDuplicate?nombre=${encodeURIComponent(nombre)}&identificador=${encodeURIComponent(idVal)}`);
+                const data = await response.json();
+
+                let hasError = false;
+
+                if (data.nombreExists) {
+                    errorNombre.textContent = "Ya existe un apiario con este nombre.";
+                    errorNombre.classList.remove('hidden');
+                    nombreInput.classList.add('border-error');
+                    hasError = true;
+                } else {
+                    errorNombre.classList.add('hidden');
+                    nombreInput.classList.remove('border-error');
+                }
+
+                if (data.identificadorExists) {
+                    errorIdentificador.textContent = "Ya existe un apiario con este código identificador.";
+                    errorIdentificador.classList.remove('hidden');
+                    idInput.classList.add('border-error');
+                    hasError = true;
+                } else {
+                    errorIdentificador.classList.add('hidden');
+                    idInput.classList.remove('border-error');
+                }
+
+                submitBtn.disabled = hasError;
+                if (hasError) {
+                    submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            } catch (err) {
+                console.error("Error validating duplicates", err);
+            }
+        }
+
+        function debouncedCheck() {
+            clearTimeout(debounceTimeout);
+            debounceTimeout = setTimeout(checkDuplicates, 300);
+        }
+
+        nombreInput.addEventListener('input', debouncedCheck);
+        idInput.addEventListener('input', debouncedCheck);
     </script>
 }

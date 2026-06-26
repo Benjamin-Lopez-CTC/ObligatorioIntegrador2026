@@ -32,7 +32,7 @@
         <div class="bg-surface-container border border-outline-variant p-6 rounded flex flex-col justify-between hover:border-primary-container transition-colors">
             <div class="flex items-center gap-2 mb-4">
                 <span class="material-symbols-outlined text-primary-container">agriculture</span>
-                <span class="font-label-caps text-label-caps text-on-surface-variant">TOTAL COLMENAS ACTIVAS</span>
+                <span class="font-label-caps text-label-caps text-on-surface-variant">TOTAL COLMENAS</span>
             </div>
             <div class="text-display font-display text-primary">@Model.TotalColmenas</div>
         </div>
@@ -123,11 +123,11 @@
             </div>
         </div>
 
-        <!-- Bottom Row Left: Movimientos Vigentes -->
+        <!-- Bottom Row Left: Movimientos Pendientes de Retorno -->
         <div class="lg:col-span-2">
             <div class="bg-surface-container border border-outline-variant p-6 rounded h-full">
                 <div class="flex justify-between items-center mb-6">
-                    <h3 class="font-display text-headline-sm text-primary">Movimientos Activos</h3>
+                    <h3 class="font-display text-headline-sm text-primary">Movimientos Pendientes de Retorno</h3>
                     <a href="/Mas/Movimientos" class="text-primary-container text-sm font-label-caps hover:underline">Ver sección</a>
                 </div>
                 
@@ -159,7 +159,10 @@
                 }
                 else
                 {
-                    <p class="text-sm text-on-surface-variant">No hay movimientos activos en este momento.</p>
+                    <div class="flex flex-col items-center justify-center text-center p-8 h-full">
+                        <span class="material-symbols-outlined text-4xl text-on-surface-variant mb-2">local_shipping</span>
+                        <p class="text-sm text-on-surface-variant">No hay movimientos pendientes de retorno en este momento.</p>
+                    </div>
                 }
             </div>
         </div>

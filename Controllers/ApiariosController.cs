@@ -64,13 +64,37 @@ namespace ObligatorioIntegrador2026.Controllers
             }
 
             var apiario = await _context.Apiarios
-                .Include(a => a.Colmenas)
                 .FirstOrDefaultAsync(m => m.Id == id);
                 
             if (apiario == null)
             {
                 return NotFound();
             }
+
+            // Obtener todas las colmenas que residen físicamente en este apiario
+            // O que pertenecen a este apiario pero están temporalmente trasladadas a otro (movimiento vigente con origen en este apiario)
+            var colmenasIdsTrasladadas = await _context.Movimientos
+                .Where(m => m.Estado == "Vigente" && m.ApiarioOrigenId == id)
+                .Select(m => m.ColmenaId)
+                .ToListAsync();
+
+            var colmenas = await _context.Colmenas
+                .Where(c => c.ApiarioId == id || colmenasIdsTrasladadas.Contains(c.Id))
+                .ToListAsync();
+
+            apiario.Colmenas = colmenas;
+
+            var activeMovementsList = await _context.Movimientos
+                .Where(m => m.Estado == "Vigente")
+                .Include(m => m.ApiarioOrigen)
+                .Include(m => m.ApiarioDestino)
+                .ToListAsync();
+
+            var activeMovements = activeMovementsList
+                .GroupBy(m => m.ColmenaId)
+                .ToDictionary(g => g.Key, g => g.First());
+
+            ViewBag.ActiveMovements = activeMovements;
 
             return View(apiario);
         }
@@ -101,16 +125,28 @@ namespace ObligatorioIntegrador2026.Controllers
         {
             if (string.IsNullOrWhiteSpace(Nombre) || string.IsNullOrWhiteSpace(UbicacionTexto))
             {
-                return BadRequest("Faltan datos obligatorios.");
+                TempData["ErrorMessage"] = "Faltan datos obligatorios.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            string finalIdentificador = string.IsNullOrWhiteSpace(StringIdentificador) 
+                ? new System.Random().Next(100, 999).ToString() 
+                : StringIdentificador.Trim();
+
+            bool exists = await _context.Apiarios.AnyAsync(a => a.Nombre.ToLower() == Nombre.Trim().ToLower() 
+                || a.StringIdentificador.ToLower() == finalIdentificador.ToLower());
+            if (exists)
+            {
+                return RedirectToAction(nameof(Index));
             }
 
             var apiario = new ObligatorioIntegrador2026.Models.Apiario
             {
-                Nombre = Nombre,
-                UbicacionTexto = UbicacionTexto,
-                StringIdentificador = string.IsNullOrWhiteSpace(StringIdentificador) ? new System.Random().Next(100, 999).ToString() : StringIdentificador,
+                Nombre = Nombre.Trim(),
+                UbicacionTexto = UbicacionTexto.Trim(),
+                StringIdentificador = finalIdentificador,
                 FechaCreacion = System.DateTime.Now,
-                UbicacionCoordenadas = string.IsNullOrWhiteSpace(UbicacionCoordenadas) ? "No registradas" : UbicacionCoordenadas,
+                UbicacionCoordenadas = string.IsNullOrWhiteSpace(UbicacionCoordenadas) ? "No registradas" : UbicacionCoordenadas.Trim(),
                 Departamento = Departamento,
                 SeccionPolicial = SeccionPolicial,
                 Paraje = Paraje,
@@ -142,13 +178,24 @@ namespace ObligatorioIntegrador2026.Controllers
                 return RedirectToAction(nameof(Detalles), new { id = id });
             }
 
-            apiario.Nombre = Nombre;
-            apiario.UbicacionTexto = UbicacionTexto;
-            apiario.StringIdentificador = StringIdentificador;
+            string finalIdentificador = string.IsNullOrWhiteSpace(StringIdentificador)
+                ? apiario.StringIdentificador
+                : StringIdentificador.Trim();
+
+            bool exists = await _context.Apiarios.AnyAsync(a => a.Id != id && (a.Nombre.ToLower() == Nombre.Trim().ToLower() 
+                || a.StringIdentificador.ToLower() == finalIdentificador.ToLower()));
+            if (exists)
+            {
+                return RedirectToAction(nameof(Detalles), new { id = id });
+            }
+
+            apiario.Nombre = Nombre.Trim();
+            apiario.UbicacionTexto = UbicacionTexto.Trim();
+            apiario.StringIdentificador = finalIdentificador;
             apiario.Departamento = Departamento;
             apiario.SeccionPolicial = SeccionPolicial;
             apiario.Paraje = Paraje;
-            apiario.UbicacionCoordenadas = string.IsNullOrWhiteSpace(UbicacionCoordenadas) ? "No registradas" : UbicacionCoordenadas;
+            apiario.UbicacionCoordenadas = string.IsNullOrWhiteSpace(UbicacionCoordenadas) ? "No registradas" : UbicacionCoordenadas.Trim();
 
             _context.Apiarios.Update(apiario);
             await _context.SaveChangesAsync();
@@ -169,6 +216,7 @@ namespace ObligatorioIntegrador2026.Controllers
 
             apiario.NotasEstado = NotasEstado;
             apiario.UltimaEdicionNota = System.DateTime.Now;
+            apiario.UltimaInspeccion = System.DateTime.Now;
 
             _context.Apiarios.Update(apiario);
             await _context.SaveChangesAsync();
@@ -176,6 +224,25 @@ namespace ObligatorioIntegrador2026.Controllers
             TempData["SuccessMessage"] = "La nota de estado fue actualizada.";
 
             return RedirectToAction(nameof(Detalles), new { id = id });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CheckDuplicate(string? nombre, string? identificador, int? excludeId = null)
+        {
+            bool nombreExists = false;
+            bool identificadorExists = false;
+
+            if (!string.IsNullOrWhiteSpace(nombre))
+            {
+                nombreExists = await _context.Apiarios.AnyAsync(a => a.Nombre.ToLower() == nombre.Trim().ToLower() && (excludeId == null || a.Id != excludeId));
+            }
+
+            if (!string.IsNullOrWhiteSpace(identificador))
+            {
+                identificadorExists = await _context.Apiarios.AnyAsync(a => a.StringIdentificador.ToLower() == identificador.Trim().ToLower() && (excludeId == null || a.Id != excludeId));
+            }
+
+            return Json(new { nombreExists, identificadorExists });
         }
     }
 }

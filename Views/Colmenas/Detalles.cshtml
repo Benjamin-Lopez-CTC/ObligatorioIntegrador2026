@@ -3,20 +3,8 @@
 @{
     ViewData["Title"] = "Detalle de Colmena";
     
-    string statusHtml = "";
-    string statusText = Model.Estado;
-    if (Model.Estado == "Óptimo")
-    {
-        statusHtml = $"<span class=\"bg-surface-container-high border border-[#4CAF50] text-[#4CAF50] font-label-caps text-label-caps px-2 py-1 rounded uppercase flex items-center gap-1\"><span class=\"material-symbols-outlined text-[14px]\" style=\"font-variation-settings: 'FILL' 1;\">check_circle</span>{statusText}</span>";
-    }
-    else if (Model.Estado == "Alerta")
-    {
-        statusHtml = $"<span class=\"bg-primary-container/10 border border-primary-container text-primary-container font-label-caps text-label-caps px-2 py-1 rounded uppercase flex items-center gap-1\"><span class=\"material-symbols-outlined text-[14px]\" style=\"font-variation-settings: 'FILL' 1;\">info</span>{statusText}</span>";
-    }
-    else if (Model.Estado == "Crítico")
-    {
-        statusHtml = $"<span class=\"bg-error-container/5 border border-error text-error font-label-caps text-label-caps px-2 py-1 rounded uppercase flex items-center gap-1\"><span class=\"material-symbols-outlined text-[14px]\" style=\"font-variation-settings: 'FILL' 1;\">warning</span>{statusText}</span>";
-    }
+    string apiarioNombre = Model.Apiario?.Nombre ?? "Sin Apiario";
+    string statusHtml = $"<span class=\"bg-surface-container-high border border-outline-variant text-on-surface font-label-caps text-label-caps px-2 py-1 rounded uppercase flex items-center gap-1\"><span class=\"material-symbols-outlined text-[14px]\">location_on</span>{apiarioNombre}</span>";
 
     double precioPorKg = ObligatorioIntegrador2026.Models.GlobalSettings.PrecioMielActual;
     double valorTotal = Model.ProduccionMielKg * precioPorKg;
@@ -31,6 +19,64 @@
     string reinaLastSeen = ultimaNotaObj != null 
         ? $"Avistada hace {(int)(DateTime.Now - ultimaNotaObj.Fecha).TotalDays} días" 
         : "Sin datos recientes";
+
+    List<string> razonesEstado = new List<string>();
+    if (Model.Estado == "Crítico")
+    {
+        var ultimaNotaCritica = Model.NotasTecnicas?.OrderByDescending(n => n.Fecha).FirstOrDefault(n => n.EstadoColmena == "Crítico");
+        if (ultimaNotaCritica != null)
+        {
+            razonesEstado.Add($"Definido manualmente como Crítico en la inspección del {ultimaNotaCritica.Fecha:dd/MM/yyyy}: \"{ultimaNotaCritica.Detalles}\"");
+        }
+        else
+        {
+            razonesEstado.Add("El estado fue definido como Crítico en la última inspección técnica.");
+        }
+    }
+    else if (Model.Estado == "Alerta")
+    {
+        if (Model.EsPiloto && (Model.TemperaturaInterna < 30 || Model.TemperaturaInterna > 38))
+        {
+            razonesEstado.Add($"Temperatura fuera de rango óptimo (30°C - 38°C). Valor actual: {Model.TemperaturaInterna:0.0}°C.");
+        }
+        if (Model.EsPiloto && (Model.HumedadInterna < 40 || Model.HumedadInterna > 80))
+        {
+            razonesEstado.Add($"Humedad fuera de rango óptimo (40% - 80%). Valor actual: {Model.HumedadInterna:0.0}%.");
+        }
+        if (Model.EstadoReina == "Ausente")
+        {
+            razonesEstado.Add("La reina está ausente en la colmena.");
+        }
+        if (Model.NotasTecnicas == null || !Model.NotasTecnicas.Any())
+        {
+            razonesEstado.Add("No se han registrado inspecciones técnicas aún en el sistema.");
+        }
+        else
+        {
+            var ultimaNota = Model.NotasTecnicas.OrderByDescending(n => n.Fecha).First();
+            if ((DateTime.Now - ultimaNota.Fecha).TotalDays > 30)
+            {
+                razonesEstado.Add($"Han transcurrido {(int)(DateTime.Now - ultimaNota.Fecha).TotalDays} días desde la última inspección (límite máximo: 30 días).");
+            }
+        }
+        
+        if (!razonesEstado.Any())
+        {
+            var ultimaNotaAlerta = Model.NotasTecnicas?.OrderByDescending(n => n.Fecha).FirstOrDefault(n => n.EstadoColmena == "Alerta");
+            if (ultimaNotaAlerta != null)
+            {
+                razonesEstado.Add($"Definido manualmente como Alerta en la inspección del {ultimaNotaAlerta.Fecha:dd/MM/yyyy}: \"{ultimaNotaAlerta.Detalles}\"");
+            }
+            else
+            {
+                razonesEstado.Add("El estado fue definido como Alerta en la última inspección técnica.");
+            }
+        }
+    }
+    else
+    {
+        razonesEstado.Add("Todos los indicadores están en niveles adecuados: reina presente, inspecciones periódicas al día y sensores dentro de los límites establecidos.");
+    }
 }
 
 <main class="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-12 flex flex-col gap-10">
@@ -52,8 +98,8 @@
     </div>
 
     <!-- Header Section -->
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-surface-container-highest pb-8">
-        <div class="flex flex-col gap-4">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-b border-surface-container-highest pb-8">
+        <div class="flex flex-col gap-2">
             <div class="flex items-center flex-wrap gap-4">
                 <h1 class="font-display text-display md:text-[40px] text-[32px] text-primary-container break-words max-w-full">
                     @(string.IsNullOrEmpty(Model.Identificador) ? Model.CodigoEscaneo : Model.Identificador)
@@ -67,14 +113,16 @@
                 {
                     <span class="bg-surface-container-high border border-outline-variant text-on-surface font-label-caps text-label-caps px-2 py-1 rounded uppercase flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">hive</span>NÚCLEO</span>
                 }
+                @if (ViewBag.EsTemporal == true)
+                {
+                    <span class="bg-primary-container/20 border border-primary-container text-on-surface font-label-caps text-label-caps px-2 py-1 rounded uppercase flex items-center gap-1" title="Pertenece al apiario de origen: @ViewBag.ApiarioOrigenNombre"><span class="material-symbols-outlined text-[14px]">local_shipping</span>TEMPORAL</span>
+                }
             </div>
             <p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
-                Código de Escaneo: @Model.CodigoEscaneo <br/>
-                @(Model.Estado == "Alerta" || Model.Estado == "Crítico" ? "Requiere inspección prioritaria debido a alertas activas." : "Inspección de rutina requerida según calendario.")
+                Código de Escaneo: @Model.CodigoEscaneo
             </p>
         </div>
         <div class="flex flex-col sm:flex-row flex-wrap gap-4 w-full md:w-auto">
-
             <button id="btnOpenEdit" class="w-full sm:w-auto justify-center border border-primary-container text-primary-container font-label-caps text-label-caps px-6 py-3 rounded flex items-center gap-2 hover:bg-surface-container-high transition-colors whitespace-nowrap">
                 <span class="material-symbols-outlined text-[18px]">edit</span>
                 Editar Colmena
@@ -90,8 +138,36 @@
         </div>
     </div>
 
-    <!-- Metrics Grid (Bento Style) -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-unit">
+    <!-- Diagnóstico de Estado -->
+    <div class="p-4 rounded border flex items-start gap-3 w-full text-left @(Model.Estado == "Óptimo" ? "bg-[#4CAF50]/10 border-[#4CAF50]/30 text-[#4CAF50]" : Model.Estado == "Alerta" ? "bg-primary-container/10 border-primary-container/30 text-on-surface" : "bg-error-container/10 border-error/30 text-error") font-body-sm text-body-sm">
+        <span class="material-symbols-outlined shrink-0 @(Model.Estado == "Óptimo" ? "text-[#4CAF50]" : Model.Estado == "Alerta" ? "text-primary-container" : "text-error") text-[20px]">
+            @(Model.Estado == "Óptimo" ? "check_circle" : Model.Estado == "Alerta" ? "info" : "warning")
+        </span>
+        <div>
+            <h4 class="font-label-caps text-label-caps font-bold mb-1">Diagnóstico de Estado: @Model.Estado</h4>
+            <ul class="list-disc pl-4 space-y-1">
+                @foreach (var razon in razonesEstado)
+                {
+                    <li>@razon</li>
+                }
+            </ul>
+        </div>
+    </div>
+
+    @if (ViewBag.EsTemporal == true)
+    {
+        <div class="p-4 rounded border flex items-start gap-3 w-full text-left bg-primary-container/10 border-primary-container/30 text-on-surface font-body-sm text-body-sm">
+            <span class="material-symbols-outlined shrink-0 text-primary-container text-[20px]">
+                local_shipping
+            </span>
+            <div>
+                <h4 class="font-label-caps text-label-caps font-bold mb-1">Traslado Temporal Activo</h4>
+                <p>Esta colmena está temporalmente en el apiario <strong>@Model.Apiario?.Nombre</strong> por motivo de un movimiento. Su apiario de origen es <strong>@ViewBag.ApiarioOrigenNombre</strong>. Debe retornar una vez finalizado el movimiento.</p>
+            </div>
+        </div>
+    }
+       <!-- Metrics Grid (Bento Style) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-unit">
         @if (Model.EsPiloto)
         {
             <!-- Temp -->
@@ -124,7 +200,8 @@
                 </div>
             </div>
         }
-        else
+
+        @if (!Model.EsPiloto)
         {
             <!-- Población -->
             <div class="bg-surface-container-low border border-outline-variant rounded p-6 flex flex-col gap-4 hover:border-primary-container transition-colors relative overflow-hidden group">
@@ -153,12 +230,12 @@
             </div>
         }
 
-        <!-- Production -->
-        <div class="bg-surface-container-low border border-outline-variant rounded p-6 flex flex-col gap-4 hover:border-primary-container transition-colors relative overflow-hidden group lg:col-span-1 md:col-span-2">
+        <!-- Current Honey / Miel Actual -->
+        <div class="bg-surface-container-low border border-outline-variant rounded p-6 flex flex-col gap-4 hover:border-primary-container transition-colors relative overflow-hidden group">
             <div class="absolute top-0 left-0 w-1 h-full bg-surface-container-high group-hover:bg-primary-container transition-colors"></div>
             <div class="flex justify-between items-center text-primary-container">
                 <span class="material-symbols-outlined text-[24px]">hive</span>
-                <span class="font-label-caps text-label-caps text-on-surface-variant">ESTIMACIÓN</span>
+                <span class="font-label-caps text-label-caps text-on-surface-variant">MIEL ACTUAL</span>
             </div>
             <div>
                 <div class="font-display text-[32px] font-bold text-on-surface">@Model.ProduccionMielKg.ToString("0.0") kg</div>
@@ -168,6 +245,19 @@
                 <div class="w-full h-1 bg-[#333333] mt-3 rounded-full overflow-hidden">
                     <div class="h-full bg-primary-container" style="width: @prodPercent%"></div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Total Honey Produced / Miel Producida -->
+        <div class="bg-surface-container-low border border-outline-variant rounded p-6 flex flex-col gap-4 hover:border-primary-container transition-colors relative overflow-hidden group">
+            <div class="absolute top-0 left-0 w-1 h-full bg-surface-container-high group-hover:bg-primary-container transition-colors"></div>
+            <div class="flex justify-between items-center text-primary-container">
+                <span class="material-symbols-outlined text-[24px]">history</span>
+                <span class="font-label-caps text-label-caps text-on-surface-variant">MIEL PRODUCIDA</span>
+            </div>
+            <div>
+                <div class="font-display text-[32px] font-bold text-on-surface">@(Model.NotasTecnicas?.Sum(n => n.KilosCosechados).ToString("0.0") ?? "0.0") kg</div>
+                <div class="font-body-sm text-body-sm text-on-surface-variant mt-1">Total cosechado históricamente</div>
             </div>
         </div>
 
@@ -195,7 +285,7 @@
                     <span class="font-label-caps text-label-caps text-on-surface-variant">UBICACIÓN</span>
                     <div class="flex items-center gap-2 text-on-surface">
                         <span class="material-symbols-outlined text-primary-container text-[20px]">location_on</span>
-                        <span class="font-body-md text-body-md">@Model.Apiario.Nombre - @Model.UbicacionIntraApiario</span>
+                        <span class="font-body-md text-body-md">@Model.Apiario?.Nombre - @Model.UbicacionIntraApiario</span>
                     </div>
                 </div>
                 <div class="w-full h-[1px] bg-surface-container-highest"></div>
@@ -206,6 +296,17 @@
                         <span class="font-body-md text-body-md">~@Model.CantidadAbejas.ToString("N0") abejas</span>
                     </div>
                 </div>
+                @if (Model.EsPiloto)
+                {
+                    <div class="w-full h-[1px] bg-surface-container-highest"></div>
+                    <div class="flex flex-col gap-1">
+                        <span class="font-label-caps text-label-caps text-on-surface-variant">PESO ACTUAL</span>
+                        <div class="flex items-center gap-2 text-on-surface">
+                            <span class="material-symbols-outlined text-primary-container text-[20px]">scale</span>
+                            <span class="font-body-md text-body-md">@Model.PesoKg.ToString("0.0") kg</span>
+                        </div>
+                    </div>
+                }
                 <div class="w-full h-[1px] bg-surface-container-highest"></div>
                 <div class="flex flex-col gap-1">
                     <span class="font-label-caps text-label-caps text-on-surface-variant">COMPORTAMIENTO</span>
@@ -213,6 +314,34 @@
                         <span class="material-symbols-outlined text-primary-container text-[20px]">psychology</span>
                         <span class="font-body-md text-body-md">@Model.ComportamientoAbejas</span>
                     </div>
+                </div>
+                <div class="w-full h-[1px] bg-surface-container-highest"></div>
+                <div class="flex flex-col gap-1">
+                    <span class="font-label-caps text-label-caps text-on-surface-variant">ALZAS INSTALADAS</span>
+                    @if (!Model.EsNucleo)
+                    {
+                        <div class="flex flex-col gap-1.5 font-body-sm text-body-sm text-on-surface">
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary-container text-[18px]">layers</span>
+                                <span>Alzas Enteras: <strong>@Model.Alzas</strong></span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary-container text-[18px]">layers</span>
+                                <span>Alzas 3/4: <strong>@Model.AlzasTresCuartos</strong></span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary-container text-[18px]">layers</span>
+                                <span>Medias Alzas: <strong>@Model.MediasAlzas</strong></span>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="flex items-center gap-2 text-on-surface-variant/70">
+                            <span class="material-symbols-outlined text-[18px]">layers_clear</span>
+                            <span class="font-body-sm text-body-sm">No permitido (Colmena Núcleo)</span>
+                        </div>
+                    }
                 </div>
             </div>
 
@@ -300,9 +429,15 @@
                     <div class="w-px h-12 bg-surface-container-highest hidden md:block"></div>
                     <div class="flex-grow flex flex-col gap-2">
                         <div class="flex items-center gap-3">
-                            <span class="font-body-md text-body-md font-semibold text-primary-container">Última Nota</span>
-                            <span class="bg-primary-container/10 px-2 py-0.5 rounded text-[10px] font-label-caps text-primary-container border border-primary-container/30 uppercase">@ultimaNotaObj.EstadoColmena</span>
+                            <span class="font-body-md text-body-md font-semibold text-primary-container">@(ultimaNotaObj.KilosCosechados > 0 ? "Última Cosecha / Extracción" : "Última Nota")</span>
                         </div>
+                        @if (ultimaNotaObj.KilosCosechados > 0)
+                        {
+                            <div class="flex items-center gap-1 text-[11px] font-bold text-primary-container bg-primary-container/10 px-2 py-0.5 border border-primary-container/30 rounded w-fit mt-1">
+                                <span class="material-symbols-outlined text-[14px]">shopping_bag</span>
+                                Miel cosechada: @ultimaNotaObj.KilosCosechados.ToString("0.0") kg (Enteras: @ultimaNotaObj.AlzasCosechadas, 3/4: @ultimaNotaObj.AlzasTresCuartosCosechadas, Medias: @ultimaNotaObj.MediasAlzasCosechadas)
+                            </div>
+                        }
                         <p class="font-body-sm text-body-sm text-on-surface-variant">
                             @ultimaNotaObj.Detalles
                         </p>
@@ -311,7 +446,7 @@
                         <span>Reina: @ultimaNotaObj.EstadoReina</span>
                         @if (ultimaNotaObj.Temperatura.HasValue) { <span>Temp: @ultimaNotaObj.Temperatura.Value.ToString("0.0")°C</span> }
                         @if (ultimaNotaObj.Humedad.HasValue) { <span>Hum: @ultimaNotaObj.Humedad.Value.ToString("0.0")%</span> }
-                        @if (ultimaNotaObj.KilosCosechados > 0) { <span class="text-primary-container">Cosechó @ultimaNotaObj.KilosCosechados kg</span> }
+                        @if (ultimaNotaObj.KilosCosechados > 0) { <span class="text-primary-container font-semibold">Cosechó @ultimaNotaObj.KilosCosechados.ToString("0.0") kg</span> }
                     </div>
                 </div>
 
@@ -328,9 +463,15 @@
                                 <div class="w-px h-12 bg-surface-container-highest hidden md:block"></div>
                                 <div class="flex-grow flex flex-col gap-2">
                                     <div class="flex items-center gap-3">
-                                        <span class="font-body-md text-body-md font-semibold text-primary-container">Registro Histórico</span>
-                                        <span class="bg-surface-container-high px-2 py-0.5 rounded text-[10px] font-label-caps text-on-surface-variant border border-outline-variant uppercase">@nota.EstadoColmena</span>
+                                        <span class="font-body-md text-body-md font-semibold text-primary-container">@(nota.KilosCosechados > 0 ? "Registro de Cosecha / Extracción" : "Registro Histórico")</span>
                                     </div>
+                                    @if (nota.KilosCosechados > 0)
+                                    {
+                                        <div class="flex items-center gap-1 text-[11px] font-bold text-primary-container bg-primary-container/10 px-2 py-0.5 border border-primary-container/30 rounded w-fit mt-1">
+                                            <span class="material-symbols-outlined text-[14px]">shopping_bag</span>
+                                            Miel cosechada: @nota.KilosCosechados.ToString("0.0") kg (Enteras: @nota.AlzasCosechadas, 3/4: @nota.AlzasTresCuartosCosechadas, Medias: @nota.MediasAlzasCosechadas)
+                                        </div>
+                                    }
                                     <p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">
                                         @nota.Detalles
                                     </p>
@@ -339,7 +480,7 @@
                                     <span>Reina: @nota.EstadoReina</span>
                                     @if (nota.Temperatura.HasValue) { <span>Temp: @nota.Temperatura.Value.ToString("0.0")°C</span> }
                                     @if (nota.Humedad.HasValue) { <span>Hum: @nota.Humedad.Value.ToString("0.0")%</span> }
-                                    @if (nota.KilosCosechados > 0) { <span class="text-primary-container">Cosechó @nota.KilosCosechados kg</span> }
+                                    @if (nota.KilosCosechados > 0) { <span class="text-primary-container font-semibold">Cosechó @nota.KilosCosechados.ToString("0.0") kg</span> }
                                 </div>
                             </div>
                         }
@@ -416,17 +557,16 @@
                     <label for="detalles" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Detalles de la Nota</label>
                     <textarea id="detalles" name="detalles" rows="4" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors resize-none" placeholder="Observaciones generales..."></textarea>
                 </div>
-                
                 @if (Model.EsPiloto)
                 {
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label for="temperatura" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Temperatura (°C)</label>
-                            <input type="number" step="0.1" id="temperatura" name="temperatura" value="@Model.TemperaturaInterna" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                            <input type="number" step="0.1" id="temperatura" name="temperatura" value="@Model.TemperaturaInterna.ToString(System.Globalization.CultureInfo.InvariantCulture)" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
                         </div>
                         <div>
                             <label for="humedad" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Humedad (%)</label>
-                            <input type="number" step="0.1" id="humedad" name="humedad" value="@Model.HumedadInterna" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                            <input type="number" step="0.1" id="humedad" name="humedad" value="@Model.HumedadInterna.ToString(System.Globalization.CultureInfo.InvariantCulture)" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
                         </div>
                     </div>
                 }
@@ -449,7 +589,7 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 gap-4">
                     <div>
                         <label for="estadoReina" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Estado de la Reina</label>
                         <select id="estadoReina" name="estadoReina" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
@@ -457,14 +597,7 @@
                             <option value="Ausente" selected="@(Model.EstadoReina == "Ausente")">Ausente</option>
                         </select>
                     </div>
-                    <div>
-                        <label for="estadoColmena" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Estado General</label>
-                        <select id="estadoColmena" name="estadoColmena" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
-                            <option value="Óptimo" selected="@(Model.Estado == "Óptimo")">Óptimo</option>
-                            <option value="Alerta" selected="@(Model.Estado == "Alerta")">Alerta</option>
-                            <option value="Crítico" selected="@(Model.Estado == "Crítico")">Crítico</option>
-                        </select>
-                    </div>
+                    <input type="hidden" name="estadoColmena" value="@Model.Estado" />
                 </div>
 
                 <div class="pt-4 border-t border-surface-container-highest flex flex-col sm:flex-row justify-end gap-3 mt-6">
@@ -482,58 +615,156 @@
 
 <!-- Edit Colmena Modal -->
 <div id="editModal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
-    <div class="bg-surface-container border border-outline-variant rounded w-full max-w-md modal-container shadow-2xl flex flex-col max-h-[75vh] md:max-h-[85vh]">
+    <div class="bg-surface-container border border-outline-variant rounded w-full max-w-4xl modal-container shadow-2xl flex flex-col max-h-[75vh] md:max-h-[85vh]">
         <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between shrink-0">
-            <h4 class="font-headline-lg text-lg font-bold text-on-surface">Editar Parámetros</h4>
+            <h4 class="font-headline-lg text-lg font-bold text-on-surface flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary-container">edit</span>
+                Editar Parámetros de Colmena
+            </h4>
             <button type="button" id="btnCancelEditIcon" class="text-on-surface-variant hover:text-primary-container transition-colors p-1">
                 <span class="material-symbols-outlined">close</span>
             </button>
         </div>
         <div class="p-6 overflow-y-auto grow custom-scrollbar">
-            <form asp-action="EditarColmena" method="post" class="space-y-4">
+            <form asp-action="EditarColmena" method="post" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="id" value="@Model.Id" />
                 
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label for="peso" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Peso (Kg)</label>
-                        <input type="number" step="0.1" id="peso" name="peso" value="@Model.PesoKg" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
-                    </div>
-                    <div>
-                        <label for="produccion" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Producción Miel (Kg)</label>
-                        <input type="number" step="0.1" id="produccion" name="produccion" value="@Model.ProduccionMielKg" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
-                    </div>
-                </div>
-
-                @if (Model.EsPiloto)
-                {
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label for="temperatura" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Temperatura (°C)</label>
-                            <input type="number" step="0.1" id="temperatura" name="temperatura" value="@Model.TemperaturaInterna" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                <!-- Left Column: Primary parameters & Sensors -->
+                <div class="space-y-4">
+                    <!-- Physical Parameters and Behavior Card -->
+                    <div class="bg-surface-container-low border border-outline-variant rounded p-5 space-y-4">
+                        <h5 class="font-label-caps text-label-caps text-primary-container font-bold border-b border-surface-container-highest pb-2 mb-2">Datos Físicos y Comportamiento</h5>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label for="peso" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Peso (Kg)</label>
+                                <input type="number" step="0.1" id="peso" name="peso" value="@Model.PesoKg.ToString(System.Globalization.CultureInfo.InvariantCulture)" required min="0" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                            </div>
+                            <div>
+                                <label for="produccion" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Producción Miel (Kg)</label>
+                                <input type="number" step="0.1" id="produccion" name="produccion" value="@Model.ProduccionMielKg.ToString(System.Globalization.CultureInfo.InvariantCulture)" required min="0" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                            </div>
                         </div>
-                        <div>
-                            <label for="humedad" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Humedad (%)</label>
-                            <input type="number" step="0.1" id="humedad" name="humedad" value="@Model.HumedadInterna" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label for="comportamiento" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Comportamiento</label>
+                                <select id="comportamiento" name="comportamiento" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
+                                    <option value="Dócil" selected="@(Model.ComportamientoAbejas == "Dócil")">Dócil</option>
+                                    <option value="Defensivo" selected="@(Model.ComportamientoAbejas == "Defensivo")">Defensivo</option>
+                                    <option value="Agresivo" selected="@(Model.ComportamientoAbejas == "Agresivo")">Agresivo</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="tipoColmenaEdit" class="font-label-caps text-label-caps text-on-surface-variant block mb-2">Tipo de Colmena</label>
+                                <select id="tipoColmenaEdit" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
+                                    @if (Model.EsNucleo)
+                                    {
+                                        <option value="Nucleo" selected>Núcleo</option>
+                                        <option value="Normal">Normal</option>
+                                    }
+                                    else if (Model.EsPiloto)
+                                    {
+                                        <option value="Piloto" selected>Piloto</option>
+                                        <option value="Normal">Normal</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="Normal" selected>Normal</option>
+                                        <option value="Piloto">Piloto</option>
+                                    }
+                                </select>
+                                <input type="hidden" id="esPilotoEdit" name="esPiloto" value="@(Model.EsPiloto ? "true" : "false")" />
+                                <input type="hidden" id="esNucleoEdit" name="esNucleo" value="@(Model.EsNucleo ? "true" : "false")" />
+                            </div>
                         </div>
                     </div>
-                }
 
-                <div>
-                    <label for="comportamiento" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Comportamiento</label>
-                    <select id="comportamiento" name="comportamiento" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
-                        <option value="Dócil" selected="@(Model.ComportamientoAbejas == "Dócil")">Dócil</option>
-                        <option value="Defensivo" selected="@(Model.ComportamientoAbejas == "Defensivo")">Defensivo</option>
-                        <option value="Agresivo" selected="@(Model.ComportamientoAbejas == "Agresivo")">Agresivo</option>
-                    </select>
+                    <!-- Sensor Monitoring Card (dynamically toggled) -->
+                    <div id="sensorFieldsContainerEdit" class="bg-surface-container-low border border-outline-variant rounded p-5 space-y-4">
+                        <h5 class="font-label-caps text-label-caps text-primary-container font-bold border-b border-surface-container-highest pb-2 mb-2">Sensores de Monitoreo</h5>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label for="temperaturaEdit" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Temperatura (°C)</label>
+                                <input type="number" step="0.1" id="temperaturaEdit" name="temperatura" value="@Model.TemperaturaInterna.ToString(System.Globalization.CultureInfo.InvariantCulture)" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                            </div>
+                            <div>
+                                <label for="humedadEdit" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Humedad (%)</label>
+                                <input type="number" step="0.1" id="humedadEdit" name="humedad" value="@Model.HumedadInterna.ToString(System.Globalization.CultureInfo.InvariantCulture)" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="flex items-center gap-2 mt-4">
-                    <input type="checkbox" id="esNucleoEdit" name="esNucleo" value="true" checked="@Model.EsNucleo" class="w-4 h-4 text-primary-container bg-background border-outline-variant rounded focus:ring-primary-container focus:ring-2" />
-                    <label for="esNucleoEdit" class="font-body-md text-body-md text-on-surface">¿Es un Núcleo?</label>
+                <!-- Right Column: Alzas current status & Inventory transactions -->
+                <div class="space-y-4">
+                    <!-- Current Alzas Configuration (ReadOnly) -->
+                    <div id="alzasConfigContainerEdit" class="bg-surface-container-low border border-outline-variant rounded p-5 space-y-4">
+                        <h5 class="font-label-caps text-label-caps text-primary-container font-bold border-b border-surface-container-highest pb-2 mb-2">Configuración Actual (Solo Lectura)</h5>
+                        <div class="grid grid-cols-3 gap-4">
+                            <div>
+                                <label for="alzasEdit" class="font-label-caps text-[10px] text-on-surface-variant mb-2 block text-center">Alzas Enteras</label>
+                                <input type="number" id="alzasEdit" name="alzas" value="@Model.Alzas.ToString(System.Globalization.CultureInfo.InvariantCulture)" readonly class="alza-input-edit w-full bg-surface-container-high border border-outline-variant px-3 py-2 rounded text-on-surface text-center font-bold outline-none cursor-not-allowed opacity-75" />
+                            </div>
+                            <div>
+                                <label for="alzasTresCuartosEdit" class="font-label-caps text-[10px] text-on-surface-variant mb-2 block text-center">Alzas 3/4</label>
+                                <input type="number" id="alzasTresCuartosEdit" name="alzasTresCuartos" value="@Model.AlzasTresCuartos.ToString(System.Globalization.CultureInfo.InvariantCulture)" readonly class="alza-input-edit w-full bg-surface-container-high border border-outline-variant px-3 py-2 rounded text-on-surface text-center font-bold outline-none cursor-not-allowed opacity-75" />
+                            </div>
+                            <div>
+                                <label for="mediasAlzasEdit" class="font-label-caps text-[10px] text-on-surface-variant mb-2 block text-center">Medias Alzas</label>
+                                <input type="number" id="mediasAlzasEdit" name="mediasAlzas" value="@Model.MediasAlzas.ToString(System.Globalization.CultureInfo.InvariantCulture)" readonly class="alza-input-edit w-full bg-surface-container-high border border-outline-variant px-3 py-2 rounded text-on-surface text-center font-bold outline-none cursor-not-allowed opacity-75" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Alzas Transaction Panel -->
+                    <div id="alzasInventoryTransactionPanel" class="bg-surface-container-low border border-outline-variant rounded p-5 space-y-4">
+                        <h5 class="font-label-caps text-label-caps text-primary-container font-bold border-b border-surface-container-highest pb-2 mb-2">Manejo de Alzas (Colmena)</h5>
+                        
+                        <!-- Inputs in a single horizontal row -->
+                        <div class="grid grid-cols-5 gap-3">
+                            <div class="col-span-2">
+                                <label for="alzaTransaccion" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Acción</label>
+                                <select id="alzaTransaccion" name="alzaTransaccion" class="w-full bg-background border border-outline-variant px-3 py-2 rounded text-on-surface focus:border-primary-container outline-none transition-colors">
+                                    <option value="Ninguna" selected>Ninguna (No modificar)</option>
+                                    <option value="Agregar">Agregar a Colmena</option>
+                                    <option value="Quitar">Quitar de Colmena</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-span-2">
+                                <label for="tipoAlzaTransaccion" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Tipo de Alza</label>
+                                <select id="tipoAlzaTransaccion" name="tipoAlzaTransaccion" class="w-full bg-background border border-outline-variant px-3 py-2 rounded text-on-surface focus:border-primary-container outline-none transition-colors">
+                                    <option value="Enteras">Alzas Enteras</option>
+                                    <option value="TresCuartos">Alzas 3/4</option>
+                                    <option value="Medias">Medias Alzas</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-span-1">
+                                <label for="cantidadTransaccion" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block text-center">Cantidad</label>
+                                <input type="number" id="cantidadTransaccion" name="cantidadTransaccion" value="1" min="1" class="w-full bg-background border border-outline-variant px-3 py-2 rounded text-on-surface focus:border-primary-container outline-none transition-colors text-center font-bold" />
+                            </div>
+                        </div>
+
+                        <input type="hidden" name="alzas" value="@Model.Alzas" />
+                        <input type="hidden" name="mediasAlzas" value="@Model.MediasAlzas" />
+                        <input type="hidden" name="alzasTresCuartos" value="@Model.AlzasTresCuartos" />
+
+                        <!-- Dynamic transaction explanation card -->
+                        <div id="transaccionExplicacion" class="p-3 rounded font-body-sm border transition-all duration-200 space-y-1.5 bg-surface-container-high border-outline-variant text-on-surface-variant">
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[18px] text-on-surface-variant">info</span>
+                                <span>Selecciona una acción (Agregar o Quitar) para modificar las alzas de la colmena.</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="pt-4 border-t border-surface-container-highest flex flex-col sm:flex-row justify-end gap-3 mt-6">
+                <!-- Form Action Buttons (Spans full width) -->
+                <div class="md:col-span-2 pt-4 border-t border-surface-container-highest flex flex-col sm:flex-row justify-end gap-3 mt-4">
                     <button type="button" id="btnCancelEdit" class="border border-outline text-on-surface hover:bg-surface-container-high transition-colors px-5 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex">
                         Cancelar
                     </button>
@@ -641,15 +872,24 @@
                         <div class="w-px h-12 bg-surface-container-highest hidden md:block"></div>
                         <div class="flex-grow flex flex-col gap-2">
                             <div class="flex items-center gap-3">
-                                <span class="font-body-md text-body-md font-semibold text-primary-container">Nota de Evaluación</span>
-                                <span class="bg-surface-container-high px-2 py-0.5 rounded text-[10px] font-label-caps text-on-surface-variant border border-outline-variant uppercase">@nota.EstadoColmena</span>
+                                <span class="font-body-md text-body-md font-semibold text-primary-container">@(nota.KilosCosechados > 0 ? "Nota de Extracción / Cosecha" : "Nota de Evaluación")</span>
                             </div>
+                            @if (nota.KilosCosechados > 0)
+                            {
+                                <div class="flex items-center gap-1 text-[11px] font-bold text-primary-container bg-primary-container/10 px-2 py-0.5 border border-primary-container/30 rounded w-fit mt-1">
+                                    <span class="material-symbols-outlined text-[14px]">shopping_bag</span>
+                                    Miel cosechada: @nota.KilosCosechados.ToString("0.0") kg (Enteras: @nota.AlzasCosechadas, 3/4: @nota.AlzasTresCuartosCosechadas, Medias: @nota.MediasAlzasCosechadas)
+                                </div>
+                            }
                             <p class="font-body-sm text-body-sm text-on-surface-variant">
                                 @nota.Detalles
                             </p>
                         </div>
-                        <div class="flex flex-col items-end gap-1 text-on-surface-variant text-[10px] font-label-caps border-l border-surface-container-highest pl-4 shrink-0 mt-4 md:mt-0">
+                        <div class="flex flex-col items-end gap-1 text-on-surface-variant text-[10px] font-label-caps border-l border-surface-container-highest pl-4 shrink-0 mt-4 md:mt-0 min-w-[120px]">
                             <span class="whitespace-nowrap">Reina: @nota.EstadoReina</span>
+                            @if (nota.Temperatura.HasValue) { <span>Temp: @nota.Temperatura.Value.ToString("0.0")°C</span> }
+                            @if (nota.Humedad.HasValue) { <span>Hum: @nota.Humedad.Value.ToString("0.0")%</span> }
+                            @if (nota.KilosCosechados > 0) { <span class="text-primary-container font-semibold">Cosechó @nota.KilosCosechados.ToString("0.0") kg</span> }
                         </div>
                     </div>
                 }
@@ -687,7 +927,272 @@
         }
 
         // Setup Edit Modal
-        setupModal('btnOpenEdit', 'editModal', ['btnCancelEdit', 'btnCancelEditIcon']);
+        const editModal = document.getElementById('editModal');
+        const btnOpenEdit = document.getElementById('btnOpenEdit');
+        if (btnOpenEdit && editModal) {
+            btnOpenEdit.addEventListener('click', () => {
+                const form = editModal.querySelector('form');
+                if (form) {
+                    form.reset();
+                }
+                if (typeof updateEditFormConstraints === 'function') {
+                    updateEditFormConstraints();
+                }
+                editModal.classList.remove('modal-hidden');
+            });
+        }
+        ['btnCancelEdit', 'btnCancelEditIcon'].forEach(id => {
+            const btn = document.getElementById(id);
+            if (btn) {
+                btn.addEventListener('click', () => editModal.classList.add('modal-hidden'));
+            }
+        });
+
+        // Toggle logic for editing a hive in the edit modal
+        const tipoColmenaEditSelect = document.getElementById('tipoColmenaEdit');
+        const esPilotoEditHidden = document.getElementById('esPilotoEdit');
+        const esNucleoEditHidden = document.getElementById('esNucleoEdit');
+        const sensorFieldsContainerEdit = document.getElementById('sensorFieldsContainerEdit');
+        const alzasConfigContainerEdit = document.getElementById('alzasConfigContainerEdit');
+        const alzasInventoryTransactionPanel = document.getElementById('alzasInventoryTransactionPanel');
+        const tempInputEdit = document.getElementById('temperaturaEdit');
+        const humInputEdit = document.getElementById('humedadEdit');
+        const inputsAlzasEdit = document.querySelectorAll('.alza-input-edit');
+
+        // Dynamic required variables for transaction
+        const alzaTransaccionSelect = document.getElementById('alzaTransaccion');
+        const tipoAlzaTransaccionSelect = document.getElementById('tipoAlzaTransaccion');
+        const cantidadTransaccionInput = document.getElementById('cantidadTransaccion');
+        const transaccionExplicacion = document.getElementById('transaccionExplicacion');
+
+        const currentAlzasCounts = {
+            'Enteras': parseInt('@Model.Alzas') || 0,
+            'TresCuartos': parseInt('@Model.AlzasTresCuartos') || 0,
+            'Medias': parseInt('@Model.MediasAlzas') || 0
+        };
+
+        function updateTransactionVisualState() {
+            if (!alzaTransaccionSelect) return;
+            const accion = alzaTransaccionSelect.value;
+            const tipoAlza = tipoAlzaTransaccionSelect.value;
+            const currentCount = currentAlzasCounts[tipoAlza];
+            const maxLimit = 5;
+
+            // Reset classes on the explanation box
+            transaccionExplicacion.className = "p-3 rounded font-body-sm border transition-all duration-200 space-y-1.5";
+
+            if (accion === 'Ninguna') {
+                cantidadTransaccionInput.required = false;
+                cantidadTransaccionInput.disabled = true;
+                cantidadTransaccionInput.value = 0;
+                cantidadTransaccionInput.max = 0;
+
+                // Show default explanation
+                transaccionExplicacion.classList.add('bg-surface-container-high', 'border-outline-variant', 'text-on-surface-variant');
+                transaccionExplicacion.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-[18px] text-on-surface-variant">info</span>
+                        <span>Selecciona una acción (Agregar o Quitar) para modificar las alzas de la colmena.</span>
+                    </div>
+                `;
+            } else if (accion === 'Agregar') {
+                const availableSlots = maxLimit - currentCount;
+
+                if (availableSlots <= 0) {
+                    cantidadTransaccionInput.disabled = true;
+                    cantidadTransaccionInput.required = false;
+                    cantidadTransaccionInput.value = 0;
+                    cantidadTransaccionInput.max = 0;
+
+                    transaccionExplicacion.classList.add('bg-error-container/10', 'border-error-container/30', 'text-on-surface');
+                    transaccionExplicacion.innerHTML = `
+                        <div class="flex items-center gap-2 text-error font-semibold">
+                            <span class="material-symbols-outlined text-[18px]">warning</span>
+                            <span>Límite Alcanzado: Esta colmena ya tiene las 5 alzas de este tipo.</span>
+                        </div>
+                    `;
+                } else {
+                    cantidadTransaccionInput.disabled = false;
+                    cantidadTransaccionInput.required = true;
+                    cantidadTransaccionInput.min = 1;
+                    cantidadTransaccionInput.max = availableSlots;
+                    if (parseInt(cantidadTransaccionInput.value) > availableSlots || parseInt(cantidadTransaccionInput.value) <= 0) {
+                        cantidadTransaccionInput.value = 1;
+                    }
+
+                    transaccionExplicacion.classList.add('bg-primary-container/10', 'border-primary-container/30', 'text-on-surface');
+                    transaccionExplicacion.innerHTML = `
+                        <div class="flex items-center gap-1.5 text-primary-container font-semibold">
+                            <span class="material-symbols-outlined text-[18px]">add_circle</span>
+                            <span>Agregar alzas (Instaladas: ${currentCount} / 5 | Disponibles: ${availableSlots})</span>
+                        </div>
+                    `;
+                }
+            } else if (accion === 'Quitar') {
+                if (currentCount <= 0) {
+                    cantidadTransaccionInput.disabled = true;
+                    cantidadTransaccionInput.required = false;
+                    cantidadTransaccionInput.value = 0;
+                    cantidadTransaccionInput.max = 0;
+
+                    transaccionExplicacion.classList.add('bg-error-container/10', 'border-error-container/30', 'text-on-surface');
+                    transaccionExplicacion.innerHTML = `
+                        <div class="flex items-center gap-2 text-error font-semibold">
+                            <span class="material-symbols-outlined text-[18px]">warning</span>
+                            <span>Sin Alzas: No hay alzas de este tipo instaladas para retirar.</span>
+                        </div>
+                    `;
+                } else {
+                    cantidadTransaccionInput.disabled = false;
+                    cantidadTransaccionInput.required = true;
+                    cantidadTransaccionInput.min = 1;
+                    cantidadTransaccionInput.max = currentCount;
+                    if (parseInt(cantidadTransaccionInput.value) > currentCount || parseInt(cantidadTransaccionInput.value) <= 0) {
+                        cantidadTransaccionInput.value = 1;
+                    }
+
+                    transaccionExplicacion.classList.add('bg-error-container/10', 'border-error-container/30', 'text-on-surface');
+                    transaccionExplicacion.innerHTML = `
+                        <div class="flex items-center gap-1.5 text-error font-semibold">
+                            <span class="material-symbols-outlined text-[18px]">remove_circle</span>
+                            <span>Retirar alzas (Instaladas: ${currentCount} | Máx. a retirar: ${currentCount})</span>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        if (alzaTransaccionSelect) {
+            alzaTransaccionSelect.addEventListener('change', updateTransactionVisualState);
+            tipoAlzaTransaccionSelect.addEventListener('change', updateTransactionVisualState);
+            updateTransactionVisualState();
+        }
+
+        const editForm = document.querySelector('#editModal form');
+        if (editForm) {
+            editForm.addEventListener('submit', function(event) {
+                if (!alzaTransaccionSelect) return;
+                const accion = alzaTransaccionSelect.value;
+                if (accion === 'Ninguna') return;
+
+                const tipoAlza = tipoAlzaTransaccionSelect.value;
+                const cantidad = parseInt(cantidadTransaccionInput.value) || 0;
+                const currentCount = currentAlzasCounts[tipoAlza];
+
+                if (accion === 'Agregar') {
+                    if (currentCount + cantidad > 5) {
+                        alert(`No se pueden agregar ${cantidad} alzas. El total superaría el límite máximo de 5 de este tipo.`);
+                        event.preventDefault();
+                        return;
+                    }
+                } else if (accion === 'Quitar') {
+                    if (currentCount < cantidad) {
+                        alert(`Cantidad inválida. La colmena solo tiene ${currentCount} alzas instaladas de este tipo.`);
+                        event.preventDefault();
+                        return;
+                    }
+                }
+            });
+        }
+
+        function updateEditFormConstraints() {
+            const val = tipoColmenaEditSelect.value;
+            if (val === 'Nucleo') {
+                esNucleoEditHidden.value = 'true';
+                esPilotoEditHidden.value = 'false';
+
+                // Nucleo: hide alzas, transaction panel and hide sensors
+                alzasConfigContainerEdit.classList.add('hidden');
+                if (alzasInventoryTransactionPanel) alzasInventoryTransactionPanel.classList.add('hidden');
+                sensorFieldsContainerEdit.classList.add('hidden');
+                
+                tempInputEdit.required = false;
+                humInputEdit.required = false;
+                tempInputEdit.value = '';
+                humInputEdit.value = '';
+
+                // Reset and calculate
+                inputsAlzasEdit.forEach(input => {
+                    input.value = 0;
+                });
+            } else if (val === 'Piloto') {
+                esNucleoEditHidden.value = 'false';
+                esPilotoEditHidden.value = 'true';
+
+                // Piloto: show alzas, transaction panel and show sensors
+                alzasConfigContainerEdit.classList.remove('hidden');
+                if (alzasInventoryTransactionPanel) alzasInventoryTransactionPanel.classList.remove('hidden');
+                sensorFieldsContainerEdit.classList.remove('hidden');
+
+                tempInputEdit.required = false;
+                humInputEdit.required = false;
+            } else {
+                // Normal: show alzas, transaction panel and hide sensors
+                esNucleoEditHidden.value = 'false';
+                esPilotoEditHidden.value = 'false';
+
+                alzasConfigContainerEdit.classList.remove('hidden');
+                if (alzasInventoryTransactionPanel) alzasInventoryTransactionPanel.classList.remove('hidden');
+                sensorFieldsContainerEdit.classList.add('hidden');
+
+                tempInputEdit.required = false;
+                humInputEdit.required = false;
+                tempInputEdit.value = '';
+                humInputEdit.value = '';
+            }
+
+            updateProduccionMax();
+        }
+
+        function updateProduccionMax() {
+            const val = tipoColmenaEditSelect.value;
+            const produccionInput = document.getElementById('produccion');
+            if (!produccionInput) return;
+
+            if (val === 'Nucleo') {
+                produccionInput.max = 0;
+                if (parseFloat(produccionInput.value) > 0) {
+                    produccionInput.value = 0;
+                    produccionInput.dispatchEvent(new Event('input'));
+                }
+            } else {
+                const alzas = parseInt(document.getElementById('alzasEdit').value) || 0;
+                const alzas34 = parseInt(document.getElementById('alzasTresCuartosEdit').value) || 0;
+                const medias = parseInt(document.getElementById('mediasAlzasEdit').value) || 0;
+                const maxMiel = (alzas * 22) + (alzas34 * 17) + (medias * 12);
+                produccionInput.max = maxMiel;
+                
+                if (parseFloat(produccionInput.value) > maxMiel) {
+                    produccionInput.value = maxMiel;
+                    produccionInput.dispatchEvent(new Event('input'));
+                }
+            }
+        }
+
+        if (tipoColmenaEditSelect) {
+            tipoColmenaEditSelect.addEventListener('change', updateEditFormConstraints);
+            // Run initially to set correct state
+            updateEditFormConstraints();
+        }
+
+        // Dynamic Hive Weight delta recalculation on edit
+        const pesoInput = document.getElementById('peso');
+        const produccionInput = document.getElementById('produccion');
+        if (pesoInput && produccionInput) {
+            let lastMiel = parseFloat(produccionInput.value) || 0;
+
+            produccionInput.addEventListener('input', () => {
+                const currentMiel = parseFloat(produccionInput.value) || 0;
+                const currentPeso = parseFloat(pesoInput.value) || 0;
+                const diff = currentMiel - lastMiel;
+                pesoInput.value = (currentPeso + diff).toFixed(1);
+                lastMiel = currentMiel;
+            });
+
+            pesoInput.addEventListener('change', () => {
+                lastMiel = parseFloat(produccionInput.value) || 0;
+            });
+        }
         
         // Setup Note Modal
         setupModal('btnOpenNote', 'noteModal', ['btnCancelNote', 'btnCancelNoteIcon']);

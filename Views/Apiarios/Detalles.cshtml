@@ -12,15 +12,25 @@
     var prodTotal = colmenas.Sum(c => c.ProduccionMielKg);
     var prodPercent = Math.Min(100, Math.Round((prodTotal / 300.0) * 100));
 
+    var activeMovements = ViewBag.ActiveMovements as Dictionary<int, ObligatorioIntegrador2026.Models.Movimiento> ?? new Dictionary<int, ObligatorioIntegrador2026.Models.Movimiento>();
+
     // Convertir a JSON para pasarlo al cliente
-    var colmenasJson = JsonSerializer.Serialize(colmenas.Select(c => new {
-        identificador = c.Identificador,
-        codigoEscaneo = c.CodigoEscaneo,
-        esPiloto = c.EsPiloto,
-        estado = c.Estado,
-        peso = c.PesoKg,
-        temp = c.TemperaturaInterna,
-        id = c.Id
+    var colmenasJson = JsonSerializer.Serialize(colmenas.Select(c => {
+        var isTemporal = activeMovements.TryGetValue(c.Id, out var mov);
+        return new {
+            identificador = c.Identificador,
+            codigoEscaneo = c.CodigoEscaneo,
+            esPiloto = c.EsPiloto,
+            estado = c.Estado,
+            peso = c.PesoKg,
+            temp = c.TemperaturaInterna,
+            id = c.Id,
+            esTemporal = isTemporal,
+            apiarioOrigenId = isTemporal ? mov!.ApiarioOrigenId : 0,
+            apiarioOrigenNombre = isTemporal ? mov!.ApiarioOrigen?.Nombre : null,
+            apiarioDestinoId = isTemporal ? mov!.ApiarioDestinoId : 0,
+            apiarioDestinoNombre = isTemporal ? mov!.ApiarioDestino?.Nombre : null
+        };
     }));
 }
 
@@ -342,10 +352,12 @@
                 <div>
                     <label for="Nombre" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Nombre *</label>
                     <input type="text" id="Nombre" name="Nombre" value="@Model.Nombre" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                    <span id="errorNombre" class="text-error text-xs font-body-sm mt-1 hidden"></span>
                 </div>
                 <div>
                     <label for="StringIdentificador" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Identificador</label>
                     <input type="text" id="StringIdentificador" name="StringIdentificador" value="@Model.StringIdentificador" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                    <span id="errorIdentificador" class="text-error text-xs font-body-sm mt-1 hidden"></span>
                 </div>
                 <div>
                     <label for="UbicacionTexto" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Ubicación Texto *</label>
@@ -373,7 +385,7 @@
                     <button type="button" id="btnCancelEditarApiario" class="border border-outline text-on-surface hover:bg-surface-container-high px-5 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex transition-colors">
                         Cancelar
                     </button>
-                    <button type="submit" class="bg-primary-container text-on-primary hover:bg-primary-fixed px-6 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex transition-colors">
+                    <button type="submit" id="btnSubmitEditarApiario" class="bg-primary-container text-on-primary hover:bg-primary-fixed px-6 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex transition-colors">
                         Guardar Cambios
                     </button>
                 </div>
@@ -385,7 +397,7 @@
 @section Scripts {
     <!-- Registrar Colmena Modal -->
 <div id="registrarColmenaModal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop bg-black/85 modal-hidden p-4">
-    <div class="bg-surface-container border border-outline-variant rounded w-full max-w-md modal-container shadow-2xl flex flex-col max-h-[75vh] md:max-h-[85vh]">
+    <div class="bg-surface-container border border-outline-variant rounded w-full max-w-3xl modal-container shadow-2xl flex flex-col max-h-[75vh] md:max-h-[85vh]">
         <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between shrink-0">
             <h4 class="font-headline-lg text-lg font-bold text-on-surface">Registrar Nueva Colmena</h4>
             <button type="button" id="btnCancelRegistrarColmenaIcon" class="text-on-surface-variant hover:text-primary-container transition-colors p-1">
@@ -393,100 +405,114 @@
             </button>
         </div>
         <div class="p-6 overflow-y-auto grow custom-scrollbar">
-            <form asp-action="RegistrarNueva" asp-controller="Colmenas" method="post" class="space-y-4">
+            <form asp-action="RegistrarNueva" asp-controller="Colmenas" method="post" class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="returnUrl" value="/Apiarios/Detalles/@Model.Id" />
                 
-                <div>
-                    <label for="Identificador" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Identificador (Opcional)</label>
-                    <input type="text" id="Identificador" name="Identificador" placeholder="#HIVE-0123" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
-                </div>
-                <div>
-                    <label for="ApiarioDummy" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Apiario</label>
-                    <input type="text" id="ApiarioDummy" value="@Model.Nombre" disabled class="w-full bg-surface-variant border border-outline-variant px-4 py-2.5 rounded text-on-surface-variant outline-none cursor-not-allowed" />
-                    <input type="hidden" name="ApiarioId" value="@Model.Id" />
-                </div>
-                <div>
-                    <label for="CantidadAbejas" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Cantidad de Abejas (Aprox.)</label>
-                    <input type="number" id="CantidadAbejas" name="CantidadAbejas" placeholder="40000" required min="0" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
-                </div>
-                <div>
-                    <label for="UbicacionIntraApiario" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Ubicación (Ej: Fila 1, Pos 3)</label>
-                    <input type="text" id="UbicacionIntraApiario" name="UbicacionIntraApiario" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
-                </div>
-                <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-4">
                     <div>
-                        <label for="TemperaturaInterna" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Temperatura (°C)</label>
-                        <input type="number" step="0.1" id="TemperaturaInterna" name="TemperaturaInterna" placeholder="35.0" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                        <label for="Identificador" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Identificador (Opcional)</label>
+                        <input type="text" id="Identificador" name="Identificador" placeholder="#HIVE-0123" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
                     </div>
                     <div>
-                        <label for="HumedadInterna" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Humedad (%)</label>
-                        <input type="number" step="0.1" id="HumedadInterna" name="HumedadInterna" placeholder="55.0" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                        <label for="ApiarioDummy" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Apiario</label>
+                        <input type="text" id="ApiarioDummy" value="@Model.Nombre" disabled class="w-full bg-surface-variant border border-outline-variant px-4 py-2.5 rounded text-on-surface-variant outline-none cursor-not-allowed" />
+                        <input type="hidden" name="ApiarioId" value="@Model.Id" />
                     </div>
-                </div>
-                <div class="bg-surface-container-low border border-outline-variant rounded p-4 mt-2">
-                    <h5 class="font-label-caps text-label-caps text-on-surface-variant mb-3">Configuración de Alzas</h5>
-                    <div class="grid grid-cols-3 gap-3">
-                        <div>
-                            <label for="Alzas" class="font-label-caps text-[10px] text-on-surface-variant mb-1 block">Alzas Enteras</label>
-                            <input type="number" id="Alzas" name="Alzas" value="0" min="0" max="5" class="alza-input w-full bg-background border border-outline-variant px-2 py-1.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
-                        </div>
-                        <div>
-                            <label for="AlzasTresCuartos" class="font-label-caps text-[10px] text-on-surface-variant mb-1 block">Alzas 3/4</label>
-                            <input type="number" id="AlzasTresCuartos" name="AlzasTresCuartos" value="0" min="0" max="5" class="alza-input w-full bg-background border border-outline-variant px-2 py-1.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
-                        </div>
-                        <div>
-                            <label for="MediasAlzas" class="font-label-caps text-[10px] text-on-surface-variant mb-1 block">Medias Alzas</label>
-                            <input type="number" id="MediasAlzas" name="MediasAlzas" value="0" min="0" max="5" class="alza-input w-full bg-background border border-outline-variant px-2 py-1.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
-                        </div>
-                    </div>
-                    <div class="mt-3 flex justify-between items-center bg-background border border-outline-variant px-3 py-2 rounded">
-                        <span class="font-body-sm text-body-sm text-on-surface-variant">Producción Estimada:</span>
-                        <div class="flex items-center gap-1">
-                            <input type="hidden" id="ProduccionMielKg" name="ProduccionMielKg" value="0" />
-                            <span id="displayMielKg" class="font-display text-[18px] text-primary-container font-bold">0.0</span>
-                            <span class="font-label-caps text-[10px] text-primary-container">KG</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label for="EstadoReina" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Estado Reina</label>
-                        <select id="EstadoReina" name="EstadoReina" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
-                            <option value="Presente" selected>Presente</option>
-                            <option value="Ausente">Ausente</option>
+                        <label for="CantidadAbejas" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Cantidad de Abejas (Aprox.)</label>
+                        <input type="number" id="CantidadAbejas" name="CantidadAbejas" placeholder="40000" required min="0" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                    </div>
+                    <div>
+                        <label for="UbicacionIntraApiario" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Ubicación (Ej: Fila 1, Pos 3)</label>
+                        <input type="text" id="UbicacionIntraApiario" name="UbicacionIntraApiario" required class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="EstadoReina" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Estado Reina</label>
+                            <select id="EstadoReina" name="EstadoReina" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
+                                <option value="Presente" selected>Presente</option>
+                                <option value="Ausente">Ausente</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="ComportamientoAbejas" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Comportamiento</label>
+                            <select id="ComportamientoAbejas" name="ComportamientoAbejas" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
+                                <option value="Dócil">Dócil</option>
+                                <option value="Defensivo">Defensivo</option>
+                                <option value="Agresivo">Agresivo</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div id="sensorFieldsContainer" class="hidden grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="TemperaturaInterna" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Temperatura (°C)</label>
+                            <input type="number" step="0.1" id="TemperaturaInterna" name="TemperaturaInterna" placeholder="35.0" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                        </div>
+                        <div>
+                            <label for="HumedadInterna" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Humedad (%)</label>
+                            <input type="number" step="0.1" id="HumedadInterna" name="HumedadInterna" placeholder="55.0" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                        </div>
+                    </div>
+
+                    <div id="alzasConfigContainer" class="bg-surface-container-low border border-outline-variant rounded p-4">
+                        <h5 class="font-label-caps text-label-caps text-on-surface-variant mb-3">Configuración de Alzas</h5>
+                        <div class="grid grid-cols-3 gap-3">
+                            <div>
+                                <label for="Alzas" class="font-label-caps text-[10px] text-on-surface-variant mb-1 block">Alzas Enteras</label>
+                                <input type="number" id="Alzas" name="Alzas" value="0" min="0" max="5" class="alza-input w-full bg-background border border-outline-variant px-2 py-1.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                            </div>
+                            <div>
+                                <label for="AlzasTresCuartos" class="font-label-caps text-[10px] text-on-surface-variant mb-1 block">Alzas 3/4</label>
+                                <input type="number" id="AlzasTresCuartos" name="AlzasTresCuartos" value="0" min="0" max="5" class="alza-input w-full bg-background border border-outline-variant px-2 py-1.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                            </div>
+                            <div>
+                                <label for="MediasAlzas" class="font-label-caps text-[10px] text-on-surface-variant mb-1 block">Medias Alzas</label>
+                                <input type="number" id="MediasAlzas" name="MediasAlzas" value="0" min="0" max="5" class="alza-input w-full bg-background border border-outline-variant px-2 py-1.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" />
+                            </div>
+                        </div>
+                        <div class="mt-3 flex justify-between items-center bg-background border border-outline-variant px-3 py-2 rounded">
+                            <span class="font-body-sm text-body-sm text-on-surface-variant">Producción Estimada:</span>
+                            <div class="flex items-center gap-1">
+                                <input type="hidden" id="ProduccionMielKg" name="ProduccionMielKg" value="0" />
+                                <span id="displayMielKg" class="font-display text-[18px] text-primary-container font-bold">0.0</span>
+                                <span class="font-label-caps text-[10px] text-primary-container">KG</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sm:col-span-2 space-y-4">
+                    <div class="space-y-2 mt-2">
+                        <label for="TipoColmena" class="font-label-caps text-label-caps text-on-surface-variant block">Tipo de Colmena</label>
+                        <select id="TipoColmena" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
+                            <option value="Normal">Normal</option>
+                            <option value="Nucleo">Núcleo</option>
+                            <option value="Piloto">Piloto</option>
                         </select>
+                        <input type="hidden" id="EsPiloto" name="EsPiloto" value="false" />
+                        <input type="hidden" id="EsNucleo" name="EsNucleo" value="false" />
                     </div>
-                    <div>
-                        <label for="ComportamientoAbejas" class="font-label-caps text-label-caps text-on-surface-variant mb-2 block">Comportamiento</label>
-                        <select id="ComportamientoAbejas" name="ComportamientoAbejas" class="w-full bg-background border border-outline-variant px-4 py-2.5 rounded text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
-                            <option value="Dócil">Dócil</option>
-                            <option value="Defensivo">Defensivo</option>
-                            <option value="Agresivo">Agresivo</option>
-                        </select>
+                    
+                    <div class="bg-primary-container/10 border border-primary-container rounded p-3 flex items-start gap-3">
+                        <span class="material-symbols-outlined text-primary-container text-[20px] shrink-0">info</span>
+                        <p class="font-body-sm text-body-sm text-on-surface text-left">
+                            Al guardar la colmena se generará un <strong class="text-primary-container">código de 6 dígitos</strong>. Debes asegurarte de anotarlo a mano con marcador visible en la colmena física para poder usar el escáner.
+                        </p>
                     </div>
-                </div>
-                <div class="flex items-center gap-2 mt-4">
-                    <input type="checkbox" id="EsPiloto" name="EsPiloto" value="true" class="w-4 h-4 text-primary-container bg-background border-outline-variant rounded focus:ring-primary-container focus:ring-2" />
-                    <label for="EsPiloto" class="font-body-md text-body-md text-on-surface">Convertir en Colmena Piloto</label>
-                </div>
-                <div class="flex items-center gap-2 mt-2">
-                    <input type="checkbox" id="EsNucleo" name="EsNucleo" value="true" class="w-4 h-4 text-primary-container bg-background border-outline-variant rounded focus:ring-primary-container focus:ring-2" />
-                    <label for="EsNucleo" class="font-body-md text-body-md text-on-surface">¿Es un Núcleo?</label>
-                </div>
-                <div class="bg-primary-container/10 border border-primary-container rounded p-3 flex items-start gap-3 mt-4">
-                    <span class="material-symbols-outlined text-primary-container text-[20px] shrink-0">info</span>
-                    <p class="font-body-sm text-body-sm text-on-surface text-left">
-                        Al guardar la colmena se generará un <strong class="text-primary-container">código de 6 dígitos</strong>. Debes asegurarte de anotarlo a mano con marcador visible en la colmena física para poder usar el escáner.
-                    </p>
-                </div>
-                <div class="pt-4 border-t border-surface-container-highest flex flex-col sm:flex-row justify-end gap-3 mt-6">
-                    <button type="button" id="btnCancelRegistrarColmena" class="border border-outline text-on-surface hover:bg-surface-container-high px-5 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex transition-colors">
-                        Cancelar
-                    </button>
-                    <button type="submit" class="bg-primary-container text-on-primary hover:bg-primary-fixed px-6 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex transition-colors">
-                        Guardar Colmena
-                    </button>
+
+                    <div class="pt-4 border-t border-surface-container-highest flex flex-col sm:flex-row justify-end gap-3 mt-4">
+                        <button type="button" id="btnCancelRegistrarColmena" class="border border-outline text-on-surface hover:bg-surface-container-high px-5 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex transition-colors">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="bg-primary-container text-on-primary hover:bg-primary-fixed px-6 py-2.5 rounded font-label-caps text-label-caps w-full sm:w-auto text-center justify-center flex transition-colors">
+                            Guardar Colmena
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -540,6 +566,31 @@
                     statusHtml = `<div class="inline-flex items-center gap-1.5 px-2 py-1 border border-outline-variant rounded bg-surface-variant text-on-surface-variant font-label-caps text-label-caps"><span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">info</span>${c.estado}</div>`;
                 }
 
+                let apiarioHtml = apiarioNombre;
+                if (c.esTemporal) {
+                    if (c.apiarioOrigenId === @Model.Id) {
+                        apiarioHtml = `
+                            <div>
+                                <span>${c.apiarioDestinoNombre}</span>
+                                <div class="mt-1 flex items-center gap-1 text-[10px] text-error font-semibold bg-error/10 px-2 py-0.5 border border-error/30 rounded w-fit uppercase" title="Trasladada temporalmente a: ${c.apiarioDestinoNombre}">
+                                    <span class="material-symbols-outlined text-[12px]">local_shipping</span>
+                                    Trasladada
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        apiarioHtml = `
+                            <div>
+                                <span>${apiarioNombre}</span>
+                                <div class="mt-1 flex items-center gap-1 text-[10px] text-primary-container font-semibold bg-primary-container/10 px-2 py-0.5 border border-primary-container/30 rounded w-fit uppercase" title="Ubicada temporalmente por un movimiento. Su origen es: ${c.apiarioOrigenNombre}">
+                                    <span class="material-symbols-outlined text-[12px]">local_shipping</span>
+                                    Temporal
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
+
                 const tr = document.createElement('tr');
                 tr.className = 'border-b border-surface-container-highest ' + bgClass;
                 tr.innerHTML = `
@@ -552,7 +603,7 @@
                             ${c.esPiloto ? '<div class="w-6 h-6 shrink-0 flex items-center justify-center border border-outline-variant bg-surface-container-high rounded text-on-surface font-label-caps text-[12px]" title="Colmena Piloto">P</div>' : ''}
                         </div>
                     </td>
-                    <td data-label="APIARIO" class="p-4 border-b border-surface-container-highest md:border-none">${apiarioNombre}</td>
+                    <td data-label="APIARIO" class="p-4 border-b border-surface-container-highest md:border-none">${apiarioHtml}</td>
                     <td data-label="ESTADO" class="p-4 border-b border-surface-container-highest md:border-none">${statusHtml}</td>
                     <td data-label="PESO (KG)" class="p-4 border-b border-surface-container-highest md:border-none ${weightClass}">${c.peso} ${weightClass ? iconArrow : ''}</td>
                     <td data-label="TEMP." class="p-4 border-b border-surface-container-highest md:border-none ${tempClass}">${c.esPiloto ? c.temp + '°C ' + (tempClass ? iconArrow : '') : '<span class="text-on-surface-variant/50">N/A</span>'}</td>
@@ -681,5 +732,147 @@
         }
         
         inputsAlzas.forEach(inp => inp.addEventListener('input', calculateHoney));
+
+        // Toggle pilot sensor fields
+        const tipoColmenaSelect = document.getElementById('TipoColmena');
+        const esPilotoHidden = document.getElementById('EsPiloto');
+        const esNucleoHidden = document.getElementById('EsNucleo');
+        const sensorFieldsContainer = document.getElementById('sensorFieldsContainer');
+        const alzasConfigContainer = document.getElementById('alzasConfigContainer');
+        const tempInput = document.getElementById('TemperaturaInterna');
+        const humInput = document.getElementById('HumedadInterna');
+
+        function updateFormConstraints() {
+            const val = tipoColmenaSelect.value;
+            if (val === 'Nucleo') {
+                esNucleoHidden.value = 'true';
+                esPilotoHidden.value = 'false';
+
+                // Nucleo: hide alzas and hide sensors
+                alzasConfigContainer.classList.add('hidden');
+                sensorFieldsContainer.classList.add('hidden');
+                
+                tempInput.required = false;
+                humInput.required = false;
+                tempInput.value = '';
+                humInput.value = '';
+
+                // Reset and calculate
+                inputsAlzas.forEach(input => {
+                    input.value = 0;
+                });
+                calculateHoney();
+            } else if (val === 'Piloto') {
+                esNucleoHidden.value = 'false';
+                esPilotoHidden.value = 'true';
+
+                // Piloto: show alzas and show sensors
+                alzasConfigContainer.classList.remove('hidden');
+                sensorFieldsContainer.classList.remove('hidden');
+
+                tempInput.required = false;
+                humInput.required = false;
+            } else {
+                // Normal: show alzas and hide sensors
+                esNucleoHidden.value = 'false';
+                esPilotoHidden.value = 'false';
+
+                alzasConfigContainer.classList.remove('hidden');
+                sensorFieldsContainer.classList.add('hidden');
+
+                tempInput.required = false;
+                humInput.required = false;
+                tempInput.value = '';
+                humInput.value = '';
+            }
+        }
+
+        tipoColmenaSelect.addEventListener('change', updateFormConstraints);
+
+        // Edit apiary form validation
+        const nombreInput = document.getElementById('Nombre');
+        const idInput = document.getElementById('StringIdentificador');
+        const errorNombre = document.getElementById('errorNombre');
+        const errorIdentificador = document.getElementById('errorIdentificador');
+        const submitBtn = document.getElementById('btnSubmitEditarApiario');
+        const excludeId = @Model.Id;
+
+        let debounceTimeout;
+
+        async function checkDuplicates() {
+            const nombre = nombreInput.value.trim();
+            const idVal = idInput.value.trim();
+
+            if (!nombre && !idVal) {
+                errorNombre.classList.add('hidden');
+                nombreInput.classList.remove('border-error');
+                errorIdentificador.classList.add('hidden');
+                idInput.classList.remove('border-error');
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/Apiarios/CheckDuplicate?nombre=${encodeURIComponent(nombre)}&identificador=${encodeURIComponent(idVal)}&excludeId=${excludeId}`);
+                const data = await response.json();
+
+                let hasError = false;
+
+                if (data.nombreExists) {
+                    errorNombre.textContent = "Ya existe otro apiario con este nombre.";
+                    errorNombre.classList.remove('hidden');
+                    nombreInput.classList.add('border-error');
+                    hasError = true;
+                } else {
+                    errorNombre.classList.add('hidden');
+                    nombreInput.classList.remove('border-error');
+                }
+
+                if (data.identificadorExists) {
+                    errorIdentificador.textContent = "Ya existe otro apiario con este código identificador.";
+                    errorIdentificador.classList.remove('hidden');
+                    idInput.classList.add('border-error');
+                    hasError = true;
+                } else {
+                    errorIdentificador.classList.add('hidden');
+                    idInput.classList.remove('border-error');
+                }
+
+                submitBtn.disabled = hasError;
+                if (hasError) {
+                    submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            } catch (err) {
+                console.error("Error validating duplicates", err);
+            }
+        }
+
+        function debouncedCheck() {
+            clearTimeout(debounceTimeout);
+            debounceTimeout = setTimeout(checkDuplicates, 300);
+        }
+
+        nombreInput.addEventListener('input', debouncedCheck);
+        idInput.addEventListener('input', debouncedCheck);
+
+        // Reset errors on close/cancel
+
+        function clearEditErrors() {
+            nombreInput.classList.remove('border-error');
+            idInput.classList.remove('border-error');
+            errorNombre.classList.add('hidden');
+            errorIdentificador.classList.add('hidden');
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            // reset values to original
+            nombreInput.value = "@Model.Nombre";
+            idInput.value = "@Model.StringIdentificador";
+        }
+        
+        if (btnCancelEditarApiario) btnCancelEditarApiario.addEventListener('click', clearEditErrors);
+        if (btnCancelEditarApiarioIcon) btnCancelEditarApiarioIcon.addEventListener('click', clearEditErrors);
     </script>
 }

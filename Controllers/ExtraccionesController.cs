@@ -99,14 +99,16 @@ namespace ObligatorioIntegrador2026.Controllers
                     double kilos = (alzas * 22.0) + (tresCuartos * 17.0) + (medias * 12.0);
                     totalKilos += kilos;
 
-                    // No se restan las alzas físicas, solo se descuenta la miel
+                    // No se restan las alzas físicas, solo se descuenta la miel y se reduce el peso de la colmena correspondientemente
                     colmena.ProduccionMielKg = Math.Max(0, colmena.ProduccionMielKg - kilos);
+                    colmena.PesoKg = Math.Max(0, colmena.PesoKg - kilos);
+                    _context.Colmenas.Update(colmena);
                     
                     var nota = new NotaTecnica
                     {
                         ColmenaId = colmena.Id,
                         Fecha = DateTime.Now,
-                        Detalles = "Cosecha en masa registrada.",
+                        Detalles = string.IsNullOrWhiteSpace(dto.Notas) ? "Cosecha en masa registrada." : $"Cosecha en masa registrada: {dto.Notas}",
                         Temperatura = null,
                         Humedad = null,
                         EstadoReina = colmena.EstadoReina,

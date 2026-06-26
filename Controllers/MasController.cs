@@ -119,12 +119,7 @@ namespace ObligatorioIntegrador2026.Controllers
             // "Completado" significa que ya retornó al origen? O "Completado" significa que el traslado se efectuó exitosamente y se quedará ahí hasta un próximo movimiento?
             // "La fecha de regreso...". Es decir, si se completó, es porque volvió a su origen.
             // Si "Canceló", significa que nunca se movió (o se arrepintió).
-            if (nuevoEstado == "Completado")
-            {
-                movimiento.Colmena.ApiarioId = movimiento.ApiarioDestinoId;
-                _context.Colmenas.Update(movimiento.Colmena);
-            }
-            else if (nuevoEstado == "Cancelado")
+            if (nuevoEstado == "Completado" || nuevoEstado == "Cancelado")
             {
                 movimiento.Colmena.ApiarioId = movimiento.ApiarioOrigenId;
                 _context.Colmenas.Update(movimiento.Colmena);

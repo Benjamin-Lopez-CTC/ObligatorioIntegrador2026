@@ -32,6 +32,15 @@ namespace ObligatorioIntegrador2026.Controllers
 
             var apiarios = await _context.Apiarios.ToListAsync();
 
+            var activeMovementsList = await _context.Movimientos
+                .Where(m => m.Estado == "Vigente")
+                .Include(m => m.ApiarioOrigen)
+                .ToListAsync();
+
+            var activeMovements = activeMovementsList
+                .GroupBy(m => m.ColmenaId)
+                .ToDictionary(g => g.Key, g => g.First());
+
             var treatmentsGrouped = await _context.Treatments
                 .GroupBy(t => t.ColmenaId)
                 .Select(g => new {
@@ -54,6 +63,7 @@ namespace ObligatorioIntegrador2026.Controllers
 
                 var latestNoteDate = c.NotasTecnicas.Any() ? (DateTime?)c.NotasTecnicas.Max(n => n.Fecha) : null;
                 var noteCount = c.NotasTecnicas.Count;
+                var hasActiveMovement = activeMovements.TryGetValue(c.Id, out var activeMov);
 
                 return new {
                     id = c.Id,
@@ -70,6 +80,9 @@ namespace ObligatorioIntegrador2026.Controllers
                     esPiloto = c.EsPiloto,
                     esNucleo = c.EsNucleo,
                     produccionMiel = c.ProduccionMielKg,
+                    mielHistorica = c.NotasTecnicas.Any() ? c.NotasTecnicas.Sum(n => n.KilosCosechados) : 0.0,
+                    esTemporal = hasActiveMovement,
+                    apiarioOrigenNombre = hasActiveMovement ? activeMov.ApiarioOrigen?.Nombre : null,
                     
                     fechaUltimoTratamiento = latestTreatmentDate,
                     fechaUltimoTratamientoDisplay = latestTreatmentDate?.ToString("dd/MM/yyyy HH:mm") ?? "N/A",
@@ -98,11 +111,40 @@ namespace ObligatorioIntegrador2026.Controllers
             ModelState.Remove("CodigoEscaneo");
             ModelState.Remove("Estado");
 
-            if (!colmena.EsPiloto)
+            if (colmena.EsNucleo)
             {
-                ModelState.Remove("TemperaturaInterna");
-                ModelState.Remove("HumedadInterna");
+                colmena.Alzas = 0;
+                colmena.MediasAlzas = 0;
+                colmena.AlzasTresCuartos = 0;
+                colmena.EsPiloto = false;
+                colmena.ProduccionMielKg = 0;
             }
+
+            double maxMiel = (colmena.Alzas * 22.0) + (colmena.MediasAlzas * 12.0) + (colmena.AlzasTresCuartos * 17.0);
+            if (colmena.ProduccionMielKg < 0)
+            {
+                TempData["ErrorMessage"] = "La producción de miel no puede ser negativa.";
+                if (!string.IsNullOrEmpty(returnUrl)) return Redirect(returnUrl);
+                return RedirectToAction(nameof(Index));
+            }
+            if (colmena.ProduccionMielKg > maxMiel)
+            {
+                TempData["ErrorMessage"] = $"La producción de miel ({colmena.ProduccionMielKg} kg) no puede ser mayor a la capacidad de las alzas instaladas ({maxMiel} kg).";
+                if (!string.IsNullOrEmpty(returnUrl)) return Redirect(returnUrl);
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (colmena.Alzas < 0 || colmena.Alzas > 5 || 
+                colmena.AlzasTresCuartos < 0 || colmena.AlzasTresCuartos > 5 || 
+                colmena.MediasAlzas < 0 || colmena.MediasAlzas > 5)
+            {
+                TempData["ErrorMessage"] = "El número de alzas de cada tipo no puede superar las 5 unidades.";
+                if (!string.IsNullOrEmpty(returnUrl)) return Redirect(returnUrl);
+                return RedirectToAction(nameof(Index));
+            }
+
+            ModelState.Remove("TemperaturaInterna");
+            ModelState.Remove("HumedadInterna");
 
             if (ModelState.IsValid)
             {
@@ -152,6 +194,22 @@ namespace ObligatorioIntegrador2026.Controllers
             ActualizarEstadoAutomatico(colmena);
             await _context.SaveChangesAsync();
 
+            var activeMovement = await _context.Movimientos
+                .Where(m => m.ColmenaId == id && m.Estado == "Vigente")
+                .Include(m => m.ApiarioOrigen)
+                .FirstOrDefaultAsync();
+
+            if (activeMovement != null)
+            {
+                ViewBag.EsTemporal = true;
+                ViewBag.ApiarioOrigenNombre = activeMovement.ApiarioOrigen?.Nombre;
+                ViewBag.ApiarioOrigenId = activeMovement.ApiarioOrigenId;
+            }
+            else
+            {
+                ViewBag.EsTemporal = false;
+            }
+
             ViewBag.FromApiarioId = fromApiarioId;
 
             ViewBag.Tratamientos = await _context.Treatments
@@ -161,6 +219,7 @@ namespace ObligatorioIntegrador2026.Controllers
                 .ToListAsync();
 
             var equipments = await _context.Equipments.OrderBy(e => e.DisplayOrder).ToListAsync();
+            ViewBag.MaterialEquipments = equipments.Where(e => e.Category == "Material").ToList();
             var options = new System.Text.Json.JsonSerializerOptions
             {
                 PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase,
@@ -173,24 +232,139 @@ namespace ObligatorioIntegrador2026.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditarColmena(int id, double? temperatura, double? humedad, double peso, double produccion, string comportamiento, bool esNucleo = false)
+        public async Task<IActionResult> EditarColmena(
+            int id, 
+            double? temperatura, 
+            double? humedad, 
+            double peso, 
+            double produccion, 
+            string comportamiento, 
+            bool esNucleo = false, 
+            bool esPiloto = false, 
+            int alzas = 0, 
+            int mediasAlzas = 0, 
+            int alzasTresCuartos = 0,
+            string alzaTransaccion = "Ninguna",
+            string tipoAlzaTransaccion = "",
+            int? equipamientoId = null,
+            int cantidadTransaccion = 0,
+            bool devolverAlInventario = false)
         {
             var colmena = await _context.Colmenas.Include(c => c.NotasTecnicas).FirstOrDefaultAsync(c => c.Id == id);
             if (colmena == null) return NotFound();
+
+            colmena.EsNucleo = esNucleo;
+            colmena.EsPiloto = esPiloto;
+
+            if (colmena.EsNucleo)
+            {
+                colmena.Alzas = 0;
+                colmena.MediasAlzas = 0;
+                colmena.AlzasTresCuartos = 0;
+                colmena.EsPiloto = false;
+            }
+            else
+            {
+                // Process transaction if requested
+                if (alzaTransaccion != "Ninguna" && cantidadTransaccion > 0)
+                {
+                    int currentCount = 0;
+                    string tipoNombre = "";
+                    if (tipoAlzaTransaccion == "Enteras")
+                    {
+                        currentCount = colmena.Alzas;
+                        tipoNombre = "Alzas Enteras";
+                    }
+                    else if (tipoAlzaTransaccion == "TresCuartos")
+                    {
+                        currentCount = colmena.AlzasTresCuartos;
+                        tipoNombre = "Alzas 3/4";
+                    }
+                    else if (tipoAlzaTransaccion == "Medias")
+                    {
+                        currentCount = colmena.MediasAlzas;
+                        tipoNombre = "Medias Alzas";
+                    }
+
+                    if (alzaTransaccion == "Agregar")
+                    {
+                        if (currentCount + cantidadTransaccion > 5)
+                        {
+                            TempData["ErrorMessage"] = $"No se puede agregar esa cantidad. La colmena ya tiene {currentCount} {tipoNombre} instaladas y el máximo permitido es 5 por tipo.";
+                            return RedirectToAction(nameof(Detalles), new { id = id });
+                        }
+
+                        if (tipoAlzaTransaccion == "Enteras") colmena.Alzas += cantidadTransaccion;
+                        else if (tipoAlzaTransaccion == "TresCuartos") colmena.AlzasTresCuartos += cantidadTransaccion;
+                        else if (tipoAlzaTransaccion == "Medias") colmena.MediasAlzas += cantidadTransaccion;
+
+                        var treatment = new Treatment
+                        {
+                            ColmenaId = colmena.Id,
+                            Fecha = DateTime.Now,
+                            Titulo = "Manejo de Alzas (Agregado)",
+                            Tipo = "Mantenimiento",
+                            Nota = $"Se agregaron {cantidadTransaccion} {tipoNombre} a la colmena."
+                        };
+                        _context.Treatments.Add(treatment);
+                    }
+                    else if (alzaTransaccion == "Quitar")
+                    {
+                        if (currentCount < cantidadTransaccion)
+                        {
+                            TempData["ErrorMessage"] = $"La colmena no tiene suficientes {tipoNombre} para retirar. Cantidad instalada: {currentCount}.";
+                            return RedirectToAction(nameof(Detalles), new { id = id });
+                        }
+
+                        if (tipoAlzaTransaccion == "Enteras") colmena.Alzas -= cantidadTransaccion;
+                        else if (tipoAlzaTransaccion == "TresCuartos") colmena.AlzasTresCuartos -= cantidadTransaccion;
+                        else if (tipoAlzaTransaccion == "Medias") colmena.MediasAlzas -= cantidadTransaccion;
+
+                        var treatment = new Treatment
+                        {
+                            ColmenaId = colmena.Id,
+                            Fecha = DateTime.Now,
+                            Titulo = "Manejo de Alzas (Retiro)",
+                            Tipo = "Mantenimiento",
+                            Nota = $"Se retiraron {cantidadTransaccion} {tipoNombre} de la colmena."
+                        };
+                        _context.Treatments.Add(treatment);
+                    }
+                }
+            }
 
             if (colmena.EsPiloto)
             {
                 if (temperatura.HasValue) colmena.TemperaturaInterna = temperatura.Value;
                 if (humedad.HasValue) colmena.HumedadInterna = humedad.Value;
             }
+            else
+            {
+                colmena.TemperaturaInterna = 0;
+                colmena.HumedadInterna = 0;
+            }
 
+            double maxMiel = (colmena.Alzas * 22.0) + (colmena.MediasAlzas * 12.0) + (colmena.AlzasTresCuartos * 17.0);
+            if (produccion < 0)
+            {
+                TempData["ErrorMessage"] = "La producción de miel no puede ser negativa.";
+                return RedirectToAction(nameof(Detalles), new { id = id });
+            }
+            if (produccion > maxMiel)
+            {
+                TempData["ErrorMessage"] = $"La producción de miel ({produccion} kg) no puede ser mayor a la capacidad de las alzas instaladas ({maxMiel} kg).";
+                return RedirectToAction(nameof(Detalles), new { id = id });
+            }
+            if (peso < 0)
+            {
+                TempData["ErrorMessage"] = "El peso de la colmena no puede ser negativo.";
+                return RedirectToAction(nameof(Detalles), new { id = id });
+            }
+
+            colmena.ProduccionMielKg = produccion;
             colmena.PesoKg = peso;
             
-            double maxMiel = (colmena.Alzas * 22.0) + (colmena.MediasAlzas * 12.0) + (colmena.AlzasTresCuartos * 17.0);
-            colmena.ProduccionMielKg = Math.Min(produccion, maxMiel);
-            
             colmena.ComportamientoAbejas = comportamiento;
-            colmena.EsNucleo = esNucleo;
 
             ActualizarEstadoAutomatico(colmena);
 
@@ -233,8 +407,9 @@ namespace ObligatorioIntegrador2026.Controllers
 
             _context.NotasTecnicas.Add(nuevaNota);
             
-            // No se restan las alzas físicas, solo se descuenta la miel producida
+            // No se restan las alzas físicas, solo se descuenta la miel producida y se ajusta el peso de la colmena
             colmena.ProduccionMielKg = Math.Max(0, colmena.ProduccionMielKg - kilosCosechados);
+            colmena.PesoKg = Math.Max(0, colmena.PesoKg - kilosCosechados);
 
             colmena.EstadoReina = estadoReina;
             
