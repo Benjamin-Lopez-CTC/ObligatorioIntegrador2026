@@ -5,6 +5,9 @@ using ObligatorioIntegrador2026.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Habilitar comportamiento legado de Npgsql para fechas sin DateTimeKind
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 // Configurar licencia de QuestPDF
 QuestPDF.Settings.License = LicenseType.Community;
 
@@ -16,7 +19,10 @@ builder.Services.AddControllersWithViews(options =>
 builder.Services.AddHttpClient();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.ConfigureWarnings(warnings => warnings.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
+});
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
@@ -57,47 +63,51 @@ using (var scope = app.Services.CreateScope())
 
     if (!tableExists)
     {
-        try
+        if (app.Environment.IsDevelopment())
         {
-            Console.WriteLine("Closing connection and calling EnsureDeleted...");
-            context.Database.CloseConnection();
-            context.Database.EnsureDeleted();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error during EnsureDeleted: {ex.Message}");
             try
             {
-                if (System.IO.File.Exists("ZanganosSA.db"))
-                {
-                    Console.WriteLine("File ZanganosSA.db exists. Attempting manual deletion...");
-                    System.IO.File.Delete("ZanganosSA.db");
-                    Console.WriteLine("Manual deletion succeeded.");
-                }
+                Console.WriteLine("Closing connection and calling EnsureDeleted...");
+                context.Database.CloseConnection();
+                context.Database.EnsureDeleted();
             }
-            catch (Exception ex2)
+            catch (Exception ex)
             {
-                Console.WriteLine($"Error during manual file deletion: {ex2.Message}");
+                Console.WriteLine($"Error during EnsureDeleted: {ex.Message}");
+            }
+
+            try
+            {
+                Console.WriteLine("Calling Migrate()...");
+                context.Database.Migrate();
+                Console.WriteLine("Migrate completed successfully!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error during Migrate: {ex.Message}");
+                Console.WriteLine(ex.StackTrace);
             }
         }
-
-        try
+        else
         {
-            Console.WriteLine("Calling EnsureCreated...");
-            context.Database.EnsureCreated();
-            Console.WriteLine("EnsureCreated completed successfully!");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error during EnsureCreated: {ex.Message}");
-            Console.WriteLine(ex.StackTrace);
+            try
+            {
+                Console.WriteLine("Production mode: Applying database migrations securely...");
+                context.Database.Migrate();
+                Console.WriteLine("Migrations applied successfully!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error during Migrate: {ex.Message}");
+                Console.WriteLine(ex.StackTrace);
+            }
         }
     }
 
     // Fix existing future inspection dates if any
     try
     {
-        var futureApiarios = context.Apiarios.Where(a => a.UltimaInspeccion > DateTime.Now).ToList();
+        var futureApiarios = context.Apiarios.Where(a => a.UltimaInspeccion > DateTime.UtcNow).ToList();
         if (futureApiarios.Any())
         {
             Console.WriteLine($"[DB SETUP] Encontrados {futureApiarios.Count} apiarios con fecha de inspección futura. Corrigiendo...");
@@ -107,7 +117,7 @@ using (var scope = app.Services.CreateScope())
                 {
                     var oldDate = apiario.UltimaInspeccion.Value;
                     // Cambiar el mes de octubre (10) a mayo (5)
-                    apiario.UltimaInspeccion = new DateTime(2026, 5, Math.Min(oldDate.Day, 31), oldDate.Hour, oldDate.Minute, oldDate.Second);
+                    apiario.UltimaInspeccion = new DateTime(2026, 5, Math.Min(oldDate.Day, 31), oldDate.Hour, oldDate.Minute, oldDate.Second, DateTimeKind.Utc);
                     Console.WriteLine($"[DB SETUP] Apiario {apiario.Id} ({apiario.Nombre}): {oldDate:yyyy-MM-dd} -> {apiario.UltimaInspeccion.Value:yyyy-MM-dd}");
                 }
             }
@@ -174,6 +184,27 @@ using (var scope = app.Services.CreateScope())
     catch (Exception ex)
     {
         Console.WriteLine($"[SECURITY ERROR] Error al migrar contraseñas existentes: {ex.Message}");
+    }
+
+    // Fix conflicting colmenas (Piloto and Nucleo simultaneously)
+    try
+    {
+        var conflictingColmenas = context.Colmenas.Where(c => c.EsPiloto && c.EsNucleo).ToList();
+        if (conflictingColmenas.Any())
+        {
+            Console.WriteLine($"[DB SETUP] Found {conflictingColmenas.Count} colmenas that are both Piloto and Nucleo. Removing EsPiloto flag...");
+            foreach (var colmena in conflictingColmenas)
+            {
+                colmena.EsPiloto = false;
+                context.Colmenas.Update(colmena);
+            }
+            context.SaveChanges();
+            Console.WriteLine("[DB SETUP] Conflicting colmenas fixed.");
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"[DB SETUP] Error fixing conflicting colmenas: {ex.Message}");
     }
 }
 

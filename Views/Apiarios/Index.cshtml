@@ -26,85 +26,25 @@
         </div>
         <div class="flex flex-col sm:flex-row items-center gap-4 w-full">
             <div class="hidden sm:block flex-grow h-px bg-surface-container-highest"></div>
-            <form method="get" class="flex gap-2 items-stretch h-[38px] w-full sm:w-auto justify-end shrink-0">
-                <select name="sortBy" class="flex-1 sm:flex-none bg-background border border-outline-variant px-3 py-0 h-full rounded text-on-surface focus:border-primary-container outline-none transition-colors text-sm" onchange="this.form.submit()">
+            <div class="flex gap-2 items-stretch h-[38px] w-full sm:w-auto justify-end shrink-0">
+                <select id="sortBySelect" class="flex-1 sm:flex-none bg-background border border-outline-variant px-3 py-0 h-full rounded text-on-surface focus:border-primary-container outline-none transition-colors text-sm">
                     <option value="">Por defecto</option>
-                    @if (ViewBag.SortBy == "nombre") { <option value="nombre" selected>Nombre</option> } else { <option value="nombre">Nombre</option> }
-                    @if (ViewBag.SortBy == "produccion") { <option value="produccion" selected>Producción de Miel</option> } else { <option value="produccion">Producción de Miel</option> }
-                    @if (ViewBag.SortBy == "fecha") { <option value="fecha" selected>Fecha de Inspección</option> } else { <option value="fecha">Fecha de Inspección</option> }
-                    @if (ViewBag.SortBy == "colmenas") { <option value="colmenas" selected>Cantidad de Colmenas</option> } else { <option value="colmenas">Cantidad de Colmenas</option> }
+                    <option value="nombre">Nombre</option>
+                    <option value="produccion">Producción de Miel</option>
+                    <option value="fecha">Fecha de Inspección</option>
+                    <option value="colmenas">Cantidad de Colmenas</option>
                 </select>
-                <input type="hidden" name="desc" id="descToggle" value="@(ViewBag.Desc == true ? "true" : "false")" />
-                <button type="button" onclick="document.getElementById('descToggle').value = document.getElementById('descToggle').value === 'true' ? 'false' : 'true'; this.form.submit();" class="bg-surface-container-high border border-outline w-[38px] h-full px-0 rounded hover:text-primary-container transition-colors flex items-center justify-center shrink-0" title="Alternar Asc/Desc">
-                    <span class="material-symbols-outlined text-[18px]">
-                        @(ViewBag.Desc == true ? "arrow_downward" : "arrow_upward")
-                    </span>
+                <button type="button" id="btnSortDesc" class="bg-surface-container-high border border-outline w-[38px] h-full px-0 rounded hover:text-primary-container transition-colors flex items-center justify-center shrink-0" title="Alternar Asc/Desc">
+                    <span class="material-symbols-outlined text-[18px]" id="sortIcon">arrow_downward</span>
                 </button>
-            </form>
+            </div>
         </div>
     </section>
 
     <!-- Apiary Grid (Cards) -->
     <section class="bg-surface-container-low border border-outline-variant rounded p-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        @foreach (var apiario in Model)
-        {
-            var colmenasCount = apiario.Colmenas?.Count() ?? 0;
-            var prodTotal = apiario.Colmenas?.Sum(c => c.ProduccionMielKg) ?? 0;
-            var prodPercent = Math.Min(100, Math.Round((prodTotal / 300.0) * 100));
-            var estadoProd = "Media";
-            var colorProd = "primary-container";
-            
-            if (prodPercent >= 90)
-            {
-                estadoProd = "Crítica"; // Near limit
-                colorProd = "error";
-            }
-            else if (prodPercent >= 70)
-            {
-                estadoProd = "Alta";
-            }
-
-            <article class="bg-background border border-outline-variant p-4 rounded flex flex-col hover:border-primary-container transition-colors relative overflow-hidden group">
-                <div class="absolute top-0 left-0 w-1 h-full bg-outline-variant group-hover:bg-primary-container transition-colors"></div>
-                <div class="flex-grow flex flex-col justify-between pl-3 relative z-10">
-                    <div class="flex justify-between items-start mb-4">
-                        <h2 class="font-headline-lg text-headline-lg text-on-surface">@apiario.Nombre</h2>
-                        <span class="font-label-caps text-label-caps bg-surface-variant text-on-surface-variant px-2 py-1 rounded whitespace-nowrap shrink-0">ID: @apiario.StringIdentificador</span>
-                    </div>
-                    <div class="space-y-3 mb-6">
-                        <div class="flex items-center gap-2 text-on-surface-variant">
-                            <span class="material-symbols-outlined text-[16px]">location_on</span>
-                            <span class="font-body-md text-body-md">@apiario.UbicacionTexto</span>
-                        </div>
-                        <div class="flex items-center gap-2 text-on-surface-variant">
-                            <span class="material-symbols-outlined text-[16px]">hive</span>
-                            <span class="font-body-md text-body-md">@colmenasCount @(colmenasCount == 1 ? "Colmena" : "Colmenas")</span>
-                        </div>
-                        <div class="flex items-center gap-2 text-on-surface-variant">
-                            <span class="material-symbols-outlined text-[16px]">calendar_today</span>
-                            <span class="font-body-md text-body-md">Últ. Insp: @(apiario.UltimaInspeccion?.ToString("dd MMM yyyy") ?? "N/A")</span>
-                        </div>
-                    </div>
-
-                    <!-- Progress/Status -->
-                    <div class="mb-4">
-                        <div class="flex justify-between items-center mb-1">
-                            <span class="font-label-caps text-label-caps text-on-surface-variant">Producción: @estadoProd</span>
-                            <span class="font-label-caps text-label-caps text-@colorProd">@prodPercent%</span>
-                        </div>
-                        <div class="w-full bg-surface-variant h-1 rounded-full overflow-hidden">
-                            <div class="bg-@colorProd h-full" style="width: @prodPercent%"></div>
-                        </div>
-                </div>
-                <div class="mt-4 pt-4 border-t border-surface-container-highest pl-3">
-                    <a asp-action="Detalles" asp-route-id="@apiario.Id" class="w-full bg-transparent border border-outline-variant text-on-surface font-label-caps text-label-caps px-4 py-2 rounded hover:text-primary-container hover:border-primary-container transition-colors flex justify-center items-center gap-2">
-                        Ver Detalles
-                        <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
-                    </a>
-                </div>
-            </article>
-        }
+        <div id="apiariosGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Filled by JS -->
         </div>
     </section>
 </main>
@@ -195,6 +135,144 @@
         btnOpen.addEventListener('click', openModal);
         btnCancel1.addEventListener('click', closeModal);
         btnCancel2.addEventListener('click', closeModal);
+
+        // --- Client-Side Rendering & Offline Logic ---
+        let rawApiarios = @Html.Raw(ViewBag.ApiariosJson);
+        let filteredApiarios = [...rawApiarios];
+        let isDesc = true;
+        
+        const apiariosGrid = document.getElementById('apiariosGrid');
+        const sortBySelect = document.getElementById('sortBySelect');
+        const btnSortDesc = document.getElementById('btnSortDesc');
+        const sortIcon = document.getElementById('sortIcon');
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            if (!navigator.onLine && window.ZanganosDB) {
+                try {
+                    const localData = await window.ZanganosDB.getAllFromStore('apiarios');
+                    if (localData && localData.length > 0) {
+                        rawApiarios = localData;
+                        console.log('[Offline] Cargados', localData.length, 'apiarios desde IndexedDB');
+                    }
+                } catch (err) {
+                    console.error('[Offline] Error cargando apiarios desde IndexedDB:', err);
+                }
+            }
+            applySorting();
+        });
+
+        btnSortDesc.addEventListener('click', () => {
+            isDesc = !isDesc;
+            sortIcon.textContent = isDesc ? 'arrow_downward' : 'arrow_upward';
+            applySorting();
+        });
+
+        sortBySelect.addEventListener('change', () => {
+            applySorting();
+        });
+
+        function applySorting() {
+            const sortBy = sortBySelect.value;
+            
+            filteredApiarios = [...rawApiarios];
+            
+            if (sortBy) {
+                filteredApiarios.sort((a, b) => {
+                    let valA, valB;
+                    switch (sortBy) {
+                        case 'nombre':
+                            valA = a.nombre.toLowerCase(); valB = b.nombre.toLowerCase();
+                            break;
+                        case 'produccion':
+                            valA = a.produccionTotal || 0; valB = b.produccionTotal || 0;
+                            break;
+                        case 'fecha':
+                            valA = a.ultimaInspeccion ? new Date(a.ultimaInspeccion).getTime() : 0;
+                            valB = b.ultimaInspeccion ? new Date(b.ultimaInspeccion).getTime() : 0;
+                            break;
+                        case 'colmenas':
+                            valA = a.colmenasCount || 0; valB = b.colmenasCount || 0;
+                            break;
+                    }
+                    if (valA < valB) return isDesc ? 1 : -1;
+                    if (valA > valB) return isDesc ? -1 : 1;
+                    return 0;
+                });
+            }
+            
+            renderGrid();
+        }
+
+        function renderGrid() {
+            apiariosGrid.innerHTML = '';
+            if (filteredApiarios.length === 0) {
+                apiariosGrid.innerHTML = '<div class="col-span-full p-8 text-center text-on-surface-variant font-label-caps tracking-widest">NO HAY APIARIOS REGISTRADOS</div>';
+                return;
+            }
+
+            filteredApiarios.forEach(apiario => {
+                const colmenasCount = apiario.colmenasCount || 0;
+                const prodTotal = apiario.produccionTotal || 0;
+                const prodPercent = Math.min(100, Math.round((prodTotal / 300.0) * 100));
+                
+                let estadoProd = "Media";
+                let colorProd = "primary-container";
+                
+                if (prodPercent >= 90) {
+                    estadoProd = "Crítica";
+                    colorProd = "error";
+                } else if (prodPercent >= 70) {
+                    estadoProd = "Alta";
+                }
+                
+                const formatFecha = apiario.ultimaInspeccion 
+                    ? new Date(apiario.ultimaInspeccion).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }) 
+                    : "N/A";
+
+                const article = document.createElement('article');
+                article.className = 'bg-background border border-outline-variant p-4 rounded flex flex-col hover:border-primary-container transition-colors relative overflow-hidden group';
+                article.innerHTML = `
+                    <div class="absolute top-0 left-0 w-1 h-full bg-outline-variant group-hover:bg-primary-container transition-colors"></div>
+                    <div class="flex-grow flex flex-col justify-between pl-3 relative z-10">
+                        <div class="flex justify-between items-start mb-4 gap-2">
+                            <h2 class="font-headline-lg text-headline-lg text-on-surface break-words">${apiario.nombre}</h2>
+                            <span class="font-label-caps text-label-caps bg-surface-variant text-on-surface-variant px-2 py-1 rounded whitespace-nowrap shrink-0">ID: ${apiario.stringIdentificador || 'S/N'}</span>
+                        </div>
+                        <div class="space-y-3 mb-6">
+                            <div class="flex items-center gap-2 text-on-surface-variant">
+                                <span class="material-symbols-outlined text-[16px]">location_on</span>
+                                <span class="font-body-md text-body-md break-all">${apiario.ubicacionTexto || 'N/A'}</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-on-surface-variant">
+                                <span class="material-symbols-outlined text-[16px]">hive</span>
+                                <span class="font-body-md text-body-md">${colmenasCount} ${colmenasCount === 1 ? 'Colmena' : 'Colmenas'}</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-on-surface-variant">
+                                <span class="material-symbols-outlined text-[16px]">calendar_today</span>
+                                <span class="font-body-md text-body-md">Últ. Insp: ${formatFecha}</span>
+                            </div>
+                        </div>
+                        <!-- Progress/Status -->
+                        <div class="mb-4">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-label-caps text-label-caps text-on-surface-variant">Producción: ${estadoProd}</span>
+                                <span class="font-label-caps text-label-caps text-${colorProd}">${prodPercent}%</span>
+                            </div>
+                            <div class="w-full bg-surface-variant h-1 rounded-full overflow-hidden">
+                                <div class="bg-${colorProd} h-full" style="width: ${prodPercent}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-surface-container-highest pl-3">
+                        <a href="/Apiarios/Detalles/${apiario.id}" class="w-full bg-transparent border border-outline-variant text-on-surface font-label-caps text-label-caps px-4 py-2 rounded hover:text-primary-container hover:border-primary-container transition-colors flex justify-center items-center gap-2">
+                            Ver Detalles
+                            <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                        </a>
+                    </div>
+                `;
+                apiariosGrid.appendChild(article);
+            });
+        }
 
         // AJAX validation for duplicates
         const nombreInput = document.getElementById('Nombre');

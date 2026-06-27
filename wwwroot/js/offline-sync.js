@@ -1,7 +1,7 @@
 // offline-sync.js
 
-const DB_NAME = 'ZanganosOfflineDB';
-const STORE_NAME = 'offlineQueue';
+// DB_NAME ya está declarado en db.js que se carga antes, usamos ese.
+const STORE_NAME = 'sync-queue';
 
 function openDB() {
     return new Promise((resolve, reject) => {
@@ -140,25 +140,60 @@ document.addEventListener('submit', async (e) => {
 });
 
 // Precarga y sincronización al iniciar
-window.addEventListener('load', () => {
+window.addEventListener('load', async () => {
     if (navigator.onLine) {
         syncOfflineQueue();
+        
+        // Descargar datos consolidados masivos y guardarlos en IndexedDB
+        if (window.ZanganosDB) {
+            try {
+                if (window.updateOfflineProgress) window.updateOfflineProgress(20);
+                console.log('[Sync] Fetching consolidated data from /Home/SyncApiariosColmenas...');
+                const response = await fetch('/Home/SyncApiariosColmenas');
+                if (response.ok) {
+                    if (window.updateOfflineProgress) window.updateOfflineProgress(50);
+                    const data = await response.json();
+                    
+                    if (data.apiarios) {
+                        await window.ZanganosDB.saveToStore('apiarios', data.apiarios);
+                    }
+                    if (data.colmenas) {
+                        await window.ZanganosDB.saveToStore('colmenas', data.colmenas);
+                    }
+                    console.log('[Sync] Database populated successfully for offline use.');
+                    if (window.updateOfflineProgress) window.updateOfflineProgress(70);
+                }
+            } catch (err) {
+                console.error('[Sync] Error fetching consolidated data:', err);
+            }
+        }
     }
     
-    // Precarga automática de páginas comunes para lectura offline
+    // Precarga automática de páginas para lectura offline (App Shell y Detalles)
     if ('serviceWorker' in navigator && navigator.onLine) {
-        const urlsToPrecache = [
-            '/Apiarios',
-            '/Colmenas',
-            '/Extracciones',
-            '/Mas/Movimientos'
-        ];
-        
-        navigator.serviceWorker.ready.then(registration => {
-            registration.active.postMessage({
-                type: 'PRECACHE_URLS',
-                urls: urlsToPrecache
-            });
-        });
+        try {
+            const urlsResponse = await fetch('/Home/GetAllOfflineUrls');
+            if (urlsResponse.ok) {
+                const urlsToPrecache = await urlsResponse.json();
+                navigator.serviceWorker.ready.then(registration => {
+                    if (registration.active) {
+                        registration.active.postMessage({
+                            type: 'PRECACHE_URLS',
+                            urls: urlsToPrecache
+                        });
+                    }
+                });
+            }
+            if (window.updateOfflineProgress) window.updateOfflineProgress(100);
+            
+            setTimeout(() => {
+                if (window.finishOfflineLoading) window.finishOfflineLoading();
+            }, 600); // Dar un momento visual para ver el 100%
+        } catch (err) {
+            console.error('[Sync] Error fetching offline urls:', err);
+            if (window.finishOfflineLoading) window.finishOfflineLoading();
+        }
+    } else {
+        if (window.finishOfflineLoading) window.finishOfflineLoading();
     }
 });

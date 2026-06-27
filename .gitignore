@@ -1,0 +1,30 @@
+# Build folders
+[Bb]in/
+[Oo]bj/
+
+# Visual Studio files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# IDE / OS files
+.vscode/
+.idea/
+.DS_Store
+
+# Temporary databases
+*.db
+*.db-shm
+*.db-wal
+
+# Logging
+*.log
+
+# Publish output
+Publish/
+out/
+
+# Development config (avoid pushing passwords/secrets)
+appsettings.Development.json

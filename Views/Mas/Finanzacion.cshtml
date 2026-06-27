@@ -163,9 +163,9 @@
                     {
                         @foreach (var inv in active.Inversiones)
                         {
-                            <div class="bg-surface-container border border-outline-variant rounded p-4 flex justify-between items-center hover:border-primary-container/50 transition-colors">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-10 h-10 rounded bg-surface-container-high border border-outline-variant flex items-center justify-center text-on-surface-variant">
+                            <div class="bg-surface-container border border-outline-variant rounded p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-primary-container/50 transition-colors">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 shrink-0 rounded bg-surface-container-high border border-outline-variant flex items-center justify-center text-on-surface-variant">
                                         <span class="material-symbols-outlined">payments</span>
                                     </div>
                                     <div class="flex flex-col">
@@ -173,14 +173,16 @@
                                         <span class="font-body-sm text-[12px] text-on-surface-variant">@inv.Nota</span>
                                     </div>
                                 </div>
-                                <div class="flex items-center gap-3">
-                                    <div class="font-body-md text-error font-semibold mr-2">-$@inv.Precio.ToString("N2")</div>
-                                    <button onclick="openEditInversionModal(@inv.Id, '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(inv.Titulo))', '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(inv.Nota ?? ""))', @inv.Precio.ToString(System.Globalization.CultureInfo.InvariantCulture))" class="text-on-surface-variant hover:text-primary-container transition-colors p-1" title="Editar inversión">
-                                        <span class="material-symbols-outlined text-[18px]">edit</span>
-                                    </button>
-                                    <button onclick="confirmarEliminarInversion(@inv.Id, '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(inv.Titulo))')" class="text-on-surface-variant hover:text-error transition-colors p-1" title="Eliminar inversión">
-                                        <span class="material-symbols-outlined text-[18px]">delete</span>
-                                    </button>
+                                <div class="flex items-center justify-between sm:justify-end gap-2 pl-12 sm:pl-0 w-full sm:w-auto">
+                                    <div class="font-body-md text-error font-semibold whitespace-nowrap mr-2">-$@inv.Precio.ToString("N2")</div>
+                                    <div class="flex items-center shrink-0">
+                                        <button onclick="openEditInversionModal(@inv.Id, '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(inv.Titulo))', '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(inv.Nota ?? ""))', @inv.Precio.ToString(System.Globalization.CultureInfo.InvariantCulture))" class="text-on-surface-variant hover:text-primary-container transition-colors p-1.5" title="Editar inversión">
+                                            <span class="material-symbols-outlined text-[18px]">edit</span>
+                                        </button>
+                                        <button onclick="confirmarEliminarInversion(@inv.Id, '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(inv.Titulo))')" class="text-on-surface-variant hover:text-error transition-colors p-1.5" title="Eliminar inversión">
+                                            <span class="material-symbols-outlined text-[18px]">delete</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         }
@@ -215,9 +217,9 @@
                     {
                         @foreach (var gan in active.Ganancias)
                         {
-                            <div class="bg-surface-container border border-outline-variant rounded p-4 flex justify-between items-center hover:border-primary-container transition-colors">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-10 h-10 rounded bg-surface-container-high border border-primary-container/20 flex items-center justify-center text-primary-container">
+                            <div class="bg-surface-container border border-outline-variant rounded p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-primary-container transition-colors">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 shrink-0 rounded bg-surface-container-high border border-primary-container/20 flex items-center justify-center text-primary-container">
                                         <span class="material-symbols-outlined">point_of_sale</span>
                                     </div>
                                     <div class="flex flex-col">
@@ -225,14 +227,16 @@
                                         <span class="font-body-sm text-[12px] text-on-surface-variant">@gan.Descripcion</span>
                                     </div>
                                 </div>
-                                <div class="flex items-center gap-3">
-                                    <div class="font-body-md text-primary-container font-semibold mr-2">+$@gan.Monto.ToString("N2")</div>
-                                    <button onclick="openEditGananciaModal(@gan.Id, '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(gan.Titulo))', '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(gan.Descripcion ?? ""))', @gan.Monto.ToString(System.Globalization.CultureInfo.InvariantCulture))" class="text-on-surface-variant hover:text-primary-container transition-colors p-1" title="Editar ganancia">
-                                        <span class="material-symbols-outlined text-[18px]">edit</span>
-                                    </button>
-                                    <button onclick="confirmarEliminarGanancia(@gan.Id, '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(gan.Titulo))')" class="text-on-surface-variant hover:text-error transition-colors p-1" title="Eliminar ganancia">
-                                        <span class="material-symbols-outlined text-[18px]">delete</span>
-                                    </button>
+                                <div class="flex items-center justify-between sm:justify-end gap-2 pl-12 sm:pl-0 w-full sm:w-auto">
+                                    <div class="font-body-md text-primary-container font-semibold whitespace-nowrap mr-2">+$@gan.Monto.ToString("N2")</div>
+                                    <div class="flex items-center shrink-0">
+                                        <button onclick="openEditGananciaModal(@gan.Id, '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(gan.Titulo))', '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(gan.Descripcion ?? ""))', @gan.Monto.ToString(System.Globalization.CultureInfo.InvariantCulture))" class="text-on-surface-variant hover:text-primary-container transition-colors p-1.5" title="Editar ganancia">
+                                            <span class="material-symbols-outlined text-[18px]">edit</span>
+                                        </button>
+                                        <button onclick="confirmarEliminarGanancia(@gan.Id, '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(gan.Titulo))')" class="text-on-surface-variant hover:text-error transition-colors p-1.5" title="Eliminar ganancia">
+                                            <span class="material-symbols-outlined text-[18px]">delete</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         }

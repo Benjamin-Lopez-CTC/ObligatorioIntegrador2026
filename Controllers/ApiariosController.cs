@@ -52,6 +52,18 @@ namespace ObligatorioIntegrador2026.Controllers
             ViewBag.Desc = desc;
             ViewBag.SearchTerm = search;
 
+            var apiariosJson = apiarios.Select(a => new {
+                a.Id,
+                a.Nombre,
+                a.StringIdentificador,
+                a.UbicacionTexto,
+                a.UltimaInspeccion,
+                ColmenasCount = a.Colmenas?.Count ?? 0,
+                ProduccionTotal = a.Colmenas?.Sum(c => (double?)c.ProduccionMielKg) ?? 0
+            });
+            var jsonOptions = new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase };
+            ViewBag.ApiariosJson = System.Text.Json.JsonSerializer.Serialize(apiariosJson, jsonOptions);
+
             return View(apiarios);
         }
 

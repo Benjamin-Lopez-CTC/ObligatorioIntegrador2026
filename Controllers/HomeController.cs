@@ -193,24 +193,59 @@ public class HomeController : Controller
     }
 
     [HttpGet]
+    public async Task<IActionResult> SyncApiariosColmenas()
+    {
+        var apiarios = await _context.Apiarios
+            .Select(a => new {
+                a.Id,
+                a.Nombre,
+                a.StringIdentificador,
+                a.UbicacionTexto,
+                a.UltimaInspeccion,
+                ColmenasCount = a.Colmenas.Count(),
+                ProduccionTotal = a.Colmenas.Sum(c => (double?)c.ProduccionMielKg) ?? 0
+            }).ToListAsync();
+
+        var colmenas = await _context.Colmenas
+            .Select(c => new {
+                c.Id,
+                c.Identificador,
+                c.CodigoEscaneo,
+                c.Estado,
+                c.ProduccionMielKg,
+                c.EsPiloto,
+                c.EsNucleo,
+                c.PesoKg,
+                c.TemperaturaInterna,
+                ApiarioNombre = c.Apiario.Nombre,
+                ApiarioId = c.ApiarioId
+            }).ToListAsync();
+
+        return Json(new { apiarios, colmenas });
+    }
+
+    [HttpGet]
     public async Task<IActionResult> GetAllOfflineUrls()
     {
         var urls = new List<string>
         {
+            "/Apiarios",
             "/Colmenas",
-            "/Apiarios"
+            "/Extracciones",
+            "/Mas/Movimientos"
         };
 
-        var colmenas = await _context.Colmenas.Select(c => c.Id).ToListAsync();
-        foreach (var id in colmenas)
-        {
-            urls.Add($"/Colmenas/Detalles/{id}");
-        }
-
-        var apiarios = await _context.Apiarios.Select(a => a.Id).ToListAsync();
-        foreach (var id in apiarios)
+        var apiariosIds = await _context.Apiarios.Select(a => a.Id).ToListAsync();
+        foreach (var id in apiariosIds)
         {
             urls.Add($"/Apiarios/Detalles/{id}");
+        }
+
+        var colmenasIds = await _context.Colmenas.Select(c => c.Id).ToListAsync();
+        foreach (var id in colmenasIds)
+        {
+            urls.Add($"/Colmenas/Detalles/{id}");
+            urls.Add($"/Colmenas/Tratamientos/{id}");
         }
 
         return Json(urls);

@@ -364,37 +364,34 @@
     </div>
     <h2 class="font-display text-headline-sm text-primary mb-2">Preparando Modo Offline</h2>
     <p class="font-body-md text-on-surface-variant max-w-[280px]">
-        Estamos descargando la base de datos de colmenas y apiarios para que puedas trabajar sin internet en el campo...
+        Estamos descargando la base de datos para que puedas trabajar sin internet en el campo...
     </p>
     <div class="mt-8 w-full max-w-[200px] h-2 bg-surface-container-highest rounded-full overflow-hidden">
-        <div class="h-full bg-primary-container rounded-full animate-[loadingBar_5.5s_ease-in-out_forwards]"></div>
+        <div id="offlineLoadingBar" class="h-full bg-primary-container rounded-full" style="width: 5%; transition: width 0.3s ease-out;"></div>
     </div>
 </div>
-
-<style>
-    @@keyframes loadingBar {
-        0% { width: 0%; }
-        20% { width: 30%; }
-        50% { width: 60%; }
-        80% { width: 85%; }
-        100% { width: 100%; }
-    }
-</style>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         // Mostrar solo en móviles (< 768px) y si no se ha mostrado en esta sesión
         if (window.innerWidth < 768 && !sessionStorage.getItem('hasLoadedOfflineData')) {
             const overlay = document.getElementById('offlineLoadingOverlay');
-            if (overlay) {
+            if (overlay && navigator.onLine) {
                 // Prevenir scroll
                 document.body.style.overflow = 'hidden';
                 
                 overlay.classList.remove('hidden');
                 overlay.classList.add('flex');
                 
-                // Ocultar después de 5.5 segundos
-                setTimeout(() => {
+                // Exponer funciones para que offline-sync.js las llame
+                window.updateOfflineProgress = (percent) => {
+                    const bar = document.getElementById('offlineLoadingBar');
+                    if (bar) {
+                        bar.style.width = percent + '%';
+                    }
+                };
+                
+                window.finishOfflineLoading = () => {
                     overlay.style.opacity = '0';
                     overlay.style.transition = 'opacity 0.5s ease-out';
                     
@@ -403,8 +400,8 @@
                         overlay.classList.remove('flex');
                         document.body.style.overflow = '';
                         sessionStorage.setItem('hasLoadedOfflineData', 'true');
-                    }, 500); // Dar tiempo a que termine el fade out
-                }, 5500);
+                    }, 500);
+                };
             }
         }
     });

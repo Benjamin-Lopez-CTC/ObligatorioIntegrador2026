@@ -378,7 +378,25 @@
 @section Scripts {
     <script src="~/js/paddle-ocr.js"></script>
     <script>
-        const rawColmenas = @Html.Raw(ViewBag.ColmenasJson);
+        let rawColmenas = @Html.Raw(ViewBag.ColmenasJson);
+        
+        // Offline override: Cargar datos locales desde IndexedDB si estamos sin conexión
+        window.addEventListener('DOMContentLoaded', async () => {
+            if (!navigator.onLine && window.ZanganosDB) {
+                try {
+                    const localData = await window.ZanganosDB.getAllFromStore('colmenas');
+                    if (localData && localData.length > 0) {
+                        rawColmenas = localData;
+                        console.log('[Offline] Cargadas', localData.length, 'colmenas desde IndexedDB');
+                        // Forzar re-renderizado
+                        filteredColmenas = [...rawColmenas];
+                        applyFilters();
+                    }
+                } catch (err) {
+                    console.error('[Offline] Error cargando colmenas desde IndexedDB:', err);
+                }
+            }
+        });
         
         // DOM Elements
         const tbody = document.getElementById('hiveTableBody');
@@ -590,6 +608,7 @@
                                 <span class="text-[10px] text-on-surface-variant mt-0.5 leading-none">ID: ${c.codigoEscaneo}</span>
                             </div>
                             ${c.esPiloto ? '<div class="w-6 h-6 shrink-0 flex items-center justify-center border border-outline-variant bg-surface-container-high rounded text-on-surface font-label-caps text-[12px]" title="Colmena Piloto">P</div>' : ''}
+                            ${c.esNucleo ? '<div class="w-6 h-6 shrink-0 flex items-center justify-center border border-outline-variant bg-surface-container-high rounded text-on-surface font-label-caps text-[12px]" title="Colmena Núcleo">N</div>' : ''}
                         </div>
                     </td>
                     <td data-label="APIARIO" class="p-4 border-b border-surface-container-highest md:border-none">
