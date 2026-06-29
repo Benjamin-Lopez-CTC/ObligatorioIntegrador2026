@@ -1,45 +1,40 @@
-# Zánganos S.A. - Sistema de Gestión Apícola (Obligatorio Integrador 2026)
+# Zánganos S.A. - Sistema de Gestión Apícola
 
-Este proyecto es un **Sistema Integral de Gestión Apícola** diseñado específicamente para resolver las necesidades logísticas, técnicas y productivas de los apicultores en el campo. Se destaca por su capacidad de funcionar bajo condiciones de conectividad nula (Offline-First) y por integrar inteligencia artificial local para la identificación de colmenas. Aunque el sistema fue diseñado originalmente para escritorio, soporta completamente una vista responsiva adaptada para dispositivos móviles.
+¡Bienvenido al **Sistema Integral de Gestión Apícola** de Zánganos S.A.! Esta plataforma está diseñada especialmente para apicultores, con el objetivo de facilitar tu trabajo diario tanto en la oficina como directamente en el campo. 
 
-## 🚀 Características Principales
+Con esta herramienta, podrás llevar un control detallado de tus colmenas, maximizar tu producción y tomar mejores decisiones respaldadas por información histórica y análisis automático.
 
-*   **📱 Arquitectura Offline-First (PWA):**
-    El sistema utiliza Service Workers y cachés dinámicas (IndexedDB/CacheStorage) para permitir a los apicultores descargar su base de datos de colmenas y apiarios antes de ir al campo. Una vez en "Modo Avión" o zonas sin señal, la aplicación funciona de forma completamente transparente, permitiendo la lectura de datos históricos.
-*   **📷 Escáner IA Híbrido (Gemini + PaddleOCR):**
-    Para facilitar la identificación física de colmenas en pleno trabajo de campo, se implementó un motor de Reconocimiento Óptico de Caracteres (OCR) inteligente y adaptable:
-    *   **Con Conexión (Online):** Utiliza la potente API de **Gemini 2.5 Flash** en la nube para un escaneo extremadamente rápido y versátil.
-    *   **Sin Conexión (Offline):** Si no hay internet, el sistema hace fallback automáticamente a un motor local basado en **ONNX Runtime Web** y modelos pre-entrenados de **PaddleOCR**. El celular procesa la foto decodificando el ID numérico mediante WebAssembly sin necesidad de enviar un solo byte a la red, garantizando privacidad y que el trabajo de campo nunca se interrumpa.
-*   **🐝 Gestión de Apiarios y Colmenas:**
-    *   Mapeo de instalaciones y control poblacional.
-    *   Seguimiento del estado de salud, docilidad y estado de la Reina.
-    *   **Colmenas Piloto:** Capacidad para registrar temperatura y humedad interna para casos de estudio o trazabilidad especial.
-*   **🍯 Trazabilidad de Producción y Extracciones:**
-    Registro detallado de cosechas en masa, contabilizando alzas, alzas de 3/4 y medias alzas retiradas.
-*   **📊 Análisis Financiero e Informes:**
-    Las extracciones pueden vincularse al mercado actual, calculando las ganancias generadas por cada colmena y agrupando la rentabilidad global de la temporada.
+## 🐝 ¿Qué puedes hacer en el sistema?
 
-## 🛠️ Stack Tecnológico
+### 1. Gestión de Apiarios y Colmenas
+- **Crear y organizar apiarios**: Registra la ubicación y detalles de todos tus apiarios para mantenerlos bajo control.
+- **Administrar colmenas**: Ingresa, modifica y asigna colmenas a sus respectivos apiarios. Podrás registrar detalles como el estado de la reina, docilidad, población y si son colmenas "piloto" (para control de temperatura y humedad).
 
-*   **Backend:** ASP.NET Core 9.0 MVC (C#)
-*   **Base de Datos:** SQLite + Entity Framework Core
-*   **Frontend:** HTML5, Vanilla JS, Tailwind CSS (Sistema de diseño "StitchUI" a medida), Material Icons
-*   **Inteligencia Artificial (Edge Computing):** ONNX Runtime Web (`ort-wasm`), modelos pre-entrenados de PaddleOCR
-*   **PWA:** Service Workers, Manifest, Cache API
+### 2. Trazabilidad y Seguimiento en el Campo
+- **Historial y Notas**: Registra notas sobre cada colmena para guardar información útil y llevar un seguimiento de sus movimientos a lo largo de la temporada.
+- **Tratamientos y Salud**: Mantén un registro del estado de salud de tus colmenas y de las dosis de tratamientos aplicadas para no olvidar ninguna intervención.
+- **Cosechas**: Registra las extracciones de miel contabilizando alzas, medias alzas y alzas de 3/4.
 
-## ⚙️ Requisitos y Ejecución
+### 3. Escáner Inteligente de Colmenas
+- **Identificación rápida**: Utiliza la cámara de tu dispositivo móvil para escanear el código numérico de las etiquetas físicas de tus colmenas. El sistema utiliza Inteligencia Artificial para reconocer la colmena instantáneamente y mostrarte toda su información en el momento.
 
-1.  Asegúrate de tener instalado el **.NET 9.0 SDK**.
-2.  Clona el repositorio y abre la carpeta del proyecto en la terminal.
-3.  Ejecuta el proyecto utilizando:
-    ```bash
-    dotnet run
-    ```
-4.  El servidor se levantará (usualmente en `http://localhost:5280` u otro puerto especificado).
-5.  *Nota:* Para probar las características progresivas (PWA) y el acceso a la cámara web/celular en otros dispositivos de tu red, deberás exponer tu puerto local mediante un túnel seguro con HTTPS (por ejemplo, utilizando `ngrok`), ya que navegadores móviles exigen conexiones seguras para habilitar la cámara o Service Workers fuera de `localhost`.
+### 4. Análisis y Reportes
+- **Finanzas e Ingresos**: Vincula tus cosechas al mercado actual y analiza tus ingresos e inversiones. Calcula las ganancias generadas por cada colmena y evalúa la rentabilidad global.
+- **Comparativa de Rendimiento**: Compara apiarios y colmenas para identificar las mejores prácticas e ideas a lo largo del año.
+- **Informes Oficiales**: Facilita la extracción de datos para rellenar los formularios solicitados por el ministerio de forma rápida y sencilla.
 
-## 🎨 Guía de Diseño (StitchUI)
+## 🚀 ¿Cómo empezar a usar la aplicación?
 
-Las vistas del sistema han sido desarrolladas siguiendo un conjunto estricto de lineamientos visuales y de usabilidad definidos en la carpeta `StitchUI/DESIGN`. El enfoque central es mantener un diseño de clase mundial, responsivo, amigable y con elementos generosos para facilitar toques rápidos con guantes de trabajo u operarios en movimiento.
+1. **Inicia Sesión**: Accede con tu cuenta de usuario para entrar a tu panel de control personalizado.
+2. **Crea tu Primer Apiario**: Dirígete a la sección de Apiarios y registra la información de tus terrenos o ubicaciones.
+3. **Agrega tus Colmenas**: Ingresa las colmenas y asígnalas a los apiarios creados.
+4. **¡Lleva el sistema al campo!**: Abre la aplicación desde tu teléfono móvil. La interfaz está adaptada para usarse cómodamente con guantes y en movimiento.
 
-*Nota de Créditos:* El estilo visual inicial, la conceptualización y la estructura base del sistema de diseño (StitchUI) fueron realizados en colaboración con **Stitch, la IA generativa de diseño de Google**, asegurando una interfaz moderna, limpia y altamente funcional desde el primer día.
+## 📶 Funciona Sin Conexión (Modo Offline)
+
+Sabemos que en el campo no siempre hay buena señal. Por eso, **el sistema funciona sin internet**.
+- Antes de salir de viaje, asegúrate de abrir la aplicación para que descargue tu base de datos de colmenas.
+- Una vez en el campo, incluso en "Modo Avión", podrás consultar la información histórica de tus colmenas, leer tus notas y utilizar el escáner de IA mediante el procesamiento local de tu celular. Todo de forma transparente y sin interrupciones.
+
+---
+*Para cualquier duda o problema, contacta con el equipo de soporte técnico.*
