@@ -91,12 +91,30 @@ namespace ObligatorioIntegrador2026.Controllers
 
         private async Task RecordLoginAttempt(string username, bool isSuccess)
         {
-            var ip = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Desconocida";
+            // Leer la IP real detrás del proxy de Render/Cloudflare
+            var ip = Request.Headers["CF-Connecting-IP"].ToString();
+            if (string.IsNullOrEmpty(ip))
+            {
+                ip = Request.Headers["X-Real-IP"].ToString();
+            }
+            if (string.IsNullOrEmpty(ip))
+            {
+                ip = Request.Headers["X-Forwarded-For"].ToString();
+                if (!string.IsNullOrEmpty(ip))
+                {
+                    ip = ip.Split(',')[0].Trim();
+                }
+            }
+            if (string.IsNullOrEmpty(ip))
+            {
+                ip = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Desconocida";
+            }
+
             var userAgent = Request.Headers["User-Agent"].ToString();
             userAgent = userAgent.Length > 200 ? userAgent.Substring(0, 200) : userAgent;
 
             string location = "Desconocida";
-            if (ip == "::1" || ip == "127.0.0.1")
+            if (ip == "::1" || ip == "127.0.0.1" || ip.EndsWith("127.0.0.1"))
             {
                 location = "Localhost";
             }
@@ -119,6 +137,14 @@ namespace ObligatorioIntegrador2026.Controllers
                             var country = doc.RootElement.GetProperty("countryCode").GetString();
                             location = $"{city}, {country}";
                         }
+                        else
+                        {
+                            location = ip; // Si la API falla (ej. rango privado), guardamos la IP
+                        }
+                    }
+                    else
+                    {
+                        location = ip;
                     }
                 }
                 catch
