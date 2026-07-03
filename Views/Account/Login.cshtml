@@ -166,18 +166,90 @@
             </div>
         </div>
     </main>
-    <!-- Essential Footer Component -->
-    <footer class="bg-surface-container-lowest border-t border-secondary-container mt-auto">
-        <div class="max-w-container-max mx-auto px-margin-desktop py-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="font-label-caps text-label-caps text-on-surface-variant">
-                Felipe Alvarez y Benjamín López - 2026
+    <!-- Footer -->
+    <footer class="grid grid-cols-1 md:grid-cols-3 items-center py-6 px-4 md:px-8 bg-surface-container border-t border-surface-container-highest mt-auto w-full gap-4">
+        <span class="font-label-caps text-label-caps font-bold text-primary-container text-center md:text-left">Zánganos S.A.</span>
+        <div class="flex flex-wrap justify-center gap-4">
+            <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary-container transition-opacity" href="/docs/Documentaci%C3%B3n%20Obligatorio%20AP%20Hito%204%20-%20Benjam%C3%ADn%20L%C3%B3pez%20y%20Felipe%20Alvarez.pdf" download>Documentación Técnica</a>
+            <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary-container transition-opacity hidden sm:inline" href="javascript:void(0)" onclick="openApiSupportModal()">Soporte API</a>
+        </div>
+        <span class="font-body-sm text-body-sm text-on-surface-variant text-center md:text-right">Felipe Alvarez y Benjamín López - 2026</span>
+    </footer>
+
+    <!-- Modal Soporte API -->
+    <div id="modalSoporteApi" class="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 p-4" style="opacity: 0; pointer-events: none; transition: opacity 0.25s ease-out;">
+        <div class="bg-surface-container border border-outline-variant rounded-lg w-full max-w-lg shadow-2xl flex flex-col max-h-[85vh]" style="transition: transform 0.25s ease-out, opacity 0.25s ease-out;">
+            <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between shrink-0">
+                <h4 class="font-headline-lg text-lg font-bold text-on-surface flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[24px] text-primary-container">api</span>
+                    <span>Soporte API de Escaneo</span>
+                </h4>
+                <button type="button" onclick="closeApiSupportModal()" class="text-on-surface-variant hover:text-primary-container transition-colors p-1" title="Cerrar">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
             </div>
-            <div class="flex gap-6">
-                <span class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary-container transition-colors cursor-pointer">Privacy Policy</span>
-                <span class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary-container transition-colors cursor-pointer">Terms of Service</span>
-                <span class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary-container transition-colors cursor-pointer">Sustainability</span>
+            <div class="p-6 overflow-y-auto grow space-y-6">
+                <p class="font-body-md text-on-surface-variant">
+                    El sistema de escaneo de colmenas funciona de forma híbrida dependiendo de la conexión a Internet:
+                </p>
+                <div class="bg-surface-container-high border border-outline-variant p-4 rounded-lg space-y-2">
+                    <div class="flex items-center gap-2 text-primary-container font-semibold">
+                        <span class="material-symbols-outlined text-[20px]">cloud</span>
+                        <span>Modo Online (Con Conexión)</span>
+                    </div>
+                    <p class="font-body-sm text-on-surface-variant">
+                        Utiliza la API de <strong class="text-on-surface">Google Gemini (modelo gemini-2.5-flash)</strong> en la nube para procesar la imagen capturada por la cámara y extraer con alta precisión los 6 dígitos del código de la colmena.
+                    </p>
+                    <div class="pt-1">
+                        <a href="https://ai.google.dev/gemini-api/docs" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 font-label-caps text-label-caps text-primary-container hover:underline text-xs">
+                            Documentación de Gemini <span class="material-symbols-outlined text-[12px]">open_in_new</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="bg-surface-container-high border border-outline-variant p-4 rounded-lg space-y-2">
+                    <div class="flex items-center gap-2 text-primary-container font-semibold">
+                        <span class="material-symbols-outlined text-[20px]">cloud_off</span>
+                        <span>Modo Offline (Sin Conexión)</span>
+                    </div>
+                    <p class="font-body-sm text-on-surface-variant">
+                        Ejecuta reconocimiento de caracteres (OCR) de forma local. Usa <strong class="text-on-surface">ONNX Runtime Web</strong> compilado en WebAssembly para procesar los modelos de <strong class="text-on-surface">PaddleOCR</strong> directamente en el navegador sin consumir datos.
+                    </p>
+                    <div class="pt-1 flex flex-wrap gap-x-4 gap-y-2">
+                        <a href="https://github.com/PaddlePaddle/PaddleOCR" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 font-label-caps text-label-caps text-primary-container hover:underline text-xs">
+                            GitHub PaddleOCR <span class="material-symbols-outlined text-[12px]">open_in_new</span>
+                        </a>
+                        <a href="https://onnxruntime.ai/docs/tutorials/web/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 font-label-caps text-label-caps text-primary-container hover:underline text-xs">
+                            ONNX Web <span class="material-symbols-outlined text-[12px]">open_in_new</span>
+                        </a>
+                        <a href="https://www.npmjs.com/package/ppu-paddle-ocr" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 font-label-caps text-label-caps text-primary-container hover:underline text-xs">
+                            Librería ppu-paddle-ocr <span class="material-symbols-outlined text-[12px]">open_in_new</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-surface-container-highest flex justify-end shrink-0">
+                <button type="button" onclick="closeApiSupportModal()" class="bg-primary-container text-on-primary hover:bg-primary-fixed transition-colors px-6 py-2 rounded font-label-caps text-label-caps">
+                    Cerrar
+                </button>
             </div>
         </div>
-    </footer>
+    </div>
+
+    <script>
+        function openApiSupportModal() {
+            const modal = document.getElementById('modalSoporteApi');
+            if (modal) {
+                modal.style.opacity = '1';
+                modal.style.pointerEvents = 'auto';
+            }
+        }
+        function closeApiSupportModal() {
+            const modal = document.getElementById('modalSoporteApi');
+            if (modal) {
+                modal.style.opacity = '0';
+                modal.style.pointerEvents = 'none';
+            }
+        }
+    </script>
 </body>
 </html>
