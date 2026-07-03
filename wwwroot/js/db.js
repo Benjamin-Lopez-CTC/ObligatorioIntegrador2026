@@ -1,5 +1,5 @@
 const DB_NAME = 'ZanganosOfflineDB';
-const DB_VERSION = 3;
+const DB_VERSION = 4;
 
 const initDB = () => {
     return new Promise((resolve, reject) => {

@@ -4,6 +4,10 @@
 const STORE_NAME = 'sync-queue';
 
 function openDB() {
+    if (window.ZanganosDB && window.ZanganosDB.initDB) {
+        return window.ZanganosDB.initDB();
+    }
+    // Fallback de seguridad si ZanganosDB no se ha cargado aún
     return new Promise((resolve, reject) => {
         const request = indexedDB.open(DB_NAME, DB_VERSION);
         request.onupgradeneeded = (event) => {

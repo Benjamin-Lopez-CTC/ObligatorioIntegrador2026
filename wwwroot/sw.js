@@ -1,5 +1,5 @@
-const CACHE_NAME = 'zanganos-cache-v4';
-const DYNAMIC_CACHE_NAME = 'zanganos-dynamic-v4';
+const CACHE_NAME = 'zanganos-cache-v5';
+const DYNAMIC_CACHE_NAME = 'zanganos-dynamic-v5';
 
 // Recursos estáticos básicos para la app shell
 const STATIC_ASSETS = [
