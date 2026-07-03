@@ -1,5 +1,5 @@
-const CACHE_NAME = 'zanganos-cache-v2';
-const DYNAMIC_CACHE_NAME = 'zanganos-dynamic-v2';
+const CACHE_NAME = 'zanganos-cache-v3';
+const DYNAMIC_CACHE_NAME = 'zanganos-dynamic-v3';
 
 // Recursos estáticos básicos para la app shell
 const STATIC_ASSETS = [
@@ -7,7 +7,9 @@ const STATIC_ASSETS = [
     '/offline.html',
     '/Logo.png',
     '/favicon.ico',
-    '/lib/jquery/dist/jquery.min.js'
+    '/lib/jquery/dist/jquery.min.js',
+    '/css/material-symbols-outlined.css',
+    '/fonts/material-symbols-outlined.woff2'
 ];
 
 // Instalación: Precargar assets estáticos

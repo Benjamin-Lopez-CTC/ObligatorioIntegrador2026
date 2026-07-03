@@ -10,6 +10,25 @@ namespace ObligatorioIntegrador2026.Models
 
         public DateTime AttemptDate { get; set; }
 
+        [System.ComponentModel.DataAnnotations.Schema.NotMapped]
+        public DateTime AttemptDateMontevideo
+        {
+            get
+            {
+                DateTime utcTime = AttemptDate.ToUniversalTime();
+                try
+                {
+                    string tzId = OperatingSystem.IsWindows() ? "Montevideo Standard Time" : "America/Montevideo";
+                    var tz = TimeZoneInfo.FindSystemTimeZoneById(tzId);
+                    return TimeZoneInfo.ConvertTimeFromUtc(utcTime, tz);
+                }
+                catch
+                {
+                    return utcTime.AddHours(-3);
+                }
+            }
+        }
+
         [MaxLength(50)]
         public string Username { get; set; } = string.Empty;
 

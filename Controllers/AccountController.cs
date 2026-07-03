@@ -155,7 +155,7 @@ namespace ObligatorioIntegrador2026.Controllers
 
             var record = new ObligatorioIntegrador2026.Models.LoginRecord
             {
-                AttemptDate = DateTime.Now,
+                AttemptDate = DateTime.UtcNow,
                 Username = username ?? "Desconocido",
                 IpAddress = ip,
                 DeviceBrowser = string.IsNullOrEmpty(userAgent) ? "Desconocido" : userAgent,
