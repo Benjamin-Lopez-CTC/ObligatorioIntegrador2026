@@ -1,0 +1,5 @@
+# Cambio al sistema de funcionamiento offline
+
+En el sistema antiguo, cada vez que querías ver la lista de apiarios o colmenas, el servidor tenía que generar y enviarte la página web completa con todo su diseño visual (el archivo HTML pesado). Para que esto funcionara sin internet, el navegador debía descargar y guardar en caché cientos de páginas individuales una por una; un proceso sumamente lento, que consumía muchos datos y que además no te permitía buscar, filtrar o registrar información nueva de manera fluida si no tenías conexión activa.
+
+Con el nuevo sistema (Fase 2), se implementó un modelo híbrido mucho más ligero y veloz: cuando entras a la aplicación, esta descarga un único archivo de texto ultra comprimido (JSON) con los datos puros y los guarda en una base de datos local dentro de tu dispositivo (IndexedDB). Ahora, la interfaz visual se dibuja instantáneamente desde tu teléfono usando esos datos guardados, lo que te permite buscar, ordenar y consultar el detalle de tus colmenas en tiempo real y sin necesidad de internet, logrando una experiencia fluida y lista para usar en el campo.

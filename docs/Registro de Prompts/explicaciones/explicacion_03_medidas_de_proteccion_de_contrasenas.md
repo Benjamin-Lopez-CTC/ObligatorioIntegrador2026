@@ -1,0 +1,5 @@
+# Medidas de protección de contraseñas
+
+Este nivel de seguridad funciona mediante una técnica criptográfica llamada hashing y salting. En lugar de guardar las contraseñas en texto plano (como "Matias123!"), el sistema las procesa a través de una función matemática no reversible provista por .NET Core. Esta función genera una huella digital única (el hash) y le añade un valor aleatorio único por cada usuario (el salt). De esta forma, si un atacante lograra descargar el archivo de base de datos ZanganosSA.db, solo vería cadenas de texto incomprensibles que son matemáticamente imposibles de revertir para revelar las contraseñas originales.
+
+Para el inicio de sesión, el sistema toma la contraseña que escribe el usuario, le aplica el mismo proceso matemático y verifica si el resultado coincide con el hash guardado en la base de datos. Además, implementamos un mecanismo automático que, al iniciar la aplicación, detecta si queda alguna contraseña vieja sin cifrar y la convierte inmediatamente en un hash seguro, garantizando una protección total sin necesidad de recrear la base de datos ni interrumpir el acceso de los usuarios.
